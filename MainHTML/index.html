@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DND Character Creator!</title>
+</head>
+<body>
+    <!--Initial Player Name and Welcome Message-->
+    <div>
+        <h1>
+            DND Character Creator
+        </h1>
+
+        <p>
+            "What's important is that you come to the table with a character you're excited to play." - James Wyatt
+        </p>
+
+        <label for="playerName">Player Name:</label>
+        <input type="text" id="playerName" name="playerName" placeholder="Enter Name">
+        <button id="beginButton">Continue</button>
+
+        <h2 id="welcomeMessage"></h2>
+    </div>
+
+
+    <!--Player Chooses thier race and their class to follow
+    Note: they must do this before continuing further
+    Race and Classes should inclue a description of them as shows on the API as well as a picture to follow-->
+    <div>
+        <h2>
+            Let's Choose A Race and Class!
+        </h2>
+
+        <label for="raceSelection">Choose Race</label>
+        <select id="raceSelection">
+            <option disabled selected>Choose</option>
+        </select>
+        <p id="raceDescription">
+            ...Choose a race for a description here...
+        </p>
+
+        <label for="classSelection">Choose Class</label>
+        <select id="classSelection">
+            <option disabled selected>Choose</option>
+        </select>
+        <p id="classDescription">
+            ...Choose a class for a list of proficiencies here...
+        </p>
+
+        <img id="raceImage" alt="Race Image" src="" height="300">
+    </div>
+    
+
+    <script src="../JS/dndAPI.js"></script>
+    <script src="../JS/scripts.js"></script>
+</body>
+</html>
