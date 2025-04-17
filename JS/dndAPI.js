@@ -61,7 +61,7 @@ raceSelection.addEventListener('change', () => {
             console.log(raceData.index)
             switch (raceData.index) {
                 case 'elf':
-                    raceImage.src = "../assets/raceImages/Elf.webp"
+                    raceImage.src = "../assets/raceImages/Elf.jpg"
                     break;
                 case 'dragonborn':
                     raceImage.src = "../assets/raceImages/dragonborn.avif"
@@ -76,10 +76,10 @@ raceSelection.addEventListener('change', () => {
                     raceImage.src = "../assets/raceImages/halfelf.avif"
                     break;
                 case 'halfling':
-                    raceImage.src = "../assets/raceImages/halfling.jpg"
+                    raceImage.src = "../assets/raceImages/halfling.webp"
                     break;
                 case 'half-orc':
-                    raceImage.src = "../assets/raceImages/halforc.webp"
+                    raceImage.src = "../assets/raceImages/halforc.jpg"
                     break;
                 case 'human':
                     raceImage.src = "../assets/raceImages/human.webp"
