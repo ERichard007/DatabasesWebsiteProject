@@ -1,6 +1,22 @@
+const character = {
+    'player_name': "",
+    'character_name': "",
+    'level': null,
+    'class': "",
+    'race': "",
+    'alignment': "",
+    'background': "",
+    'experience': null,
+    'ability_scores': [
+        
+    ]
+    
+}
+
 const raceSelection = document.getElementById('raceSelection')
 const raceDescription = document.getElementById('raceDescription')
 const raceImage = document.getElementById('raceImage')
+const subrace = document.getElementById('subrace')
 
 const classSelection = document.getElementById('classSelection')
 const classDescription = document.getElementById('classDescription')
@@ -55,6 +71,13 @@ raceSelection.addEventListener('change', () => {
             const alignment = raceData.alignment;
             const age = raceData.age;
             const sizeDesc = raceData.size_description;
+
+            if(raceData.subraces.length > 0)
+                {
+                    subrace.innerHTML = `Subrace: ${raceData.subraces[0].name}`
+                }else{
+                    subrace.innerHTML = "No Subrace"
+                }
 
             raceDescription.innerHTML = `${alignment} ${age} ${sizeDesc}`
 
