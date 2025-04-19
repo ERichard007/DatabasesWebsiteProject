@@ -49,15 +49,28 @@
         <select id="classSelection">
             <option disabled selected>Choose</option>
         </select>
-        
+
+        <img id="raceImage" alt="Race Image" src="" height="300" width="500">
+        <br>
+    </div>
+
+    <div>
         <p id="classDescription">
             ...Choose a class for a list of proficiencies here...
         </p>
 
-        <img id="raceImage" alt="Race Image" src="" height="300" width="500">
+        <div id="proficiencyInputs">
+            <div id="proficiencyChoices"></div>
+            <br>
+            <div id="otherProficiencyChoice"></div>
+            <br>
+        </div>
     </div>
-    
 
+    <button id="continueButton">Continue</button>
+
+
+    <script src="../JS/characterFunctions.js"></script>
     <script src="../JS/dndAPI.js"></script>
     <script src="../JS/scripts.js"></script>
 </body>

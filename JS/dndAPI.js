@@ -8,20 +8,152 @@ const character = {
     'background': "",
     'experience': null,
     'ability_scores': [
-        
-    ]
-    
+        {
+            'STR': null,
+            'bonus': 0
+        },
+        {
+            'DEX': null,
+            'bonus': 0
+        },
+        {
+            'CON': null,
+            'bonus': 0
+        },
+        {
+            'INT': null,
+            'bonus': 0
+        },
+        {
+            'WIS': null,
+            'bonus': 0
+        },
+        {
+            'CHA': null,
+            'bonus': 0
+        }
+    ],
+    'inspiration': 0,
+    'proficiency_bonus': null,
+    'saving_throws': [
+        {
+            'STR': null,
+            'proficient': false
+        },
+        {
+            'DEX': null,
+            'proficient': false
+        },
+        {
+            'CON': null,
+            'proficient': false
+        },
+        {
+            'INT': null,
+            'proficient': false
+        },
+        {
+            'WIS': null,
+            'proficient': false
+        },
+        {
+            'CHA': null,
+            'proficient': false
+        }
+    ],
+    'skills': [
+        {
+            'Acrobatics': null,
+            'proficient': false
+        },
+        {
+            'Animal Handling': null,
+            'proficient': false
+        },
+        {
+            'Arcana': null,
+            'proficient': false
+        },
+        {
+            'Athletics': null,
+            'proficient': false
+        },
+        {
+            'Deception': null,
+            'proficient': false
+        },
+        {
+            'History': null,
+            'proficient': false
+        },
+        {
+            'Insight': null,
+            'proficient': false
+        },
+        {
+            'Intimidation': null,
+            'proficient': false
+        },
+        {
+            'Investigation': null,
+            'proficient': false
+        },
+        {
+            'Medicine': null,
+            'proficient': false
+        },
+        {
+            'Nature': null,
+            'proficient': false
+        },
+        {
+            'Perception': null,
+            'proficient': false
+        },
+        {
+            'Performance': null,
+            'proficient': false
+        },
+        {
+            'Persuasion': null,
+            'proficient': false
+        },
+        {
+            'Religion': null,
+            'proficient': false
+        },
+        {
+            'Sleight of Hand': null,
+            'proficient': false
+        },
+        {
+            'Stealth': null,
+            'proficient': false
+        },
+        {
+            'Survival': null,
+            'proficient': false
+        }
+    ],
+    'passive_wisdom': null,
+    'armor_class': null,
+    'initiative': null,
+    'speed': null,
+    'hitpoints': null,
+    'hit_dice': null,
+    'languages': [],
+    'traits' : [],
+    'other_proficiencies': []
 }
 
 const raceSelection = document.getElementById('raceSelection')
 const raceDescription = document.getElementById('raceDescription')
 const raceImage = document.getElementById('raceImage')
-const subrace = document.getElementById('subrace')
 
 const classSelection = document.getElementById('classSelection')
 const classDescription = document.getElementById('classDescription')
 
-//Fetching stuff
+//Fetching stuff -----------------------------------------------------
 fetch('https://www.dnd5eapi.co/api/2014/races')
     .then(Response => Response.json())
     .then(data => {
@@ -57,7 +189,7 @@ fetch('https://www.dnd5eapi.co/api/2014/classes')
     });
 
 
-//Event Listeners
+//Event Listeners -----------------------------------------------------
 raceSelection.addEventListener('change', () => {
     const selectedRace = raceSelection.value;
     const fetchURL = `https://www.dnd5eapi.co/api/2014/races/${selectedRace}`
@@ -65,23 +197,13 @@ raceSelection.addEventListener('change', () => {
     fetch(fetchURL)
         .then(Response => Response.json())
         .then(data => {
-            console.log(data);
-
             const raceData = data;
             const alignment = raceData.alignment;
             const age = raceData.age;
             const sizeDesc = raceData.size_description;
 
-            if(raceData.subraces.length > 0)
-                {
-                    subrace.innerHTML = `Subrace: ${raceData.subraces[0].name}`
-                }else{
-                    subrace.innerHTML = "No Subrace"
-                }
-
             raceDescription.innerHTML = `${alignment} ${age} ${sizeDesc}`
 
-            console.log(raceData.index)
             switch (raceData.index) {
                 case 'elf':
                     raceImage.src = "../assets/raceImages/Elf.jpg"
@@ -114,6 +236,9 @@ raceSelection.addEventListener('change', () => {
                     raceImage.src = ""
                     break;
             }
+
+            BuildCharacterFromRace(character, raceData);
+            console.log(character);
         })
         .catch(error => {
             console.error("Could not get data from race changing: ", error);
@@ -128,8 +253,6 @@ classSelection.addEventListener('change', () =>{
     fetch(fetchURL)
         .then(Response => Response.json())
         .then(data => {
-            console.log(data);
-
             const classData = data;
             const shortDesc = classData.proficiency_choices;
 
@@ -141,6 +264,8 @@ classSelection.addEventListener('change', () =>{
                 ct += 1;
             });
 
+            BuildCharacterFromClass(character, classData);
+            console.log(character);
         })
         .catch(error => {
             console.error("Could not get data from class changing: ", error);
