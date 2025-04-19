@@ -143,7 +143,9 @@ const character = {
     'hit_dice': null,
     'languages': [],
     'traits' : [],
-    'other_proficiencies': []
+    'other_proficiencies': [],
+    'other_proficiencies2': [],
+    'inventory': []
 }
 
 const raceSelection = document.getElementById('raceSelection')

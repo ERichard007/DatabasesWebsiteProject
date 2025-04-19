@@ -126,10 +126,16 @@ function BuildCharacterFromClass(character, classData){
     //INITIALIZATIONS -------------------------------------------- 
     character.hit_dice = classData.hit_die;
 
+    character.other_proficiencies2 = [];
+    character.inventory = [];
+
+    character.saving_throws.forEach(save => {
+        save.proficient = false;
+    });
+
     //Function starts here ------------------------------------------
 
-    //giving the player their choice of proficiencies
-    //chooseProficiency.innerHTML = '';
+    //giving the player their choice of starting proficiencies
     classData.proficiency_choices[0].from.options.forEach(option => {
         const profName = option.item.name.split("Skill: ")[1];
 
@@ -154,7 +160,7 @@ function BuildCharacterFromClass(character, classData){
         });
     });
 
-    //giving players second choice of proficiency if applicable
+    //giving players second choice of starting proficiency if applicable
     if (classData.proficiency_choices.length>1){
         classData.proficiency_choices[1].from.options.forEach(option => {
             const profName = option.item.name;
@@ -180,4 +186,28 @@ function BuildCharacterFromClass(character, classData){
             });
         });
     }
+
+    //giving player's their proficiencies and saving throws
+    classData.proficiencies.forEach(prof => {
+        const name = prof.name.split("Saving Throw: ");
+        if (name[1]) {
+            const savingThrow = name[1];
+            character.saving_throws.forEach(save => {
+                if (save.hasOwnProperty(savingThrow)){
+                    save.proficient = true;
+                }
+            })
+        }else if (!(name[0] in character.other_proficiencies)){
+            character.other_proficiencies2.push(name[0]);
+        }
+    })
+
+    //give starting equipment
+    classData.starting_equipment.forEach(equip => {
+        for (let i = 0; i < equip.quantity; i++) {
+            character.inventory.push(equip.equipment.name);
+        }
+    });
+
+    
 }
