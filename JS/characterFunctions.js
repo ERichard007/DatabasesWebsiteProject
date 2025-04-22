@@ -3,6 +3,8 @@ const subrace = document.getElementById('subrace');
 const chooseProficiency = document.getElementById('proficiencyChoices');
 const chooseOtherProficiency = document.getElementById('otherProficiencyChoice');
 
+const startingEquipmentOptions = document.getElementById('startingEquipmentOptions');
+
 //BUilds the inital character from the race values, RUNS FIRST!
 function BuildCharacterFromRace(character, raceData){
     //INITIALIZATIONS --------------------------------------------
@@ -149,8 +151,8 @@ function BuildCharacterFromClass(character, classData){
         label.htmlFor = checkbox.id;
         label.textContent = profName;
 
-        chooseProficiency.appendChild(checkbox);
         chooseProficiency.appendChild(label);
+        chooseProficiency.appendChild(checkbox);
 
         checkbox.addEventListener('change', () => {
             const selectedCheckboxes = document.querySelectorAll('input[name="Proficiency Choice"]:checked');
@@ -167,9 +169,9 @@ function BuildCharacterFromClass(character, classData){
     
             const checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = `${profName}-choice`
-            checkbox.name = "Other Proficiency Choice"
-            checkbox.value = profName
+            checkbox.id = `${profName}-choice`;
+            checkbox.name = "Other Proficiency Choice";
+            checkbox.value = profName;
     
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
@@ -207,6 +209,93 @@ function BuildCharacterFromClass(character, classData){
         for (let i = 0; i < equip.quantity; i++) {
             character.inventory.push(equip.equipment.name);
         }
+    });
+
+    //adding player's starting equipment options
+    ct = 0;
+    classData.starting_equipment_options.forEach(option => {
+        ct+=1;
+
+        const numChoices = option.choose;
+
+        const newParagraph = document.createElement('p');
+        newParagraph.innerHTML = `Choose ${numChoices}: ${option.desc}`;
+
+        startingEquipmentOptions.appendChild(newParagraph)
+
+        option.from.options.forEach(item => {
+            console.log(item);
+            if (item.of){
+                const checkbox = document.createElement('input');
+                checkbox.type = "checkbox";
+                checkbox.id = `${item.of.name}-choice`;
+                checkbox.name = `Starting Equipment Choice${ct}`;
+                checkbox.value = item.of.name;
+
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = `${item.count} ${item.of.name}`;
+
+                checkbox.addEventListener('change', ((choiceGroup) => () => {
+                    const selectedCheckboxes = document.querySelectorAll(`input[name="Starting Equipment Choice${choiceGroup}"]:checked`)
+                    if (selectedCheckboxes.length > numChoices){
+                        checkbox.checked = false;
+                    }
+                })(ct));
+
+                startingEquipmentOptions.appendChild(label);
+                startingEquipmentOptions.appendChild(checkbox);
+                
+            }else if (item.choice){
+                const new_item = item.choice;
+                const choices = new_item.choose;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = "checkbox";
+                checkbox.id = `${new_item.desc}-choice`;
+                checkbox.name = `Starting Equipment Choice${ct}`;
+                checkbox.value = new_item.desc;
+
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = `${choices} ${new_item.desc}`;
+
+                checkbox.addEventListener('change', ((choiceGroup) => () => {
+                    const selectedCheckboxes = document.querySelectorAll(`input[name="Starting Equipment Choice${choiceGroup}"]:checked`)
+                    if (selectedCheckboxes.length > numChoices){
+                        checkbox.checked = false;
+                    }
+                })(ct));
+
+                startingEquipmentOptions.appendChild(label);
+                startingEquipmentOptions.appendChild(checkbox);
+
+            }else{
+                const description = item.desc;
+                const choices = item.choose;
+                item.from.options.forEach(option2 => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = "checkbox";
+                    checkbox.id = `${option2.of.name}-choice`;
+                    checkbox.name = `Starting Equipment Choice${ct}`;
+                    checkbox.value = option2.of.name;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.textContent = `${option2.count} ${option2.of.name}`;
+
+                    startingEquipmentOptions.appendChild(label);
+                    startingEquipmentOptions.appendChild(checkbox);
+
+                    checkbox.addEventListener('change', ((choiceGroup) => () => {
+                        const selectedCheckboxes = document.querySelectorAll(`input[name="Starting Equipment Choice${choiceGroup}"]:checked`)
+                        if (selectedCheckboxes.length > numChoices){
+                            checkbox.checked = false;
+                        }
+                    })(ct));
+                });
+            }
+        });
     });
 
     
