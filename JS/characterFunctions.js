@@ -297,6 +297,4 @@ function BuildCharacterFromClass(character, classData){
             }
         });
     });
-
-    
 }

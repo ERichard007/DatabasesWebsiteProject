@@ -3,6 +3,7 @@ const playerName = document.getElementById("playerName");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
 const continueButton = document.getElementById("continueButton");
+const continueButton2 = document.getElementById("continueButton2");
 
 const profInputs = document.getElementById("proficiencyChoices");
 const otherprofInputs = document.getElementById("otherProficiencyChoice");
@@ -75,4 +76,9 @@ continueButton.addEventListener('click', () => {
 
 
     console.log(character);
+});
+
+//Next continue button for getting the player's level
+continueButton2.addEventListener('click', () => {
+
 });
