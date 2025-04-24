@@ -155,6 +155,9 @@ const raceImage = document.getElementById('raceImage')
 const classSelection = document.getElementById('classSelection')
 const classDescription = document.getElementById('classDescription')
 
+const levelInput = document.getElementById("levelInput");
+const levelImage = document.getElementById("levelImage");
+
 //Fetching stuff -----------------------------------------------------
 fetch('https://www.dnd5eapi.co/api/2014/races')
     .then(Response => Response.json())
@@ -192,6 +195,7 @@ fetch('https://www.dnd5eapi.co/api/2014/classes')
 
 
 //Event Listeners -----------------------------------------------------
+//race changed
 raceSelection.addEventListener('change', () => {
     const selectedRace = raceSelection.value;
     const fetchURL = `https://www.dnd5eapi.co/api/2014/races/${selectedRace}`
@@ -248,6 +252,7 @@ raceSelection.addEventListener('change', () => {
         });
 });
 
+//class changed
 classSelection.addEventListener('change', () =>{
     const selectedClass = classSelection.value;
     const fetchURL = `https://www.dnd5eapi.co/api/2014/classes/${selectedClass}`
@@ -273,4 +278,23 @@ classSelection.addEventListener('change', () =>{
             console.error("Could not get data from class changing: ", error);
             classDescription.innerHTML = "Error";
         });
+});
+
+//level changed
+levelInput.addEventListener('change', () => {
+    if (levelInput.value < 1){
+        levelInput.value = 1;
+        levelImage.src="../assets/levelImages/Level 1-5.png"
+    }else if (levelInput.value < 6){
+        levelImage.src="../assets/levelImages/Level 1-5.png"
+    }else if (levelInput.value < 11){
+        levelImage.src="../assets/levelImages/Level 6-10-1.png"
+    }else if (levelInput.value < 16){
+        levelImage.src="../assets/levelImages/Level 11-15-1.png"
+    }else if (levelInput.value < 21){
+        levelImage.src="../assets/levelImages/Level 16-20-1.png"
+    }else{
+        levelInput.value = 20;
+        levelImage.src="../assets/levelImages/Level 16-20-1.png"
+    }
 });

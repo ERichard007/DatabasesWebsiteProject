@@ -80,5 +80,10 @@ continueButton.addEventListener('click', () => {
 
 //Next continue button for getting the player's level
 continueButton2.addEventListener('click', () => {
+    continueButton2.disabled = true;
+    levelInput.disabled = true;
+    
+    character.level = levelInput.value;
 
+    console.log(character)
 });
