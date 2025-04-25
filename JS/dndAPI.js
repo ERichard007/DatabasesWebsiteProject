@@ -3,6 +3,7 @@ const character = {
     'character_name': "",
     'level': null,
     'class': "",
+    'subclass': "",
     'race': "",
     'alignment': "",
     'background': "",
@@ -145,7 +146,10 @@ const character = {
     'traits' : [],
     'other_proficiencies': [],
     'other_proficiencies2': [],
-    'inventory': []
+    'inventory': [],
+    'features': [],
+    'spellSlots': {},
+    'classSpecificAttributes': {}
 }
 
 const raceSelection = document.getElementById('raceSelection')

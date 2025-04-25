@@ -86,4 +86,5 @@ continueButton2.addEventListener('click', () => {
     character.level = levelInput.value;
 
     console.log(character)
+
 });

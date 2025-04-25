@@ -5,6 +5,78 @@ const chooseOtherProficiency = document.getElementById('otherProficiencyChoice')
 
 const startingEquipmentOptions = document.getElementById('startingEquipmentOptions');
 
+//Give player subclass stuff
+function BuildPlayerSubclass(character, subclassData){
+    subclassData.forEach(levelData => {
+        if (character.level >= levelData.level){
+            levelData.features.forEach(feature => {
+                fetch(`https://www.dnd5eapi.co${feature.url}`)
+                .then(Response => Response.json())
+                .then(featureData => {
+                    character.features.push({[feature.name]: featureData.desc})
+                })
+                .catch(error => {
+                    console.error(`There was an error retrieving feature level data: ${error}`)
+                });
+            });
+        }
+    })
+}
+
+//Give the player all their level specific stuff
+function BuildPlayerLevelSpecificStuff(character, levelData){
+    const playerLevel = character.level;
+
+    levelData.forEach(levelStuff => {
+        const level = levelStuff.level;
+
+        if (playerLevel >= level){
+
+            //start with features
+            if (levelStuff.features){
+                levelStuff.features.forEach(feature => {
+                    fetch(`https://www.dnd5eapi.co${feature.url}`)
+                    .then(Response => Response.json())
+                    .then(featureData => {
+                        character.features.push({[feature.name]: featureData.desc});
+                    })
+                    .catch(error => {
+                        console.error(`Error accessing **${feature.name}** data: ${error}`)
+                    })
+                });
+            }
+
+            //give profbonus
+            character.proficiency_bonus = levelStuff.prof_bonus;
+
+            //need to handle spellcasting
+            if (levelStuff.spellcasting){
+                character.spellSlots = levelStuff.spellcasting;
+            }
+
+            //handle class specific values
+            character.classSpecificAttributes = levelStuff.class_specific;
+        }
+    });
+
+    fetch(`https://www.dnd5eapi.co${levelData.subclasses[0].url}`)
+    .then(Response => Response.json())
+    .then(subclassData => {
+        character.subclass = subclassData.class.name;
+        fetch(`https://www.dnd5eapi.co${subclassData.subclass_levels}`)
+        .then(Response => Response.json())
+        .then(subclassLevelData => {
+            BuildPlayerSubclass(character, subclassLevelData);
+        })
+        .catch(error => {
+            console.error(`Issues with loading the subclass levels: ${error}`);
+        });
+    })
+    .catch(error => {
+        console.error(`Problem getting subclass data: ${error}`);
+    });
+}
+
 //BUilds the inital character from the race values, RUNS FIRST!
 function BuildCharacterFromRace(character, raceData){
     //INITIALIZATIONS --------------------------------------------
@@ -127,6 +199,7 @@ function BuildCharacterFromRace(character, raceData){
 function BuildCharacterFromClass(character, classData){
     //INITIALIZATIONS -------------------------------------------- 
     character.hit_dice = classData.hit_die;
+    character.class = classData.name;
 
     character.other_proficiencies2 = [];
     character.inventory = [];
@@ -295,6 +368,18 @@ function BuildCharacterFromClass(character, classData){
                     })(ct));
                 });
             }
+        });
+    });
+
+    //adding level specific things and features
+    continueButton2.addEventListener('click', () => {
+        fetch(`https://www.dnd5eapi.co${classData.class_levels}`)
+        .then(Response => Response.json())
+        .then(data => {
+            BuildPlayerLevelSpecificStuff(character, data);
+        })
+        .catch(error => {
+            console.error(`There was an error when trying to retrieve class leveling data: ${error}`);
         });
     });
 }
