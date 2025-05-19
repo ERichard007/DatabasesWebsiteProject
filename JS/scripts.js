@@ -10,6 +10,7 @@ const otherprofInputs = document.getElementById("otherProficiencyChoice");
 const startingEquipmentInputs = document.getElementById("startingEquipmentOptions");
 
 const rollButton = document.getElementById("rollDice");
+const clearButton = document.getElementById("clearDice");
 const dice = [
     document.getElementById("dice1"),
     document.getElementById("dice2"),
@@ -116,4 +117,10 @@ rollButton.addEventListener('click', () => {
         newListItem.innerHTML = total;
         diceTotals.appendChild(newListItem);
     }
+});
+
+clearButton.addEventListener('click', () => {
+    Array.from(diceTotals.children).forEach(child => {
+        child.remove();
+    });
 });
