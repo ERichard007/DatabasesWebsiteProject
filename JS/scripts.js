@@ -9,6 +9,16 @@ const profInputs = document.getElementById("proficiencyChoices");
 const otherprofInputs = document.getElementById("otherProficiencyChoice");
 const startingEquipmentInputs = document.getElementById("startingEquipmentOptions");
 
+const rollButton = document.getElementById("rollDice");
+const dice = [
+    document.getElementById("dice1"),
+    document.getElementById("dice2"),
+    document.getElementById("dice3"),
+    document.getElementById("dice4")
+];
+const rollResults = document.getElementById("rollResults");
+const diceTotals = document.getElementById("totalsList");
+
 //Welcome message click
 startBtn.addEventListener('click', () => {
     const name = playerName.value.trim();
@@ -86,5 +96,24 @@ continueButton2.addEventListener('click', () => {
     character.level = levelInput.value;
 
     console.log(character)
+});
 
+rollButton.addEventListener('click', () => {
+    const rolls = [];
+
+    for (let i = 0; i < 4; i++){
+        const roll = (Math.floor(Math.random() * 6) + 1);
+        rolls.push(roll);
+        dice[i].innerHTML = roll;
+    }
+    rolls.sort((a,b) => a-b);
+    const total = rolls[1] + rolls[2] + rolls[3]
+
+    rollResults.innerHTML = total;
+
+    if (diceTotals.childElementCount < 6){
+        const newListItem = document.createElement("li");
+        newListItem.innerHTML = total;
+        diceTotals.appendChild(newListItem);
+    }
 });

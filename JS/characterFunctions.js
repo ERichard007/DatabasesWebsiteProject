@@ -7,6 +7,7 @@ const startingEquipmentOptions = document.getElementById('startingEquipmentOptio
 
 //Give player subclass stuff
 function BuildPlayerSubclass(character, subclassData){
+
     subclassData.forEach(levelData => {
         if (character.level >= levelData.level){
             levelData.features.forEach(feature => {
@@ -21,11 +22,81 @@ function BuildPlayerSubclass(character, subclassData){
             });
         }
     })
+
+    console.log(character)
 }
 
-//Give the player all their level specific stuff
-function BuildPlayerLevelSpecificStuff(character, levelData){
+//Give the player all their level specific stuff, RUNS AFTER BUILD CHARACTER FROM CLASS COMPLETED
+function BuildPlayerLevelSpecificStuff(character, levelData, classData){
     const playerLevel = character.level;
+
+    //Give experience based on level
+    switch (playerLevel) {
+        case '1':
+            character.experience = 0;
+            break;
+        case '2':
+            character.experience = 300;
+            break;
+        case '3':
+            character.experience = 900;
+            break;
+        case '4':
+            character.experience = 2700;
+            break;
+        case '5':
+            character.experience = 6500;
+            break;
+        case '6':
+            character.experience = 14000;
+            break;
+        case '7':
+            character.experience = 23000;
+            break;
+        case '8':
+            character.experience = 34000;
+            break;
+        case '9':
+            character.experience = 48000;
+            break;
+        case '10':
+            character.experience = 64000;
+            break;
+        case '11':
+            character.experience = 85000;
+            break;
+        case '12':
+            character.experience = 100000;
+            break;
+        case '13':
+            character.experience = 120000;
+            break;
+        case '14':
+            character.experience = 140000;
+            break;
+        case '15':
+            character.experience = 165000;
+            break;
+        case '16':
+            character.experience = 195000;
+            break;
+        case '17':
+            character.experience = 225000;
+            break;
+        case '18':
+            character.experience = 265000;
+            break;
+        case '19':
+            character.experience = 305000;
+            break;
+        case '20':
+            character.experience = 355000;
+            break;
+        default:
+            console.log(playerLevel);
+            character.experience = 0;
+            break;
+    }
 
     levelData.forEach(levelStuff => {
         const level = levelStuff.level;
@@ -59,10 +130,10 @@ function BuildPlayerLevelSpecificStuff(character, levelData){
         }
     });
 
-    fetch(`https://www.dnd5eapi.co${levelData.subclasses[0].url}`)
+    fetch(`https://www.dnd5eapi.co${classData.subclasses[0].url}`)
     .then(Response => Response.json())
     .then(subclassData => {
-        character.subclass = subclassData.class.name;
+        character.subclass = subclassData.name;
         fetch(`https://www.dnd5eapi.co${subclassData.subclass_levels}`)
         .then(Response => Response.json())
         .then(subclassLevelData => {
@@ -376,7 +447,7 @@ function BuildCharacterFromClass(character, classData){
         fetch(`https://www.dnd5eapi.co${classData.class_levels}`)
         .then(Response => Response.json())
         .then(data => {
-            BuildPlayerLevelSpecificStuff(character, data);
+            BuildPlayerLevelSpecificStuff(character, data, classData);
         })
         .catch(error => {
             console.error(`There was an error when trying to retrieve class leveling data: ${error}`);
