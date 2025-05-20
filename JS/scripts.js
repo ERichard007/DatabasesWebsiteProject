@@ -4,6 +4,7 @@ const welcomeMessage = document.getElementById("welcomeMessage");
 
 const continueButton = document.getElementById("continueButton");
 const continueButton2 = document.getElementById("continueButton2");
+const continueButton3 = document.getElementById("continueButton3");
 
 const profInputs = document.getElementById("proficiencyChoices");
 const otherprofInputs = document.getElementById("otherProficiencyChoice");
@@ -19,6 +20,17 @@ const dice = [
 ];
 const rollResults = document.getElementById("rollResults");
 const diceTotals = document.getElementById("totalsList");
+
+const dropdowns = [
+    document.getElementById("str"),
+    document.getElementById("dex"),
+    document.getElementById("con"),
+    document.getElementById("int"),
+    document.getElementById("wis"),
+    document.getElementById("cha")
+];
+
+
 
 //Welcome message click
 startBtn.addEventListener('click', () => {
@@ -99,6 +111,7 @@ continueButton2.addEventListener('click', () => {
     console.log(character)
 });
 
+//Roll button to roll the 4d6 for stats
 rollButton.addEventListener('click', () => {
     const rolls = [];
 
@@ -119,8 +132,63 @@ rollButton.addEventListener('click', () => {
     }
 });
 
+//clear button if you wanna reroll your ability scores
 clearButton.addEventListener('click', () => {
     Array.from(diceTotals.children).forEach(child => {
         child.remove();
     });
 });
+
+//continue button to lock in your ability scores
+continueButton3.addEventListener('click', () => {
+    if (diceTotals.childElementCount == 6){
+        rollButton.disabled = true;
+        clearButton.disabled = true;
+        continueButton3.disabled = true;
+
+        //add intial options to all of the dropdowns
+        Array.from(diceTotals.children).forEach(child => {
+            dropdowns.forEach(down => {
+                const newOption = document.createElement("option");
+                newOption.value = child.innerHTML;
+                newOption.innerHTML = child.innerHTML;
+                down.appendChild(newOption);
+
+                down.addEventListener("change", () => {
+                    //first lets go see what has been selected through all of them and get rid of all their past children except for the one selected
+                    const chosenStats = new Set();
+                    dropdowns.forEach(d => {
+                        const valueSelected = d.value;
+                        chosenStats.add(valueSelected);
+
+                        Array.from(d.children).forEach(opt => {
+                            opt.remove();
+                        });
+
+                        const newOption = document.createElement("option");
+                        newOption.value = valueSelected;
+                        newOption.innerHTML = valueSelected;
+                        newOption.selected = true;
+                        d.appendChild(newOption);
+
+                    });
+                    
+                    console.log(chosenStats);
+                    
+                    //now lets give them new children
+                    const diceTotalSet = new Set(diceTotals.children);
+                    const unchosenStats = new Set([...diceTotalSet].filter(x => !chosenStats.has(x)));
+                    dropdowns.forEach(d => {
+                        Array.from(unchosenStats).forEach(t => {
+                            const newOption = document.createElement("option");
+                            newOption.value = t.innerHTML;
+                            newOption.innerHTML = t.innerHTML;
+                            d.appendChild(newOption);
+                        });
+                    });
+                });
+            });
+        });
+    }
+});
+
