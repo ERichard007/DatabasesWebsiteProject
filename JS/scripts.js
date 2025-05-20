@@ -139,6 +139,40 @@ clearButton.addEventListener('click', () => {
     });
 });
 
+function AbilityScoreDropdownValueChanged() {
+    //first lets go see what has been selected through all of them and get rid of all their past children except for the one selected
+    const chosenStats = new Set();
+    dropdowns.forEach(d => {
+        const valueSelected = d.value;
+        chosenStats.add(valueSelected);
+
+        Array.from(d.children).forEach(opt => {
+            opt.remove();
+        });
+
+        const newOption = document.createElement("option");
+        newOption.value = valueSelected;
+        newOption.innerHTML = valueSelected;
+        newOption.selected = true;
+        d.appendChild(newOption);
+    });
+    
+    console.log(chosenStats);
+    
+    //now lets give them new children
+    const diceTotalSet = new Set(Array.from(diceTotals.children).map(child => child.innerHTML));
+    const unchosenStats = new Set([...diceTotalSet].filter(x => !chosenStats.has(x)));
+    console.log(unchosenStats)
+    dropdowns.forEach(d => {
+        Array.from(unchosenStats).forEach(t => {
+            const newOption = document.createElement("option");
+            newOption.value = t.innerHTML;
+            newOption.innerHTML = t.innerHTML;
+            d.appendChild(newOption);
+        });
+    });
+}
+
 //continue button to lock in your ability scores
 continueButton3.addEventListener('click', () => {
     if (diceTotals.childElementCount == 6){
@@ -154,39 +188,7 @@ continueButton3.addEventListener('click', () => {
                 newOption.innerHTML = child.innerHTML;
                 down.appendChild(newOption);
 
-                down.addEventListener("change", () => {
-                    //first lets go see what has been selected through all of them and get rid of all their past children except for the one selected
-                    const chosenStats = new Set();
-                    dropdowns.forEach(d => {
-                        const valueSelected = d.value;
-                        chosenStats.add(valueSelected);
-
-                        Array.from(d.children).forEach(opt => {
-                            opt.remove();
-                        });
-
-                        const newOption = document.createElement("option");
-                        newOption.value = valueSelected;
-                        newOption.innerHTML = valueSelected;
-                        newOption.selected = true;
-                        d.appendChild(newOption);
-
-                    });
-                    
-                    console.log(chosenStats);
-                    
-                    //now lets give them new children
-                    const diceTotalSet = new Set(diceTotals.children);
-                    const unchosenStats = new Set([...diceTotalSet].filter(x => !chosenStats.has(x)));
-                    dropdowns.forEach(d => {
-                        Array.from(unchosenStats).forEach(t => {
-                            const newOption = document.createElement("option");
-                            newOption.value = t.innerHTML;
-                            newOption.innerHTML = t.innerHTML;
-                            d.appendChild(newOption);
-                        });
-                    });
-                });
+                down.addEventListener("change", AbilityScoreDropdownValueChanged)
             });
         });
     }
