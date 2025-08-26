@@ -141,10 +141,14 @@ clearButton.addEventListener('click', () => {
 
 function AbilityScoreDropdownValueChanged() {
     //first lets go see what has been selected through all of them and get rid of all their past children except for the one selected
-    const chosenStats = new Set();
+    const currentDropdownChoices = diceTotals.children;
     dropdowns.forEach(d => {
         const valueSelected = d.value;
-        chosenStats.add(valueSelected);
+        console.log(d.value);
+
+        if (currentDropdownChoices.namedItem(valueSelected)){
+            currentDropdownChoices.remove(valueSelected);
+        }
 
         Array.from(d.children).forEach(opt => {
             opt.remove();
