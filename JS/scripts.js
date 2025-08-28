@@ -5,6 +5,7 @@ const welcomeMessage = document.getElementById("welcomeMessage");
 const continueButton = document.getElementById("continueButton");
 const continueButton2 = document.getElementById("continueButton2");
 const continueButton3 = document.getElementById("continueButton3");
+const continueButton4 = document.getElementById("AbilityScoreButton")
 
 const profInputs = document.getElementById("proficiencyChoices");
 const otherprofInputs = document.getElementById("otherProficiencyChoice");
@@ -12,6 +13,7 @@ const startingEquipmentInputs = document.getElementById("startingEquipmentOption
 
 const rollButton = document.getElementById("rollDice");
 const clearButton = document.getElementById("clearDice");
+
 const dice = [
     document.getElementById("dice1"),
     document.getElementById("dice2"),
@@ -30,7 +32,60 @@ const dropdowns = [
     document.getElementById("cha")
 ];
 
+/* -------------------------- FUNCTIONS -------------------------- */
 
+function StartPDFEditing() {
+    CreateThePDF()
+}
+
+//returns the array of ability score values that have yet to be chosen/selected. RETURNS AN ARRAY
+function RemainingAbilityScoreValues() {
+    const chosenValues = dropdowns.map(d => d.value).filter(v => v)
+    const allValues = Array.from(diceTotals.children).map(c => c.innerHTML)
+    const remainingValues = [...allValues]
+
+    chosenValues.forEach(val => {
+        const index = remainingValues.indexOf(val)
+        if (index > -1) {
+            remainingValues.splice(index, 1);
+        }
+    })
+
+    return remainingValues
+}
+
+//Used to detect when the dropdown values are changed for selecting your ability scores
+function AbilityScoreDropdownValueChanged() {
+    
+    const chosenValues = dropdowns.map(d => d.value).filter(v => v)
+    const remainingValues = RemainingAbilityScoreValues()
+
+    dropdowns.forEach(down => {
+        down.innerText = ""
+    })
+
+    for (let i = 0; i < dropdowns.length; i++){
+        const selectedOption = document.createElement("option");
+        selectedOption.textContent = chosenValues[i]
+        selectedOption.value = chosenValues[i]
+
+        const blank = document.createElement("option");
+        blank.textContent = " "
+        blank.value = " "
+
+        dropdowns[i].appendChild(selectedOption)
+        dropdowns[i].appendChild(blank)
+
+        remainingValues.forEach(val => {
+            const newOption = document.createElement("option");
+            newOption.value = val;
+            newOption.innerHTML = val;
+            dropdowns[i].appendChild(newOption);    
+        })
+    }
+};
+
+/* -------------------------- EVENT LISTENERS -------------------------- */
 
 //Welcome message click
 startBtn.addEventListener('click', () => {
@@ -139,44 +194,6 @@ clearButton.addEventListener('click', () => {
     });
 });
 
-function AbilityScoreDropdownValueChanged() {
-    //first lets go see what has been selected through all of them and get rid of all their past children except for the one selected
-    const currentDropdownChoices = diceTotals.children;
-    dropdowns.forEach(d => {
-        const valueSelected = d.value;
-        console.log(d.value);
-
-        if (currentDropdownChoices.namedItem(valueSelected)){
-            currentDropdownChoices.remove(valueSelected);
-        }
-
-        Array.from(d.children).forEach(opt => {
-            opt.remove();
-        });
-
-        const newOption = document.createElement("option");
-        newOption.value = valueSelected;
-        newOption.innerHTML = valueSelected;
-        newOption.selected = true;
-        d.appendChild(newOption);
-    });
-    
-    console.log(chosenStats);
-    
-    //now lets give them new children
-    const diceTotalSet = new Set(Array.from(diceTotals.children).map(child => child.innerHTML));
-    const unchosenStats = new Set([...diceTotalSet].filter(x => !chosenStats.has(x)));
-    console.log(unchosenStats)
-    dropdowns.forEach(d => {
-        Array.from(unchosenStats).forEach(t => {
-            const newOption = document.createElement("option");
-            newOption.value = t.innerHTML;
-            newOption.innerHTML = t.innerHTML;
-            d.appendChild(newOption);
-        });
-    });
-}
-
 //continue button to lock in your ability scores
 continueButton3.addEventListener('click', () => {
     if (diceTotals.childElementCount == 6){
@@ -198,3 +215,19 @@ continueButton3.addEventListener('click', () => {
     }
 });
 
+//continue button to finalize your ability score choices dropdowns
+continueButton4.addEventListener('click', () => {
+    const valuesLeft = RemainingAbilityScoreValues()
+
+    if (valuesLeft.length > 0) {
+        return
+    }else{
+        continueButton4.disabled = true
+
+        dropdowns.forEach(down => {
+            down.disabled = true
+        })
+    }
+
+    StartPDFEditing()
+})
