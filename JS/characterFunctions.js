@@ -247,7 +247,7 @@ function BuildCharacterFromRace(character, raceData){
 
                 //Adding any more racial traits
                 subraceData.racial_traits.forEach(trait => {
-                    fetch(`https://www.dnd5eapi.co/api/2014//traits/${trait.index}`)
+                    fetch(`https://www.dnd5eapi.co/api/2014/traits/${trait.index}`)
                         .then(Response => Response.json())
                         .then(data => {
                             const traitData = data;

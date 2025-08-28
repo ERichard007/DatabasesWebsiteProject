@@ -229,5 +229,25 @@ continueButton4.addEventListener('click', () => {
         })
     }
 
+    character.ability_scores[0].STR = Number(dropdowns[0].textContent)
+    character.ability_scores[0].bonus = Math.floor((character.ability_scores[0].STR - 10) / 2) 
+
+    character.ability_scores[1].DEX = Number(dropdowns[1].textContent)
+    character.ability_scores[1].bonus = Math.floor((character.ability_scores[1].DEX - 10) / 2)  
+
+    character.ability_scores[2].CON = Number(dropdowns[2].textContent)
+    character.ability_scores[2].bonus = Math.floor((character.ability_scores[2].CON - 10) / 2)  
+
+    character.ability_scores[3].INT = Number(dropdowns[3].textContent)
+    character.ability_scores[3].bonus = Math.floor((character.ability_scores[3].INT - 10) / 2)  
+
+    character.ability_scores[4].WIS = Number(dropdowns[4].textContent)
+    character.ability_scores[4].bonus = Math.floor((character.ability_scores[4].WIS - 10) / 2) 
+
+    character.ability_scores[5].CHA = Number(dropdowns[5].textContent)
+    character.ability_scores[5].bonus = Math.floor((character.ability_scores[5].CHA - 10) / 2)  
+
+    console.log(character)
+
     StartPDFEditing()
 })
