@@ -7,7 +7,7 @@ const character = {
     'race': "",
     'alignment': "",
     'background': "",
-    'experience': null,
+    'experience': 0,
     'ability_scores': [
         {
             'STR': null,
