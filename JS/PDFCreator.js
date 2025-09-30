@@ -1,22 +1,6 @@
 const { PDFDocument } = PDFLib
 
-
-async function CreateThePDF() {
-    //fetching local doc (note: might not work if website published ever and might only work because vscode plugin)
-    const respone = await fetch("../assets/DNDForm/CharacterSheet.pdf")
-    const pdfArrayBuffer = await respone.arrayBuffer();
-
-    const pdfDoc = await PDFDocument.load(pdfArrayBuffer)
-    
-    const form = pdfDoc.getForm()
-    const fields = form.getFields()
-
-    // pints all the field names
-    fields.forEach(field => {
-        console.log(field.getName());
-    });
-
-
+function SetCharacterSheetFields(form) {
     // Dictionary of all form field names
     const formFieldDict = {
         "ClassLevel": form.getTextField("ClassLevel"),
@@ -355,8 +339,6 @@ async function CreateThePDF() {
         "Check Box 3083": form.getCheckBox("Check Box 3083")
     };
 
-    //Setting form fields
-
     //formFieldDict.CharacterName.setText(character.CharacterName) Need this
     formFieldDict.ClassLevel.setText(`${character.class} ${character.level}`)
     //formFieldDict.Background.setText(character.background) Need this
@@ -379,7 +361,7 @@ async function CreateThePDF() {
     formFieldDict.CHamod.setText((character.ability_scores[5].bonus > 0 ? `+${character.ability_scores[5].bonus.toString()}` : character.ability_scores[5].bonus.toString()))
 
     formFieldDict.Inspiration.setText(character.inspiration.toString())
-    formFieldDict.ProfBonus.setText(character.proficiency_bonus.toString())
+    //formFieldDict.ProfBonus.setText(character.proficiency_bonus.toString()) Need to get proficiency bonus still
     /* Need to set saving throws up (very simple)
     formFieldDict["ST Strength"].setText(character.saving_throws[0].bonus > 0 ? `+${character.saving_throws[0].bonus.toString()}` : character.saving_throws[0].bonus.toString())
     formFieldDict["ST Dexterity"].setText(character.saving_throws[1].bonus > 0 ? `+${character.saving_throws[1].bonus.toString()}` : character.saving_throws[1].bonus.toString())
@@ -394,10 +376,75 @@ async function CreateThePDF() {
     formFieldDict["Check Box 21"].checked = character.saving_throws[4].proficient
     formFieldDict["Check Box 22"].checked = character.saving_throws[5].proficient
 
+    /*
+    formFieldDict.Acrobatics.setText(character.skills[0].Acrobatics.toString())
+    formFieldDict["Check Box 23"].checked = character.skills[0].proficient
+    formFieldDict.Animal.setText(character.skills[1]["Animal Handling"].toString())
+    formFieldDict["Check Box 24"].checked = character.skills[1].proficient
+    formFieldDict.Arcana.setText(character.skills[2].Arcana.toString())
+    formFieldDict["Check Box 25"].checked = character.skills[2].proficient
+    formFieldDict.Athletics.setText(character.skills[3].Athletics.toString())
+    formFieldDict["Check Box 26"].checked = character.skills[3].proficient
+    formFieldDict.Deception.setText(character.skills[4].Deception.toString())
+    formFieldDict["Check Box 27"].checked = character.skills[4].proficient
+    formFieldDict.History.setText(character.skills[5].History.toString())
+    formFieldDict["Check Box 28"].checked = character.skills[5].proficient
+    formFieldDict.Insight.setText(character.skills[6].Insight.toString())
+    formFieldDict["Check Box 29"].checked = character.skills[6].proficient
+    formFieldDict.Intimidation.setText(character.skills[7].Intimidation.toString())
+    formFieldDict["Check Box 30"].checked = character.skills[7].proficient
+    formFieldDict.Investigation.setText(character.skills[8].Investigation.toString())
+    formFieldDict["Check Box 31"].checked = character.skills[8].proficient
+    formFieldDict.Medicine.setText(character.skills[9].Medicine.toString())
+    formFieldDict["Check Box 32"].checked = character.skills[9].proficient
+    formFieldDict.Nature.setText(character.skills[10].Nature.toString())
+    formFieldDict["Check Box 33"].checked = character.skills[10].proficient
+    formFieldDict.Perception.setText(character.skills[11].Perception.toString())
+    formFieldDict["Check Box 34"].checked = character.skills[11].proficient
+    formFieldDict.Performance.setText(character.skills[12].Performance.toString())
+    formFieldDict["Check Box 35"].checked = character.skills[12].proficient
+    formFieldDict.Persuasion.setText(character.skills[13].Persuasion.toString())
+    formFieldDict["Check Box 36"].checked = character.skills[13].proficient
+    formFieldDict.Religion.setText(character.skills[14].Religion.toString())
+    formFieldDict["Check Box 37"].checked = character.skills[14].proficient
+    formFieldDict.SleightofHand.setText(character.skills[15]["Sleight of Hand"].toString())
+    formFieldDict["Check Box 38"].checked = character.skills[15].proficient
+    formFieldDict.Stealth.setText(character.skills[16].Stealth.toString())
+    formFieldDict["Check Box 39"].checked = character.skills[16].proficient
+    formFieldDict.Survival.setText(character.skills[17].Survival.toString())
+    formFieldDict["Check Box 40"].checked = character.skills[17].proficient
+    */
+
     
     //formFieldDict.AC.setText(character.armor_class) Need to fix this as well
     //formFieldDict.Initiative.setText(character.initiative >= 0 ? `+${character.initiative}` : `${character.initiative}`) need to get this
     formFieldDict.Speed.setText(`${character.speed.toString()} ft.`)
+    //formFieldDict.HPMax.setText(character.hitpoints.toString())
+    formFieldDict.HPCurrent.setText(character.hitpoints.toString())
+    formFieldDict.HPTemp.setText("0")
+    formFieldDict.HDTotal.setText(character.hit_dice)
+    formFieldDict.HD.setText(character.hit_dice)
+
+    formFieldDict.Passive.setText
+}
+
+async function CreateThePDF() {
+    //fetching local doc (note: might not work if website published ever and might only work because vscode plugin)
+    const respone = await fetch("../assets/DNDForm/CharacterSheet.pdf")
+    const pdfArrayBuffer = await respone.arrayBuffer();
+
+    const pdfDoc = await PDFDocument.load(pdfArrayBuffer)
+    
+    const form = pdfDoc.getForm()
+    const fields = form.getFields()
+
+    // pints all the field names
+    fields.forEach(field => {
+        console.log(field.getName());
+    });
+
+    // sets all of the fields for the character sheet
+    SetCharacterSheetFields(form);
 
     //save and download form
     const pdfBytes = await pdfDoc.save()
