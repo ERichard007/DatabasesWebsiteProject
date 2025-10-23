@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1> DnD Character Stat Tracker </h1>
+
+        <div> <!-- MAIN CHARACTER STATS (name, class, level, background, race, alignment, exp) -->
+            <form>
+                <label for="characterName">Character Name: </label>
+                <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name">
+
+                <label for ="Class">Class: </label>
+                <input type="text" id="Class" name="Class" placeholder="Enter Class">
+
+                <label for="Level">Level: </label>
+                <input type="number" id="Level" name="Level" min="1" max="20" placeholder="Enter Level">
+
+                <label for="Background">Background: </label>
+                <input type="text" id="Background" name="Background" placeholder="Enter Background">
+
+                <label for="Race">Race: </label>
+                <input type="text" id="Race" name="Race" placeholder="Enter Race">
+
+                <label for="Alignment">Alignment: </label>
+                <input type="text" id="Alignment" name="Alignment" placeholder="Enter Alignment">
+
+                <label for="ExperiencePoints">Experience Points: </label>
+                <input type="number" id="ExperiencePoints" name="ExperiencePoints" min="0" placeholder="Enter Experience Points">
+            </form>
+        </div>
+
+        <h2> STATS </h2>
+            <div> <!--MAIN STATS (health, hitdice, armor class, initiative, speed ...)--> 
+                <form>
+                    <p> Armor Class </p>
+                    <input type="number" id="ArmorClass" name="ArmorClass">
+
+                    <p> Initiative </p>
+                    <input type="number" id="Initiative" name="Initiative">
+
+                    <p> Speed </p>
+                    <input type="number" id="Speed" name="Speed">
+
+                    <p> Hitpoints </p>
+                    <label for="MaxHealthPoints"> Max: </label>
+                    <input type="number" id="MaxHealthPoints" name="MaxHealthPoints">
+                    <label for="CurrentHealthPoints"> Current: </label>
+                    <input type="number" id="CurrentHealthPoints" name="CurrentHealthPoints">
+                    <label for="TemporaryHealthPoints"> Temporary: </label>
+                    <input type="number" id="TemporaryHealthPoints" name="TemporaryHealthPoints">
+
+                    <p> Hit Dice </p>
+                    <label for="HitDiceTotal"> Total: </label>
+                    <input type="number" id="HitDiceTotal" name="HitDiceTotal">
+                    <label for="HitDiceCurrent"> Current: </label>
+                    <input type="number" id="HitDiceCurrent" name="HitDiceCurrent">
+
+                    <p> Death Saves </p>
+                    <label for="DeathSaveSuccesses"> Successes: </label>
+                    <input type="checkbox" id="DeathSaveSuccesses1" name="DeathSaveSuccesses1">
+                    <input type="checkbox" id="DeathSaveSuccesses2" name="DeathSaveSuccesses2">
+                    <input type="checkbox" id="DeathSaveSuccesses3" name="DeathSaveSuccesses3"><br>
+                    <label for="DeathSaveFailures"> Failures: </label>
+                    <input type="checkbox" id="DeathSaveFailures1" name="DeathSaveFailures1">
+                    <input type="checkbox" id="DeathSaveFailures2" name="DeathSaveFailures2">
+                    <input type="checkbox" id="DeathSaveFailures3" name="DeathSaveFailures3"> 
+                </form>
+            </div>
+
+        <h3> Ability Scores </h3>
+            <div> <!--ABILITY SCORES-->
+                <form>
+                    <p> Strength </p>
+                    <input type="number" id="Strength" name="Strength" min="1" max="20">
+                    <input type="number" id="StrengthModifier" name="StrengthModifier">
+                    <p> Dexterity </p>
+                    <input type="number" id="Dexterity" name="Dexterity" min="1" max="20">
+                    <input type="number" id="DexterityModifier" name="DexterityModifier">
+                    <p> Constitution </p> 
+                    <input type="number" id="Constitution" name="Constitution" min="1" max="20">
+                    <input type="number" id="ConstitutionModifier" name="ConstitutionModifier">
+                    <p> Intelligence </p>   
+                    <input type="number" id="Intelligence" name="Intelligence" min="1" max="20">
+                    <input type="number" id="IntelligenceModifier" name="IntelligenceModifier">
+                    <p> Wisdom </p>
+                    <input type="number" id="Wisdom" name="Wisdom" min="1" max="20">
+                    <input type="number" id="WisdomModifier" name="WisdomModifier">
+                    <p> Charisma </p>
+                    <input type="number" id="Charisma" name="Charisma" min="1" max="20">
+                    <input type="number" id="CharismaModifier" name="CharismaModifier">
+                </form>
+            </div>
+
+        <h3> Saving Throws </h3>
+            <div> <!--SAVING THROWS-->
+                <form>
+                    <input type="checkbox" id="StrengthSaveProficiency" name="StrengthSaveProficiency">
+                    <input type="number" id="StrengthSave" name="StrengthSave">
+                    <span> Strength </span><br>
+                    <input type="checkbox" id="DexteritySaveProficiency" name="DexteritySaveProficiency">
+                    <input type="number" id="DexteritySave" name="DexteritySave">  
+                    <span> Dexterity </span><br>
+                    <input type="checkbox" id="ConstitutionSaveProficiency" name="ConstitutionSaveProficiency">
+                    <input type="number" id="ConstitutionSave" name="ConstitutionSave">
+                    <span> Constitution </span><br>
+                    <input type="checkbox" id="IntelligenceSaveProficiency" name="IntelligenceSaveProficiency">
+                    <input type="number" id="IntelligenceSave" name="IntelligenceSave">
+                    <span> Intelligence </span><br>
+                    <input type="checkbox" id="WisdomSaveProficiency" name="WisdomSaveProficiency">
+                    <input type="number" id="WisdomSave" name="WisdomSave">
+                    <span> Wisdom </span><br>
+                    <input type="checkbox" id="CharismaSaveProficiency" name="CharismaSaveProficiency">
+                    <input type="number" id="CharismaSave" name="CharismaSave">
+                    <span> Charisma </span><br>
+                </form>
+            </div>
+            
+        <h3> Skills </h3>
+            <div> <!--SKILLS-->
+                <form>
+                    <input type="checkbox" id="AcrobaticsProficiency" name="AcrobaticsProficiency">
+                    <input type="number" id="Acrobatics" name="Acrobatics">
+                    <span> Acrobatics (Dex) </span><br>
+                    <input type="checkbox" id="AnimalHandlingProficiency" name="AnimalHandlingProficiency">
+                    <input type="number" id="AnimalHandling" name="AnimalHandling">
+                    <span> Animal Handling (Wis) </span><br>
+                    <input type="checkbox" id="ArcanaProficiency" name="ArcanaProficiency">
+                    <input type="number" id="Arcana" name="Arcana">
+                    <span> Arcana (Int) </span><br>
+                    <input type="checkbox" id="AthleticsProficiency" name="AthleticsProficiency">
+                    <input type="number" id="Athletics" name="Athletics">
+                    <span> Athletics (Str) </span><br>
+                    <input type="checkbox" id="DeceptionProficiency" name="DeceptionProficiency">
+                    <input type="number" id="Deception" name="Deception">
+                    <span> Deception (Cha) </span><br>
+                    <input type="checkbox" id="HistoryProficiency" name="HistoryProficiency">
+                    <input type="number" id="History" name="History">
+                    <span> History (Int) </span><br>
+                    <input type="checkbox" id="InsightProficiency" name="InsightProficiency">
+                    <input type="number" id="Insight" name="Insight">
+                    <span> Insight (Wis) </span><br>
+                    <input type="checkbox" id="IntimidationProficiency" name="IntimidationProficiency">
+                    <input type="number" id="Intimidation" name="Intimidation">
+                    <span> Intimidation (Cha) </span><br>
+                    <input type="checkbox" id="InvestigationProficiency" name="InvestigationProficiency">
+                    <input type="number" id="Investigation" name="Investigation">
+                    <span> Investigation (Int) </span><br>
+                    <input type="checkbox" id="MedicineProficiency" name="MedicineProficiency">
+                    <input type="number" id="Medicine" name="Medicine">
+                    <span> Medicine (Wis) </span><br>
+                    <input type="checkbox" id="NatureProficiency" name="NatureProficiency">
+                    <input type="number" id="Nature" name="Nature">
+                    <span> Nature (Int) </span><br>
+                    <input type="checkbox" id="PerceptionProficiency" name="PerceptionProficiency">
+                    <input type="number" id="Perception" name="Perception">
+                    <span> Perception (Wis) </span><br>
+                    <input type="checkbox" id="PerformanceProficiency" name="PerformanceProficiency">
+                    <input type="number" id="Performance" name="Performance">
+                    <span> Performance (Cha) </span><br>
+                    <input type="checkbox" id="PersuasionProficiency" name="PersuasionProficiency">
+                    <input type="number" id="Persuasion" name="Persuasion">
+                    <span> Persuasion (Cha) </span><br>
+                    <input type="checkbox" id="ReligionProficiency" name="ReligionProficiency">
+                    <input type="number" id="Religion" name="Religion">
+                    <span> Religion (Int) </span><br>
+                    <input type="checkbox" id="SleightOfHandProficiency" name="SleightOfHandProficiency">
+                    <input type="number" id="SleightOfHand" name="SleightOfHand">
+                    <span> Sleight of Hand (Dex) </span><br>
+                    <input type="checkbox" id="StealthProficiency" name="StealthProficiency">
+                    <input type="number" id="Stealth" name="Stealth">
+                    <span> Stealth (Dex) </span><br>
+                    <input type="checkbox" id="SurvivalProficiency" name="SurvivalProficiency">
+                    <input type="number" id="Survival" name="Survival">
+                    <span> Survival (Wis) </span><br>
+                </form>
+            </div>
+
+        <h3> Attacks and Spellcasting </h3>
+            <div> <!-- Place to add weapons like swords and spells--> 
+                <form>
+                    <div id="AddANewWeapon">
+                        <input type="text" id="WeaponName" name="WeaponName" placeholder="Weapon Name">
+                        <input type="number" id="WeaponAttackBonus" name="WeaponAttackBonus" placeholder="Attack Bonus">
+                        <input type="text" id="WeaponDamage" name="WeaponDamage" placeholder="Damage/Type">
+                        <input type="button" id="AddWeaponButton" value="Add Weapon">
+                    </div id="AddASpell">
+                        <input type="text" id="SpellName" name="SpellName" placeholder="Spell Name">
+                        <input type="text" id="SpellDescription" name="SpellDescription" placeholder="Spell Description">
+                        <input type="button" id="AddSpellButton" value="Add Spell">
+                </form>
+            </div>
+
+
+        
+        
+</body>
+</html>
