@@ -11,7 +11,7 @@
     <a href="/charactercreation"> Create Character </a>
 
     <ul>
-        {% for c in characters %}
+        {% for c in characters %} <!--c[0] = characterid, c[1] = name, c[2] = background-->
             <li>
                 {{c[1]}} -- ({{c[2]}}:{{c[0]}})
                 <a href="character/{{ c[0] }}">Choose</a>

@@ -84,7 +84,6 @@ def character(cid):
 
 @app.route("/charactercreation", methods=["GET","POST"]) #character creation page
 def create_character():
-    
     return render_template("charactercreation.html")
 
 if __name__ == '__main__':
