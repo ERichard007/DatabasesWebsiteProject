@@ -173,7 +173,7 @@ rollButton.addEventListener('click', () => {
     for (let i = 0; i < 4; i++){
         const roll = (Math.floor(Math.random() * 6) + 1);
         rolls.push(roll);
-        dice[i].innerHTML = roll;
+        dice[i].textContent = roll;
     }
     rolls.sort((a,b) => a-b);
     const total = rolls[1] + rolls[2] + rolls[3]
