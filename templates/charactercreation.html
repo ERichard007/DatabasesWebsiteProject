@@ -26,7 +26,7 @@
     <!--Player Chooses thier race and their class to follow
     Note: they must do this before continuing further
     Race and Classes should inclue a description of them as shows on the API as well as a picture to follow-->
-    <div>
+    <div id="raceAndClassDiv">
 
         <!-- Race -->
         <h2>
@@ -36,27 +36,31 @@
         <label for="raceSelection">Choose Race:</label> 
         <input type="text" id="raceSelection" name="raceSelection" placeholder="Enter Race" required><br> 
         Speed: <input type="number" id="speed" name="speed" placeholder="Enter Speed" required><br>
-        <label for="addRace">Add Race</label>
 
         <!-- Class -->
         <h2>
             Choose a Class!
         </h2>
 
+        <label for="addClass">Add Class</label>
+        <button type="button" id="addClass" name="addClass">➕</button>
+        <label for="removeClass" id="removeClassLabel" hidden>Remove Class</label>
+        <button type="button" id="removeClass" name="removeClass" hidden>➖</button><br>
+
         <label for="classSelection">Choose Class:</label>
         <input type="text" id="classSelection" name="classSelection" placeholder="Enter Class" required><br>
 
-        <img src="{{ url_for('static', filename='assets/levelImages/Level 1-5.png') }}" height="100" width="100" id="levelImage"><br>
-        Enter Class Level (1-20): <input type="number" id="levelInput" name="levelInput" min="1" max="20" value="1" required><br>
-        Proficiency Bonus: <input type="number" id="profBons" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
-        Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
-        Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
-        Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass" required><br>
-        Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
-        Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
-
-        <label for="addClass">Add Class</label>
-        <button type="button" id="addClass" name="addClass">➕</button><br>
+        <div id="classDiv" class="classDiv">
+            <img src="{{ url_for('static', filename='assets/levelImages/Level 1-5.png') }}" height="100" width="100" id="levelImage"><br>
+            Enter Class Level (1-20): <input type="number" id="levelInput" name="levelInput" min="1" max="20" value="1" required><br>
+            Proficiency Bonus: <input type="number" id="profBonus" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
+            Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
+            Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
+            Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass" required><br>
+            Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
+            Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
+        </div>
+     
 
         <!-- <img id="raceImage" alt="Race Image" src="" height="300" width="500"> 
         DEPRECATED for now, but would be cool if maybe incorporated AI here to auto search an image to retrieve based on the prompt? 
@@ -130,10 +134,12 @@
     </div>
 
     <!-- Features and Traits -->
-    <div>
+    <div id="featureDiv">
         <h2>Features and Traits</h2>
         <p> This is the place to add any unique features or traits of your character. This includes things like Dark vision or abilities that your class has given you like Chronal Shift</p>
         Add Feature/Trait <button type="button" id="addFeature" name="addFeature">➕</button>
+        <label for="removeFeatureLabel" id="removeFeatureLabel" hidden> Remove Feature/Trait </label>
+        <button type="button" id="removeFeature" name="removeFeature" hidden>➖</button><br>
     </div>
 
     <!-- Additional Proficiencies and Languages -->
