@@ -143,10 +143,12 @@
     </div>
 
     <!-- Additional Proficiencies and Languages -->
-    <div>
+    <div id="proficiencyDiv">
         <h2>Additional Proficiencies and Languages</h2>
-        <p>Here is where you add anything that you are proficient with given possibly your background, class, or even just your backstory</p>
+        <p>Here is where you add anything that you are proficient with given possibly your background, class, or even just your backstory. Also any languages you speak go here!</p>
         Add Proficiency <button type="button" id="addProficiency" name="addProficiency">➕</button>
+        <label for="removeProficiency" id="removeProficiencyLabel" hidden>Remove Proficiency</label>
+        <button type="button" id="removeProficiency" name="removeProficiency" hidden>➖</button><br>
     </div>
 
     <!-- Inventory Item Management-->
@@ -176,6 +178,8 @@
 
         <label for="addItem">Add Item</label>
         <button type="button" id="addItem" name="addItem">➕</button>
+
+        <div id="itemDiv"></div>
 
     </div>
 

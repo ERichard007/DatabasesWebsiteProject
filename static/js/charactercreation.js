@@ -40,6 +40,18 @@ const addFeature = document.getElementById('addFeature')
 const removeFeatureLabel = document.getElementById('removeFeatureLabel')
 const removeFeature = document.getElementById('removeFeature')
 
+//Profiency and Languages Variables
+let numOfProficiencies = 0
+
+const profDiv = document.getElementById('proficiencyDiv')
+const addProf = document.getElementById('addProficiency')
+const remProfLabel = document.getElementById('removeProficiencyLabel')
+const remProf = document.getElementById('removeProficiency')
+
+//Item Management Variables
+const addItem = document.getElementById('addItem')
+const itemDiv = document.getElementById('itemDiv')
+
 // ------------------------------------------------------- FUNCTIONS -------------------------------------------------------------
 
 // image changing function
@@ -205,4 +217,138 @@ removeFeature.addEventListener('click', () =>{
         removeFeatureLabel.hidden = true
         removeFeature.hidden = true
     }
+})
+
+//proficiency and language adding functionality
+addProf.addEventListener('click', () => {
+    numOfProficiencies++
+
+    let nameLabel = document.createElement('label')
+    nameLabel.htmlFor= 'name' + numOfProficiencies
+    nameLabel.id = 'nameLabel' + numOfProficiencies
+    nameLabel.innerText = 'Name:'
+
+    let name = document.createElement('input')
+    name.type = 'text'
+    name.id = 'name' + numOfProficiencies
+    name.name = 'name' + numOfProficiencies
+    name.required = true
+
+    let descLabel = document.createElement('label')
+    descLabel.htmlFor = 'description' + numOfProficiencies
+    descLabel.id = 'descriptionLabel' + numOfProficiencies
+    descLabel.innerText = 'Description: '
+
+    let desc = document.createElement('input')
+    desc.type = 'text'
+    desc.id = 'description' + numOfProficiencies
+    desc.name = 'description' + numOfProficiencies
+    desc.required = true
+
+    let break1 = document.createElement('br')
+    break1.id = 'break1' + numOfProficiencies
+    let break2 = document.createElement('br')
+    break2.id = 'break2' + numOfProficiencies
+
+    profDiv.appendChild(nameLabel)
+    profDiv.appendChild(name)
+    profDiv.appendChild(break1)
+    profDiv.appendChild(descLabel)
+    profDiv.appendChild(desc)
+    profDiv.appendChild(break2)
+
+    remProf.hidden = false
+    remProfLabel.hidden = false
+})
+
+//proficiency and language removing functionality
+remProf.addEventListener('click', () => {
+    if (numOfProficiencies == 0){
+        return
+    }
+
+    let profName = profDiv.querySelector('#name'+numOfProficiencies)
+    let profLabel = profDiv.querySelector('#nameLabel'+numOfProficiencies)
+    let profDesc = profDiv.querySelector("#description"+numOfProficiencies)
+    let profDescLabel = profDiv.querySelector("#descriptionLabel"+numOfProficiencies)
+    let break1 = profDiv.querySelector("#break1"+numOfProficiencies)
+    let break2 = profDiv.querySelector("#break2"+numOfProficiencies)
+
+    profName.remove()
+    profLabel.remove()
+    profDesc.remove()
+    profDescLabel.remove()
+    break1.remove()
+    break2.remove()
+
+    numOfProficiencies--
+
+    if (numOfProficiencies == 0){
+        remProf.hidden = true
+        remProfLabel.hidden = true
+    }
+})
+
+//Item Adding Functionality
+addItem.addEventListener('click', () => {
+    let newItemDiv = document.createElement('div')
+    newItemDiv.id = 'itemDiv'+crypto.randomUUID()
+
+    
+    let x = 'itemName'+crypto.randomUUID()
+    let itemNameLabel = document.createElement('label')
+    itemNameLabel.htmlFor = x
+    itemNameLabel.innerText = 'Name:'
+
+    let itemName = document.createElement('input')
+    itemName.type = 'text'
+    itemName.id = x
+    itemName.name = x
+
+    let break1 = document.createElement('br')
+    break1.id = 'break1'+crypto.randomUUID()
+    
+    x = 'descriptionAndProperties'+crypto.randomUUID()
+    let descriptionAndPropertiesLabel = document.createElement('label')
+    descriptionAndPropertiesLabel.htmlFor = x
+    descriptionAndPropertiesLabel.innerText = 'Description And/Or Properties:'
+
+    let descriptionAndProperties = document.createElement('input')
+    descriptionAndProperties.type = 'text'
+    descriptionAndProperties.id = x
+    descriptionAndProperties.name = x
+
+    let break2 = document.createElement('br')
+    break2.id = 'break2'+crypto.randomUUID()
+
+    
+
+    x = 'removeItemButton'+crypto.randomUUID()
+    let removeItemLabel = document.createElement('label')
+    removeItemLabel.htmlFor = x
+    removeItemLabel.innerText = 'Remove'
+
+    let removeItemButton = document.createElement('button')
+    removeItemButton.type = 'button'
+    removeItemButton.id = x
+    removeItemButton.name = x
+    removeItemButton.innerText = '➖'
+
+    let finalBreak = document.createElement('br')
+    finalBreak.id = 'finalBreak'+crypto.randomUUID()
+
+    newItemDiv.appendChild(itemNameLabel)
+    newItemDiv.appendChild(itemName)
+    newItemDiv.appendChild(break1)
+    newItemDiv.appendChild(descriptionAndPropertiesLabel)
+    newItemDiv.appendChild(descriptionAndProperties)
+    newItemDiv.appendChild(break2)
+    newItemDiv.appendChild(removeItemLabel)
+    newItemDiv.appendChild(removeItemButton)
+
+    itemDiv.appendChild(newItemDiv)
+
+    removeItemButton.addEventListener('click', () => {
+        newItemDiv.remove()
+    })
 })
