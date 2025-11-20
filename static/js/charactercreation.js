@@ -14,8 +14,6 @@ const clearButton = document.getElementById("clearDice")
 const totalsList = document.getElementById("totalsList")
 
 //Class Variables
-let numOfClasses = 1
-
 const raceDiv = document.getElementById('raceAndClassDiv')
 const classDiv = document.getElementById('classDiv')
 
@@ -29,8 +27,6 @@ const spellSlots = document.getElementById('spellSlots')
 const spellcastingModifier = document.getElementById('spellMod')
 
 const addClass = document.getElementById('addClass')
-const removeClassLabel = document.getElementById('removeClassLabel')
-const removeClass = document.getElementById('removeClass')
 
 //Features/Trait Variables
 let numOfTraits = 0
@@ -105,13 +101,7 @@ clearButton.addEventListener('click', () => {
 
 //class adding functionality
 addClass.addEventListener('click', () => {
-    numOfClasses++
-
-    removeClass.hidden = false
-    removeClassLabel.hidden = false
-
     let classBlock2 = classDiv.cloneNode(true)
-    classBlock2.id += numOfClasses
 
     Array.from(classBlock2.children).forEach(child => {
         if (child.id.split('Input')[0] == 'level'){
@@ -119,29 +109,35 @@ addClass.addEventListener('click', () => {
                 classImageChange(child)
             })
         }
-        child.id += numOfClasses
-        child.name += numOfClasses
+
+        let x = crypto.randomUUID()
+        child.id += x
+        child.name += x
+    })
+
+    let x = crypto.randomUUID()
+    let classRemoveLabel = document.createElement('label')
+    classRemoveLabel.htmlFor = 'removeClass'+x
+    classRemoveLabel.id = 'removeClassLabel'+x
+
+    let classRemoveButton = document.createElement('button')
+    classRemoveButton.type = 'button'
+    classRemoveButton.id = 'removeClass'+x
+    classRemoveButton.name = 'removeClass'+x
+    classRemoveButton.innerText = '➖'
+
+    let finalBreak = document.createElement('br')
+    finalBreak.id = 'finalBreak'+x
+
+    classBlock2.appendChild(classRemoveLabel)
+    classBlock2.appendChild(classRemoveButton)
+    classBlock2.appendChild(finalBreak)
+
+    classRemoveButton.addEventListener('click', () => {
+        classBlock2.remove()
     })
 
     raceDiv.appendChild(classBlock2)
-})
-
-//class removing functionality
-removeClass.addEventListener('click', () => {
-    if (numOfClasses == 1){
-        return
-    }
-
-    let divName = "classDiv" + numOfClasses
-    let divToRemove = document.getElementById(divName)
-    divToRemove.remove()
-
-    numOfClasses--
-
-    if (numOfClasses == 1){
-        removeClass.hidden = true
-        removeClassLabel.hidden = true
-    }
 })
 
 //class image changing fucntionality
