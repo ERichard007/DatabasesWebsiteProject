@@ -29,23 +29,16 @@ const spellcastingModifier = document.getElementById('spellMod')
 const addClass = document.getElementById('addClass')
 
 //Features/Trait Variables
-let numOfTraits = 0
-
 const featureDiv = document.getElementById('featureDiv')
 const addFeature = document.getElementById('addFeature')
-const removeFeatureLabel = document.getElementById('removeFeatureLabel')
-const removeFeature = document.getElementById('removeFeature')
 
 //Profiency and Languages Variables
-let numOfProficiencies = 0
-
 const profDiv = document.getElementById('proficiencyDiv')
 const addProf = document.getElementById('addProficiency')
-const remProfLabel = document.getElementById('removeProficiencyLabel')
-const remProf = document.getElementById('removeProficiency')
 
 //Item Management Variables
 const addItem = document.getElementById('addItem')
+const itemType = document.getElementById('itemType')
 const itemDiv = document.getElementById('itemDiv')
 
 // ------------------------------------------------------- FUNCTIONS -------------------------------------------------------------
@@ -147,149 +140,138 @@ classLevel.addEventListener('input', () => {
 
 //features and trait adding fucntionality
 addFeature.addEventListener('click', () => {
-    numOfTraits++
+    let newDiv = document.createElement('div')
+    newDiv.id = 'addedFeature'+crypto.randomUUID()
 
-    removeFeatureLabel.hidden = false
-    removeFeature.hidden = false
-
+    let x = crypto.randomUUID()
     let nameLabel = document.createElement('label')
-    nameLabel.htmlFor= 'name' + numOfTraits
-    nameLabel.id = 'nameLabel' + numOfTraits
+    nameLabel.htmlFor= 'name' + x
+    nameLabel.id = 'nameLabel' + x
     nameLabel.innerText = 'Name:'
 
     let name = document.createElement('input')
     name.type = 'text'
-    name.id = 'name' + numOfTraits
-    name.name = 'name' + numOfTraits
+    name.id = 'name' + x
+    name.name = 'name' + x
     name.required = true
 
+    x = crypto.randomUUID()
     let descLabel = document.createElement('label')
-    descLabel.htmlFor = 'description' + numOfTraits
-    descLabel.id = 'descriptionLabel' + numOfTraits
+    descLabel.htmlFor = 'description' + x
+    descLabel.id = 'descriptionLabel' + x
     descLabel.innerText = 'Description: '
 
     let desc = document.createElement('input')
     desc.type = 'text'
-    desc.id = 'description' + numOfTraits
-    desc.name = 'description' + numOfTraits
+    desc.id = 'description' + x
+    desc.name = 'description' + x
     desc.required = true
 
+    x = crypto.randomUUID()
+    let removeLabel = document.createElement('label')
+    removeLabel.id = 'removeFeatureLabel' + x
+    removeLabel.htmlFor = 'removeFeature'
+    removeLabel.innerText = 'Remove'
+
+    let remove = document.createElement('button')
+    remove.type = 'button'
+    remove.id = 'removeFeature' + x
+    remove.name = 'removeFeature' + x
+    remove.innerText = '➖'
+
     let break1 = document.createElement('br')
-    break1.id = 'break1' + numOfTraits
+    break1.id = 'break1' + crypto.randomUUID()
     let break2 = document.createElement('br')
-    break2.id = 'break2' + numOfTraits
+    break2.id = 'break2' + crypto.randomUUID()
+    let break3 = document.createElement('br')
+    break3.id = 'break3' + crypto.randomUUID()
 
-    featureDiv.appendChild(nameLabel)
-    featureDiv.appendChild(name)
-    featureDiv.appendChild(break1)
-    featureDiv.appendChild(descLabel)
-    featureDiv.appendChild(desc)
-    featureDiv.appendChild(break2)
-})
+    newDiv.appendChild(nameLabel)
+    newDiv.appendChild(name)
+    newDiv.appendChild(break1)
+    newDiv.appendChild(descLabel)
+    newDiv.appendChild(desc)
+    newDiv.appendChild(break2)
+    newDiv.appendChild(removeLabel)
+    newDiv.appendChild(remove)
+    newDiv.appendChild(break3)
+    featureDiv.appendChild(newDiv)
 
-//feature/trait removing functionality
-removeFeature.addEventListener('click', () =>{
-    if (numOfTraits == 0){
-        return
-    }
-
-    let featureName = featureDiv.querySelector('#name'+numOfTraits)
-    let featureLabel = featureDiv.querySelector('#nameLabel'+numOfTraits)
-    let featureDesc = featureDiv.querySelector("#description"+numOfTraits)
-    let featureDescLabel = featureDiv.querySelector("#descriptionLabel"+numOfTraits)
-    let break1 = featureDiv.querySelector("#break1"+numOfTraits)
-    let break2 = featureDiv.querySelector("#break2"+numOfTraits)
-
-    featureName.remove()
-    featureLabel.remove()
-    featureDesc.remove()
-    featureDescLabel.remove()
-    break1.remove()
-    break2.remove()
-
-    numOfTraits--
-
-    if (numOfTraits == 0){
-        removeFeatureLabel.hidden = true
-        removeFeature.hidden = true
-    }
+    remove.addEventListener('click', () => {
+        newDiv.remove()
+    })
 })
 
 //proficiency and language adding functionality
 addProf.addEventListener('click', () => {
-    numOfProficiencies++
+    let newDiv = document.createElement('div')
+    newDiv.id = 'addedProf'+crypto.randomUUID()
 
+    let x = crypto.randomUUID()
     let nameLabel = document.createElement('label')
-    nameLabel.htmlFor= 'name' + numOfProficiencies
-    nameLabel.id = 'nameLabel' + numOfProficiencies
+    nameLabel.htmlFor= 'name' + x
+    nameLabel.id = 'nameLabel' + x
     nameLabel.innerText = 'Name:'
 
     let name = document.createElement('input')
     name.type = 'text'
-    name.id = 'name' + numOfProficiencies
-    name.name = 'name' + numOfProficiencies
+    name.id = 'name' + x
+    name.name = 'name' + x
     name.required = true
 
+    x = crypto.randomUUID()
     let descLabel = document.createElement('label')
-    descLabel.htmlFor = 'description' + numOfProficiencies
-    descLabel.id = 'descriptionLabel' + numOfProficiencies
+    descLabel.htmlFor = 'description' + x
+    descLabel.id = 'descriptionLabel' + x
     descLabel.innerText = 'Description: '
 
     let desc = document.createElement('input')
     desc.type = 'text'
-    desc.id = 'description' + numOfProficiencies
-    desc.name = 'description' + numOfProficiencies
+    desc.id = 'description' + x
+    desc.name = 'description' + x
     desc.required = true
 
+    x = crypto.randomUUID()
+    let removeProfLabel = document.createElement('label')
+    removeProfLabel.id = 'removeProfLabel'+x
+    removeProfLabel.htmlFor = 'removeProf'+x
+    removeProfLabel.innerText = 'Remove'
+
+    let removeProf = document.createElement('button')
+    removeProf.id = 'removeProf' + x
+    removeProf.name = 'removeProf' + x
+    removeProf.type = 'button'
+    removeProf.innerText = '➖'
+
     let break1 = document.createElement('br')
-    break1.id = 'break1' + numOfProficiencies
+    break1.id = 'break1' + crypto.randomUUID()
     let break2 = document.createElement('br')
-    break2.id = 'break2' + numOfProficiencies
+    break2.id = 'break2' + crypto.randomUUID()
+    let break3 = document.createElement('br')
+    break3.id = 'break3' + crypto.randomUUID()
 
-    profDiv.appendChild(nameLabel)
-    profDiv.appendChild(name)
-    profDiv.appendChild(break1)
-    profDiv.appendChild(descLabel)
-    profDiv.appendChild(desc)
-    profDiv.appendChild(break2)
+    newDiv.appendChild(nameLabel)
+    newDiv.appendChild(name)
+    newDiv.appendChild(break1)
+    newDiv.appendChild(descLabel)
+    newDiv.appendChild(desc)
+    newDiv.appendChild(break2)
+    newDiv.appendChild(removeProfLabel)
+    newDiv.appendChild(removeProf)
+    newDiv.appendChild(break3)
+    profDiv.appendChild(newDiv)
 
-    remProf.hidden = false
-    remProfLabel.hidden = false
-})
-
-//proficiency and language removing functionality
-remProf.addEventListener('click', () => {
-    if (numOfProficiencies == 0){
-        return
-    }
-
-    let profName = profDiv.querySelector('#name'+numOfProficiencies)
-    let profLabel = profDiv.querySelector('#nameLabel'+numOfProficiencies)
-    let profDesc = profDiv.querySelector("#description"+numOfProficiencies)
-    let profDescLabel = profDiv.querySelector("#descriptionLabel"+numOfProficiencies)
-    let break1 = profDiv.querySelector("#break1"+numOfProficiencies)
-    let break2 = profDiv.querySelector("#break2"+numOfProficiencies)
-
-    profName.remove()
-    profLabel.remove()
-    profDesc.remove()
-    profDescLabel.remove()
-    break1.remove()
-    break2.remove()
-
-    numOfProficiencies--
-
-    if (numOfProficiencies == 0){
-        remProf.hidden = true
-        remProfLabel.hidden = true
-    }
+    removeProf.addEventListener('click', () => {
+        newDiv.remove()
+    })
 })
 
 //Item Adding Functionality
 addItem.addEventListener('click', () => {
+
+    //stuff that is the same for every item
     let newItemDiv = document.createElement('div')
     newItemDiv.id = 'itemDiv'+crypto.randomUUID()
-
     
     let x = 'itemName'+crypto.randomUUID()
     let itemNameLabel = document.createElement('label')
@@ -317,8 +299,6 @@ addItem.addEventListener('click', () => {
     let break2 = document.createElement('br')
     break2.id = 'break2'+crypto.randomUUID()
 
-    
-
     x = 'removeItemButton'+crypto.randomUUID()
     let removeItemLabel = document.createElement('label')
     removeItemLabel.htmlFor = x
@@ -339,9 +319,590 @@ addItem.addEventListener('click', () => {
     newItemDiv.appendChild(descriptionAndPropertiesLabel)
     newItemDiv.appendChild(descriptionAndProperties)
     newItemDiv.appendChild(break2)
+
+    //stuff that changes per item
+    if (itemType.value == 'Container') {
+
+        x = crypto.randomUUID()
+        let ozFilledOfWaterLabel = document.createElement('label')
+        ozFilledOfWaterLabel.id = 'ozFilledOfWaterLabel'+ x
+        ozFilledOfWaterLabel.htmlFor = 'ozFilledOfWater'+ x
+        ozFilledOfWaterLabel.innerText = 'Oz Filled: '
+
+        let ozFilledOfWater = document.createElement('input')
+        ozFilledOfWater.type = 'number'
+        ozFilledOfWater.min = 0
+        ozFilledOfWater.placeholder = 0
+        ozFilledOfWater.id = 'ozFilledOfWater' + x
+        ozFilledOfWater.name = 'ozFilledOfWater' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(ozFilledOfWaterLabel)
+        newItemDiv.appendChild(ozFilledOfWater)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'SiegeEquipment') {
+
+        x = crypto.randomUUID()
+        let acLabel = document.createElement('label')
+        acLabel.id = 'acLabel'+x
+        acLabel.htmlFor = 'ac'+x
+        acLabel.innerText = 'AC:'
+
+        let ac = document.createElement('input')
+        ac.type = 'number'
+        ac.id = 'ac'+x
+        ac.name = 'ac'+x
+        ac.placeholder = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let damageImmunitiesLabel = document.createElement('label')
+        damageImmunitiesLabel.id = 'damageImmunitiesLabel' + x
+        damageImmunitiesLabel.htmlFor = 'damageImmunities' + x
+        damageImmunitiesLabel.innerText = 'Damage Immunities:'
+
+        let damageImmunities = document.createElement('input')
+        damageImmunities.type = 'text'
+        damageImmunities.id = 'damageImmunities' + x
+        damageImmunities.name = 'damageImmunities' + x
+
+        let innerBreak2 = document.createElement('br')
+        innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let HPLabel = document.createElement('label')
+        HPLabel.id = 'HPLabel' + x
+        HPLabel.htmlFor = 'HP' + x
+        HPLabel.innerText = 'HP:'
+
+        let HP = document.createElement('input')
+        HP.type = 'number'
+        HP.id = 'HP' + x
+        HP.name = 'HP' + x
+        HP.placeholder = 0
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(acLabel)
+        newItemDiv.appendChild(ac)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(damageImmunitiesLabel)
+        newItemDiv.appendChild(damageImmunities)
+        newItemDiv.appendChild(innerBreak2)
+        newItemDiv.appendChild(HPLabel)
+        newItemDiv.appendChild(HP)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Poison') {
+
+        x = crypto.randomUUID()
+        let typeLabel = document.createElement('label')
+        typeLabel.id = 'typeLabel' + x
+        typeLabel.htmlFor = 'type'+x
+        typeLabel.innerText = 'Type:'
+
+        let type = document.createElement('input')
+        type.type = 'text'
+        type.id = 'type' + x
+        type.name = 'type' + x
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(typeLabel)
+        newItemDiv.appendChild(type)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'AdventuringGear') {
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Weapon') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let innerBreak2 = document.createElement('br')
+        innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let damageLabel = document.createElement('label')
+        damageLabel.id = 'damageLabel' + x
+        damageLabel.htmlFor = 'damage' + x
+        damageLabel.innerText = 'Damage:'
+
+        let damage = document.createElement('input')
+        damage.type = 'text'
+        damage.id = 'damage' + x
+        damage.name = 'damage' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(innerBreak2)
+        newItemDiv.appendChild(damageLabel)
+        newItemDiv.appendChild(damage)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Armor&Shield') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let innerBreak2 = document.createElement('br')
+        innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let acLabel = document.createElement('label')
+        acLabel.id = 'acLabel'+x
+        acLabel.htmlFor = 'ac'+x
+        acLabel.innerText = 'AC:'
+
+        let ac = document.createElement('input')
+        ac.type = 'number'
+        ac.id = 'ac'+x
+        ac.name = 'ac'+x
+        ac.required = true
+        ac.placeholder = 0
+
+        let innerBreak3 = document.createElement('br')
+        innerBreak3.id = 'innerBreak3' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let equippedLabel = document.createElement('label')
+        equippedLabel.id = 'equippedLabel' + x
+        equippedLabel.htmlFor = 'equipped' + x
+        equippedLabel.innerText = 'Equipped:'
+
+        let equipped = document.createElement('input')
+        equipped.type = 'checkbox'
+        equipped.id = 'equipped' + x
+        equipped.name = 'equipped' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(innerBreak2)
+        newItemDiv.appendChild(acLabel)
+        newItemDiv.appendChild(ac)
+        newItemDiv.appendChild(innerBreak3)
+        newItemDiv.appendChild(equippedLabel)
+        newItemDiv.appendChild(equipped)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Explosive') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Tools') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Trinket') {
+
+        // nothing extra for trinkets
+
+    } else if (itemType.value == 'Firearm') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let innerBreak2 = document.createElement('br')
+        innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let damageLabel = document.createElement('label')
+        damageLabel.id = 'damageLabel' + x
+        damageLabel.htmlFor = 'damage' + x
+        damageLabel.innerText = 'Damage:'
+
+        let damage = document.createElement('input')
+        damage.type = 'text'
+        damage.id = 'damage' + x
+        damage.name = 'damage' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(innerBreak2)
+        newItemDiv.appendChild(damageLabel)
+        newItemDiv.appendChild(damage)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Other') {
+
+        x = crypto.randomUUID()
+        let weightLabel = document.createElement('label')
+        weightLabel.id = 'weightLabel' + x
+        weightLabel.htmlFor = 'weight' + x
+        weightLabel.innerText = 'Weight:'
+
+        let weight = document.createElement('input')
+        weight.type = 'number'
+        weight.id = 'weight' + x
+        weight.name = 'weight' + x
+        weight.placeholder = 0
+        weight.min = 0
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let costLabel = document.createElement('label')
+        costLabel.id = 'costLabel' + x
+        costLabel.htmlFor = 'cost' + x
+        costLabel.innerText = 'Cost:'
+
+        let cost = document.createElement('input')
+        cost.type = 'text'
+        cost.id = 'cost' + x
+        cost.name = 'cost' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(weightLabel)
+        newItemDiv.appendChild(weight)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(costLabel)
+        newItemDiv.appendChild(cost)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Wondrous') {
+
+        // nothing extra for wondrous items
+
+    } else if (itemType.value == 'Ration') {
+
+        x = crypto.randomUUID()
+        let countLabel = document.createElement('label')
+        countLabel.id = 'countLabel' + x
+        countLabel.htmlFor = 'count' + x
+        countLabel.innerText = 'Count:'
+
+        let count = document.createElement('input')
+        count.type = 'number'
+        count.id = 'count' + x
+        count.name = 'count' + x
+        count.min = 0
+        count.placeholder = 0
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(countLabel)
+        newItemDiv.appendChild(count)
+        newItemDiv.appendChild(finalBreak)
+
+    } else if (itemType.value == 'Spells') {
+
+        x = crypto.randomUUID()
+        let durationLabel = document.createElement('label')
+        durationLabel.id = 'durationLabel' + x
+        durationLabel.htmlFor = 'duration' + x
+        durationLabel.innerText = 'Duration:'
+
+        let duration = document.createElement('input')
+        duration.type = 'text'
+        duration.id = 'duration' + x
+        duration.name = 'duration' + x
+
+        let innerBreak1 = document.createElement('br')
+        innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let componentLabel = document.createElement('label')
+        componentLabel.id = 'componentLabel' + x
+        componentLabel.htmlFor = 'component' + x
+        componentLabel.innerText = 'Components:'
+
+        let component = document.createElement('input')
+        component.type = 'text'
+        component.id = 'component' + x
+        component.name = 'component' + x
+
+        let innerBreak2 = document.createElement('br')
+        innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let spellLevelLabel = document.createElement('label')
+        spellLevelLabel.id = 'spellLevelLabel' + x
+        spellLevelLabel.htmlFor = 'spellLevel' + x
+        spellLevelLabel.innerText = 'Spell Level:'
+
+        let spellLevel = document.createElement('input')
+        spellLevel.type = 'number'
+        spellLevel.id = 'spellLevel' + x
+        spellLevel.name = 'spellLevel' + x
+        spellLevel.min = 0
+        spellLevel.placeholder = 0
+
+        let innerBreak3 = document.createElement('br')
+        innerBreak3.id = 'innerBreak3' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let rangeLabel = document.createElement('label')
+        rangeLabel.id = 'rangeLabel' + x
+        rangeLabel.htmlFor = 'range' + x
+        rangeLabel.innerText = 'Range:'
+
+        let range = document.createElement('input')
+        range.type = 'text'
+        range.id = 'range' + x
+        range.name = 'range' + x
+
+        let innerBreak4 = document.createElement('br')
+        innerBreak4.id = 'innerBreak4' + crypto.randomUUID()
+
+        x = crypto.randomUUID()
+        let castingTimeLabel = document.createElement('label')
+        castingTimeLabel.id = 'castingTimeLabel' + crypto.randomUUID()
+        castingTimeLabel.htmlFor = 'castingTime' + crypto.randomUUID()
+        castingTimeLabel.innerText = 'Casting Time:'
+
+        let castingTime = document.createElement('input')
+        castingTime.type = 'text'
+        castingTime.id = 'castingTime' + x
+        castingTime.name = 'castingTime' + x
+
+        let finalBreak = document.createElement('br')
+        finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+        newItemDiv.appendChild(durationLabel)
+        newItemDiv.appendChild(duration)
+        newItemDiv.appendChild(innerBreak1)
+        newItemDiv.appendChild(componentLabel)
+        newItemDiv.appendChild(component)
+        newItemDiv.appendChild(innerBreak2)
+        newItemDiv.appendChild(spellLevelLabel)
+        newItemDiv.appendChild(spellLevel)
+        newItemDiv.appendChild(innerBreak3)
+        newItemDiv.appendChild(rangeLabel)
+        newItemDiv.appendChild(range)
+        newItemDiv.appendChild(innerBreak4)
+        newItemDiv.appendChild(castingTimeLabel)
+        newItemDiv.appendChild(castingTime)
+        newItemDiv.appendChild(finalBreak)
+
+    }
+
     newItemDiv.appendChild(removeItemLabel)
     newItemDiv.appendChild(removeItemButton)
-
     itemDiv.appendChild(newItemDiv)
 
     removeItemButton.addEventListener('click', () => {

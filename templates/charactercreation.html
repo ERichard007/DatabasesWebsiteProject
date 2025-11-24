@@ -6,208 +6,224 @@
     <title>DND Character Creator!</title>
 </head>
 <body>
-    <!--Initial Player Name and Welcome Message-->
-    <div>
-        <h1>
-            DND Character Creator
-        </h1>
+    <form action="/charactercreation" method="post">
 
-        <p>
-            "What's important is that you come to the table with a character you're excited to play." - James Wyatt
-        </p>
+        <!--Initial Player Name and Welcome Message-->
+        <div>
+            <h1>
+                DND Character Creator
+            </h1>
 
-        <label for="playerName">Player Name:</label>
-        <input type="text" id="playerName" name="playerName" placeholder="Enter Name" required>
-        <label for="characterName">Character Name:</label>
-        <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name" required>
-    
-    </div>
+            <p>
+                "What's important is that you come to the table with a character you're excited to play." - James Wyatt
+            </p>
 
-    <!--Player Chooses thier race and their class to follow
-    Note: they must do this before continuing further
-    Race and Classes should inclue a description of them as shows on the API as well as a picture to follow-->
-    <div id="raceAndClassDiv">
-
-        <!-- Race -->
-        <h2>
-            Let's Choose A Race!
-        </h2>
-
-        <label for="raceSelection">Choose Race:</label> 
-        <input type="text" id="raceSelection" name="raceSelection" placeholder="Enter Race" required><br> 
-        Speed: <input type="number" id="speed" name="speed" placeholder="Enter Speed" required><br>
-
-        <!-- Class -->
-        <h2>
-            Choose a Class!
-        </h2>
-
-        <label for="addClass">Add Class</label>
-        <button type="button" id="addClass" name="addClass">➕</button><br>
-
-        <label for="classSelection">Choose Class:</label>
-        <input type="text" id="classSelection" name="classSelection" placeholder="Enter Class" required><br>
-
-        <div id="classDiv" class="classDiv">
-            <img src="{{ url_for('static', filename='assets/levelImages/Level 1-5.png') }}" height="100" width="100" id="levelImage"><br>
-            Enter Class Level (1-20): <input type="number" id="levelInput" name="levelInput" min="1" max="20" value="1" required><br>
-            Proficiency Bonus: <input type="number" id="profBonus" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
-            Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
-            Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
-            Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass" required><br>
-            Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
-            Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
+            <label for="playerName">Player Name:</label>
+            <input type="text" id="playerName" name="playerName" placeholder="Enter Name" required>
+            <label for="characterName">Character Name:</label>
+            <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name" required>
+        
         </div>
-     
 
-        <!-- <img id="raceImage" alt="Race Image" src="" height="300" width="500"> 
-        DEPRECATED for now, but would be cool if maybe incorporated AI here to auto search an image to retrieve based on the prompt? 
-        -->
-    </div>
+        <!--Player Chooses thier race and their class to follow
+        Note: they must do this before continuing further
+        Race and Classes should inclue a description of them as shows on the API as well as a picture to follow-->
+        <div id="raceAndClassDiv">
 
-    <!-- Dice Roller -->
-    <div>
-        <h2>Dice Roller</h2>
-        <p>This will give roll your stats for you using the traditional rules of rolling 4 d6 die and choosing the 3 highest until you have 6 values</p>
-        <p id="dice1"></p>
-        <p id="dice2"></p>
-        <p id="dice3"></p>
-        <p id="dice4"></p>
-        <p id="rollResults"></p>
-        <button id="rollDice">Roll</button> 
-        <button id="clearDice">Clear Rolls</button>
-        <p>Your Totals:</p>
-        <ol id="totalsList">
-        </ol>
-    </div>
+            <!-- Race -->
+            <h2>
+                Let's Choose A Race!
+            </h2>
 
-    <!-- Skills, Abilities, Saving Throws, RandomStats-->
-    <div>
-        <!-- Random Stats -->
-        <h2>Experience and Background</h2>
-        Experience: <input type="number" id="experience" name="experience" required><br>
-        Background: <input type="text" id="background" name="background" placeholder="Enter background" required><br>
+            <label for="raceSelection">Choose Race:</label> 
+            <input type="text" id="raceSelection" name="raceSelection" placeholder="Enter Race" required><br> 
+            Speed: <input type="number" id="speed" name="speed" placeholder="Enter Speed" required><br>
 
-        <!-- Abilities -->
-        <h2>Allocate Dice to Your Ability Scores</h2>
-        <p> Note: you are not required to use the given dice roller and are free to use whatever you want to roll for stats</p>
-        Strength: <input type="number" id="strength" name="strength" placeholder="Enter Strength Score" required><br>
-        Dexterity: <input type="number" id="dexterity" name="dexterity" placeholder="Enter Dexterity Score" required><br>
-        Constitution: <input type="number" id="constitution" name="constitution" placeholder="Enter Constitution Score" required><br>
-        Intelligence: <input type="number" id="intelligence" name="intelligence" placeholder="Enter Intelligence Score" required><br>
-        Wisdom: <input type="number" id="wisdom" name="wisdom" placeholder="Enter Wisdom Score" required><br>
-        Charisma: <input type="number" id="charisma" name="charisma" placeholder="Enter Charisma Score" required><br>
+            <!-- Class -->
+            <h2>
+                Choose a Class!
+            </h2>
 
-        <!-- Saving Throws -->
-        <h2>Saving Throws</h2>
-        <p>Indicate if you are proficient</p>
-        Strength Saving Throw: <input type="checkbox" id="strSave" name="strSave"><br>
-        Dexterity Saving Throw: <input type="checkbox" id="dexSave" name="dexSave"><br>
-        Constitution Saving Throw: <input type="checkbox" id="conSave" name="conSave"><br>
-        Intelligence Saving Throw: <input type="checkbox" id="intSave" name="intSave"><br>
-        Wisdom Saving Throw: <input type="checkbox" id="wisSave" name="wisSave"><br>
-        Charisma Saving Throw: <input type="checkbox" id="chaSave" name="chaSave"><br>
+            <label for="addClass">Add Class</label>
+            <button type="button" id="addClass" name="addClass">➕</button><br>
 
-        <!-- Skills -->
-        <h2>Skills</h2>
-        <p>Indicate if you are proficient</p>
-        Acrobatics: <input type="checkbox" id="acrobatics" name="acrobatics"><br>
-        Animal Handling: <input type="checkbox" id="animalHandling" name="animalHandling"><br>
-        Arcana: <input type="checkbox" id="arcana" name="arcana"><br>
-        Athletics: <input type="checkbox" id="athletics" name="athletics"><br>
-        Deception: <input type="checkbox" id="deception" name="deception"><br>
-        History: <input type="checkbox" id="history" name="history"><br>
-        Insight: <input type="checkbox" id="insight" name="insight"><br>
-        Intimidation: <input type="checkbox" id="intimidation" name="intimidation"><br>
-        Investigation: <input type="checkbox" id="investigation" name="investigation"><br>
-        Medicine: <input type="checkbox" id="medicine" name="medicine"><br>
-        Nature: <input type="checkbox" id="nature" name="nature"><br>
-        Perception: <input type="checkbox" id="perception" name="perception"><br>
-        Performance: <input type="checkbox" id="performance" name="performance"><br>
-        Persuasion: <input type="checkbox" id="persuasion" name="persuasion"><br>
-        Religion: <input type="checkbox" id="religion" name="religion"><br>
-        Sleight of Hand: <input type="checkbox" id="sleightOfHand" name="sleightOfHand"><br>
-        Stealth: <input type="checkbox" id="stealth" name="stealth"><br>
-        Survival: <input type="checkbox" id="survival" name="survival"><br>
-    </div>
+            <label for="classSelection">Choose Class:</label>
+            <input type="text" id="classSelection" name="classSelection" placeholder="Enter Class" required><br>
 
-    <!-- Features and Traits -->
-    <div id="featureDiv">
-        <h2>Features and Traits</h2>
-        <p> This is the place to add any unique features or traits of your character. This includes things like Dark vision or abilities that your class has given you like Chronal Shift</p>
-        Add Feature/Trait <button type="button" id="addFeature" name="addFeature">➕</button><br>
-    </div>
+            <div id="classDiv" class="classDiv">
+                <img src="{{ url_for('static', filename='assets/levelImages/Level 1-5.png') }}" height="100" width="100" id="levelImage"><br>
+                Enter Class Level (1-20): <input type="number" id="levelInput" name="levelInput" min="1" max="20" value="1" required><br>
+                Proficiency Bonus: <input type="number" id="profBonus" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
+                Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
+                Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
+                Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass" required><br>
+                Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
+                Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
+            </div>
+        
 
-    <!-- Additional Proficiencies and Languages -->
-    <div id="proficiencyDiv">
-        <h2>Additional Proficiencies and Languages</h2>
-        <p>Here is where you add anything that you are proficient with given possibly your background, class, or even just your backstory. Also any languages you speak go here!</p>
-        Add Proficiency <button type="button" id="addProficiency" name="addProficiency">➕</button>
-        <label for="removeProficiency" id="removeProficiencyLabel" hidden>Remove Proficiency</label>
-        <button type="button" id="removeProficiency" name="removeProficiency" hidden>➖</button><br>
-    </div>
+            <!-- <img id="raceImage" alt="Race Image" src="" height="300" width="500"> 
+            DEPRECATED for now, but would be cool if maybe incorporated AI here to auto search an image to retrieve based on the prompt? 
+            -->
+        </div>
 
-    <!-- Inventory Item Management-->
-    <div>
-        <h2>
-            Add In Items To Your Inventory
-        </h2>
+        <!-- Dice Roller -->
+        <div>
+            <h2>Dice Roller</h2>
+            <p>This will give roll your stats for you using the traditional rules of rolling 4 d6 die and choosing the 3 highest until you have 6 values</p>
+            <p id="dice1"></p>
+            <p id="dice2"></p>
+            <p id="dice3"></p>
+            <p id="dice4"></p>
+            <p id="rollResults"></p>
+            <button id="rollDice">Roll</button> 
+            <button id="clearDice">Clear Rolls</button>
+            <p>Your Totals:</p>
+            <ol id="totalsList">
+            </ol>
+        </div>
 
-        <p> 
-            It is important to note that all of the following categories come with a designated spot to insert a name along with additional descriptions of the items <br>
-            Note that items come in groups of the following: <br>
-            <strong>Container</strong>-> An object that hold water, important for implimentation of water tracking <br>
-            <strong>Siege Equipment</strong> -> Has AC, Damage Immunities, and Hitpoints <br>
-            <strong>Poison</strong> -> Has a type and cost <br>
-            <strong>Adventuring Gear</strong> -> Has cost and weight <br>
-            <strong>Weapon</strong> -> Has a weight, cost, and damage <br>
-            <strong>Armor & Shield</strong> -> has an equipped status, weight, cost, and AC <br>
-            <strong>Explosive</strong> -> Has a cost and weight <br>
-            <strong>Tools</strong> -> Have a cost and weight <br>
-            <strong>Trinket</strong> -> nothing special <br>
-            <strong>Firearm</strong> -> Have cost, damage, and weight <br>
-            <strong>Other</strong> -> The broad category of anything that doesn't fit the previous, has a cost and weight <br>
-            <strong>Wondrous</strong> -> nothing special <br>
-            <strong>Ration</strong> -> important for the implementation of the rationing tracker, has nothing special <br>
-            <strong>Spells</strong> -> Yes.. Spells! These are not technically items, but you will add any spells you have here! Spells have a duration, components, level, range, and casting time. <br>
-        </p>
+        <!-- Skills, Abilities, Saving Throws, RandomStats-->
+        <div>
+            <!-- Random Stats -->
+            <h2>Experience and Background</h2>
+            Experience: <input type="number" id="experience" name="experience" required><br>
+            Background: <input type="text" id="background" name="background" placeholder="Enter background" required><br>
 
-        <label for="addItem">Add Item</label>
-        <button type="button" id="addItem" name="addItem">➕</button>
+            <!-- Abilities -->
+            <h2>Allocate Dice to Your Ability Scores</h2>
+            <p> Note: you are not required to use the given dice roller and are free to use whatever you want to roll for stats</p>
+            Strength: <input type="number" id="strength" name="strength" placeholder="Enter Strength Score" required><br>
+            Dexterity: <input type="number" id="dexterity" name="dexterity" placeholder="Enter Dexterity Score" required><br>
+            Constitution: <input type="number" id="constitution" name="constitution" placeholder="Enter Constitution Score" required><br>
+            Intelligence: <input type="number" id="intelligence" name="intelligence" placeholder="Enter Intelligence Score" required><br>
+            Wisdom: <input type="number" id="wisdom" name="wisdom" placeholder="Enter Wisdom Score" required><br>
+            Charisma: <input type="number" id="charisma" name="charisma" placeholder="Enter Charisma Score" required><br>
 
-        <div id="itemDiv"></div>
+            <!-- Saving Throws -->
+            <h2>Saving Throws</h2>
+            <p>Indicate if you are proficient</p>
+            Strength Saving Throw: <input type="checkbox" id="strSave" name="strSave"><br>
+            Dexterity Saving Throw: <input type="checkbox" id="dexSave" name="dexSave"><br>
+            Constitution Saving Throw: <input type="checkbox" id="conSave" name="conSave"><br>
+            Intelligence Saving Throw: <input type="checkbox" id="intSave" name="intSave"><br>
+            Wisdom Saving Throw: <input type="checkbox" id="wisSave" name="wisSave"><br>
+            Charisma Saving Throw: <input type="checkbox" id="chaSave" name="chaSave"><br>
 
-    </div>
+            <!-- Skills -->
+            <h2>Skills</h2>
+            <p>Indicate if you are proficient</p>
+            Acrobatics: <input type="checkbox" id="acrobatics" name="acrobatics"><br>
+            Animal Handling: <input type="checkbox" id="animalHandling" name="animalHandling"><br>
+            Arcana: <input type="checkbox" id="arcana" name="arcana"><br>
+            Athletics: <input type="checkbox" id="athletics" name="athletics"><br>
+            Deception: <input type="checkbox" id="deception" name="deception"><br>
+            History: <input type="checkbox" id="history" name="history"><br>
+            Insight: <input type="checkbox" id="insight" name="insight"><br>
+            Intimidation: <input type="checkbox" id="intimidation" name="intimidation"><br>
+            Investigation: <input type="checkbox" id="investigation" name="investigation"><br>
+            Medicine: <input type="checkbox" id="medicine" name="medicine"><br>
+            Nature: <input type="checkbox" id="nature" name="nature"><br>
+            Perception: <input type="checkbox" id="perception" name="perception"><br>
+            Performance: <input type="checkbox" id="performance" name="performance"><br>
+            Persuasion: <input type="checkbox" id="persuasion" name="persuasion"><br>
+            Religion: <input type="checkbox" id="religion" name="religion"><br>
+            Sleight of Hand: <input type="checkbox" id="sleightOfHand" name="sleightOfHand"><br>
+            Stealth: <input type="checkbox" id="stealth" name="stealth"><br>
+            Survival: <input type="checkbox" id="survival" name="survival"><br>
+        </div>
 
-    <!-- Stats -->
-    <div>
-    </div>
+        <!-- Features and Traits -->
+        <div id="featureDiv">
+            <h2>Features and Traits</h2>
+            <p> This is the place to add any unique features or traits of your character. This includes things like Dark vision or abilities that your class has given you like Chronal Shift</p>
+            Add Feature/Trait <button type="button" id="addFeature" name="addFeature">➕</button><br>
+        </div>
 
-    <!-- Character Lore -->
-    <div>
-        <h2>Character Lore</h2>
-        <p>These are not necessary for practical gameplay, but are very important lore wise! Leave them out at your own risk and to your dm's chagrin!</p>
-        Backstory: <input type="text" id="backstory" name="backstory"><br>
-        Allies&Organizations: <input type="text" id="allies" name="allies"><br>
-        Skin: <input type="text" id="skin" name="skin"><br>
-        Eyes: <input type="text" id="eyes" name="eyes"><br>
-        Ideals: <input type="text" id="ideals" name="ideals"><br>
-        Bonds: <input type="text" id="bonds" name="bonds"><br>
-        Flaws: <input type="text" id="flaws" name="flaws"><br>
-        Age: <input type="text" id="age" name="age"><br>
-        Personality Traits: <input type="text" id="traits" name="traits"><br>
-        Weight: <input type="text" id="weight" name="weight"><br>
-        Height: <input type="text" id="height" name="height"><br>
-        Appearance: <input type="text" id="appearance" name="appearance"><br>
-        Hair: <input type="text" id="hair" name="hair"><br>
-        Alignment: <input type="text" id="alignment" name="alignment"><br>
-    </div>
+        <!-- Additional Proficiencies and Languages -->
+        <div id="proficiencyDiv">
+            <h2>Additional Proficiencies and Languages</h2>
+            <p>Here is where you add anything that you are proficient with given possibly your background, class, or even just your backstory. Also any languages you speak go here!</p>
+            Add Proficiency <button type="button" id="addProficiency" name="addProficiency">➕</button><br>
+        </div>
 
-    <h1>Done?</h1>
-    <p>Submit your entire form here, required values you did not fill out will warn you</p>
-    <button type="submit" id="submitCharacterCreator" name="submitCharacterCreator">Submit</button>
+        <!-- Inventory Item Management-->
+        <div>
+            <h2>
+                Add In Items To Your Inventory
+            </h2>
+
+            <p> 
+                It is important to note that all of the following categories come with a designated spot to insert a name along with additional descriptions of the items <br>
+                Note that items come in groups of the following: <br>
+                <strong>Container</strong>-> An object that hold water, important for implimentation of water tracking <br>
+                <strong>Siege Equipment</strong> -> Has AC, Damage Immunities, and Hitpoints <br>
+                <strong>Poison</strong> -> Has a type and cost <br>
+                <strong>Adventuring Gear</strong> -> Has cost and weight <br>
+                <strong>Weapon</strong> -> Has a weight, cost, and damage <br>
+                <strong>Armor & Shield</strong> -> has an equipped status, weight, cost, and AC <br>
+                <strong>Explosive</strong> -> Has a cost and weight <br>
+                <strong>Tools</strong> -> Have a cost and weight <br>
+                <strong>Trinket</strong> -> nothing special <br>
+                <strong>Firearm</strong> -> Have cost, damage, and weight <br>
+                <strong>Other</strong> -> The broad category of anything that doesn't fit the previous, has a cost and weight <br>
+                <strong>Wondrous</strong> -> nothing special <br>
+                <strong>Ration</strong> -> important for the implementation of the rationing tracker, has nothing special <br>
+                <strong>Spells</strong> -> Yes.. Spells! These are not technically items, but you will add any spells you have here! Spells have a duration, components, level, range, and casting time. <br>
+            </p>
+
+            <select id="itemType" name="itemType">
+                <option value="Container">Container</option>
+                <option value="SiegeEquipment">Siege Equipment</option>
+                <option value="Poison">Poison</option>
+                <option value="AdventuringGear">Adventuring Gear</option>
+                <option value="Weapon">Weapon</option>
+                <option value="Armor&Shield">Armor & Shield</option>
+                <option value="Explosive">Explosive</option>
+                <option value="Tools">Tools</option>
+                <option value="Trinket">Trinket</option>
+                <option value="Firearm">Firearm</option>
+                <option value="Other">Other</option>
+                <option value="Wondrous">Wondrous</option>
+                <option value="Ration">Ration</option>
+                <option value="Spells">Spells</option>
+            </select>
+
+            <label for="addItem">Add Item</label>
+            <button type="button" id="addItem" name="addItem">➕</button>
+
+            <div id="itemDiv"></div>
+        </div>
+
+        <!-- Stats -->
+        <div>
+        </div>
+
+        <!-- Character Lore -->
+        <div>
+            <h2>Character Lore</h2>
+            <p>These are not necessary for practical gameplay, but are very important lore wise! Leave them out at your own risk and to your dm's chagrin!</p>
+            Backstory: <input type="text" id="backstory" name="backstory"><br>
+            Allies&Organizations: <input type="text" id="allies" name="allies"><br>
+            Skin: <input type="text" id="skin" name="skin"><br>
+            Eyes: <input type="text" id="eyes" name="eyes"><br>
+            Ideals: <input type="text" id="ideals" name="ideals"><br>
+            Bonds: <input type="text" id="bonds" name="bonds"><br>
+            Flaws: <input type="text" id="flaws" name="flaws"><br>
+            Age: <input type="text" id="age" name="age"><br>
+            Personality Traits: <input type="text" id="traits" name="traits"><br>
+            Weight: <input type="text" id="weight" name="weight"><br>
+            Height: <input type="text" id="height" name="height"><br>
+            Appearance: <input type="text" id="appearance" name="appearance"><br>
+            Hair: <input type="text" id="hair" name="hair"><br>
+            Alignment: <input type="text" id="alignment" name="alignment"><br>
+        </div>
+
+        <h1>Done?</h1>
+        <p>Submit your entire form here, required values you did not fill out will warn you</p>
+        <button type="submit" id="submitCharacterCreator" name="submitCharacterCreator">Submit</button>
+    </form>
 
     <script src="{{ url_for('static', filename='js/charactercreation.js') }}"></script>
-  
 </body>
 </html>
