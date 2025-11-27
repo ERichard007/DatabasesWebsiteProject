@@ -21,7 +21,9 @@
             <label for="playerName">Player Name:</label>
             <input type="text" id="playerName" name="playerName" placeholder="Enter Name" required>
             <label for="characterName">Character Name:</label>
-            <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name" required>
+            <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name" required><br>
+            <label for="companion" id="companionLabel" name="companionLabel">Is this a companion?</label>
+            <input type="checkbox" id="companion" name="companion">
         
         </div>
 
@@ -56,7 +58,7 @@
                 Proficiency Bonus: <input type="number" id="profBonus" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
                 Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
                 Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
-                Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass" required><br>
+                Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass"><br>
                 Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
                 Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
             </div>
@@ -197,6 +199,12 @@
 
         <!-- Stats -->
         <div>
+            <h2>Currency</h2>
+            Copper Pieces: <input type="number" id="copper" name="copper" min="0" placeholder="0"><br>
+            Silver Pieces: <input type="number" id="silver" name="silver" min="0" placeholder="0"><br>
+            Electrum Pieces: <input type="number" id="electrum" name="electrum" min="0" placeholder="0"><br>
+            Gold Pieces: <input type="number" id="gold" name="gold" min="0" placeholder="0"><br>
+            Platinum Pieces: <input type="number" id="platinum" name="platinum" min="0" placeholder="0"><br>
         </div>
 
         <!-- Character Lore -->

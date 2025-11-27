@@ -105,7 +105,6 @@ addClass.addEventListener('click', () => {
 
         let x = crypto.randomUUID()
         child.id += x
-        child.name += x
     })
 
     let x = crypto.randomUUID()

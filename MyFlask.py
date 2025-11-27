@@ -26,7 +26,7 @@ def login():
             session["userid"] = row[1]
             return redirect("/list")
         else:
-            return "Incoreect username or password"
+            return "Incorrect username or password"
             
 
     return render_template("login.html")
@@ -85,7 +85,79 @@ def character(cid):
 @app.route("/charactercreation", methods=["GET","POST"]) #character creation page
 def create_character():
     if request.method == "POST":
-        print("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL!")
+        conn = sqlite3.connect("DnDCharacterManager.db")
+        cursor = conn.cursor()
+
+        #form variables from character creation page
+        print(request.form)
+
+        cursor.execute("SELECT MAX(characterid) FROM Character")
+        new_id = cursor.fetchone()[0] + 1
+        characterid = new_id
+
+        userid = session.get("userid") 
+        isCompanion = request.form['companion']
+        ownerid = new_id if isCompanion else None
+
+        className = request.form.getlist('classSelection')
+        profBonus = request.form.getlist('profBonus')
+        hitDice = request.form.getlist('hitDice')
+        maxHP = request.form.getlist('maxHP')
+        levelInput = request.form.getlist('levelInput')
+        spellCastingClass = request.form.getlist('spellcastingClass')
+        spellSlots = request.form.getlist('spellSlots')
+        spellMod = request.form.getlist('spellMod')
+
+
+        #database insertion
+        cursor.execute("INSERT INTO Character(userid, background, iscompanion, name, playername, electrum, gold, silver, copper, platinum, ownerid) VALUES(?,?,?,?,?,?,?,?,?,?,?)", (userid,request.form['background'],isCompanion,request.form['characterName'],request.form['playerName'],request.form['electrum'],request.form['gold'],request.form['silver'],request.form['copper'],request.form['platinum'],ownerid,))
+
+        cursor.execute("INSERT INTO Stats(characterid, exp) VALUES(?,?)", (characterid, request.form['experience'],))
+
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Acrobatics", request.form['dexterity'], request.form['acrobatics'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Animal Handling", request.form['wisdom'], request.form['animalHandling'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Arcana", request.form['intelligence'], request.form['arcana'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Athletics", request.form['strength'], request.form['athletics'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Deception", request.form['charisma'], request.form['deception'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "History", request.form['intelligence'], request.form['history'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Insight", request.form['wisdom'], request.form['insight'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Intimidation", request.form['charisma'], request.form['intimidation'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Investigation", request.form['intelligence'], request.form['investigation'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Medicine", request.form['wisdom'], request.form['medicine'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Nature", request.form['intelligence'], request.form['nature'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Perception", request.form['wisdom'], request.form['perception'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Performance", request.form['charisma'], request.form['performance'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Persuasion", request.form['charisma'], request.form['persuasion'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Religion", request.form['intelligence'], request.form['religion'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Sleight of Hand", request.form['dexterity'], request.form['sleightOfHand'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], request.form['stealth'],))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], request.form['survival'],))    
+
+        for className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod in zip(className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod):
+            cursor.execute("INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, currenthitpoints, classlevel, spellcastingmodifier) VALUES(?,?,?,?,?,?,?,?,?,?)", (characterid, className, profBonus, hitDice, hitDice, maxHP, maxHP, levelInput, spellMod,))
+
+        cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
+
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Strength", request.form['strSave'], request.form['strength'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Dexterity", request.form['dexSave'], request.form['dexterity'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Constitution", request.form['conSave'], request.form['constitution'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Intelligence", request.form['intSave'], request.form['intelligence'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Wisdom", request.form['wisSave'], request.form['wisdom'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Charisma", request.form['chaSave'], request.form['charisma'],))
+
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Strength", request.form['strength'],))
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Dexterity", request.form['dexterity'],))
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Constitution", request.form['constitution'],))
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Intelligence", request.form['intelligence'],))
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Wisdom", request.form['wisdom'],))
+        cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Charisma", request.form['charisma'],))
+
+        cursor.execute("")
+
+        conn.commit()
+        cursor.close()
+
+        return redirect('/list')
         
     return render_template("charactercreation.html")
 

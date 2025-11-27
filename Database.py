@@ -31,7 +31,6 @@ Stats(
 characterid INTEGER REFERENCES Character(characterid),
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 inspiration INTEGER CHECK(inspiration >= 0) DEFAULT 0,
-currenthitdice INTEGER CHECK(currenthitdice >= 0) DEFAULT 0,
 temporaryhitpoints INTEGER CHECK(temporaryhitpoints >= 0) DEFAULT 0,
 exp INTEGER CHECK(exp >= 0) DEFAULT 0
 )"""
@@ -51,6 +50,7 @@ characterid INTEGER REFERENCES Character(characterid),
 name TEXT,
 proficiencybonus INTEGER NOT NULL CHECK(proficiencybonus >= 0),
 totalhitdice INTEGER NOT NULL CHECK(totalhitdice >= 0),
+currenthitdice INTEGER CHECK(currenthitdice >= 0) DEFAULT 0,
 maxhitpoints INTEGER NOT NULL CHECK(maxhitpoints >= 0),
 currenthitpoints INTEGER CHECK(currenthitpoints <= maxhitpoints) DEFAULT 0,
 classlevel INTEGER NOT NULL CHECK(classlevel >= 0),
