@@ -152,7 +152,7 @@ def create_character():
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Wisdom", request.form['wisdom'],))
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Charisma", request.form['charisma'],))
 
-        cursor.execute("")
+        cursor.execute("INSERT INTO Feat(characterid, name, description) VALUES(?,?,?)", (characterid,))
 
         conn.commit()
         cursor.close()

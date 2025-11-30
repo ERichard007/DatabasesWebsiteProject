@@ -28,6 +28,10 @@ const spellcastingModifier = document.getElementById('spellMod')
 
 const addClass = document.getElementById('addClass')
 
+//Feat Variables
+const featDiv = document.getElementById('featDiv')
+const addFeat = document.getElementById('addFeat')
+
 //Features/Trait Variables
 const featureDiv = document.getElementById('featureDiv')
 const addFeature = document.getElementById('addFeature')
@@ -137,6 +141,73 @@ classLevel.addEventListener('input', () => {
     classImageChange(classLevel)
 })
 
+//feat adding functionality
+addFeat.addEventListener('click', () => {
+    let x = crypto.randomUUID()
+    let nameLabel = document.createElement('label')
+    nameLabel.htmlFor= 'name' + x
+    nameLabel.id = 'nameLabel' + x
+    nameLabel.innerText = 'Name:'
+
+    let name = document.createElement('input')
+    name.type = 'text'
+    name.id = 'name' + x
+    name.name = 'name' + x
+    name.required = true
+
+    let break1 = document.createElement('br')
+    break1.id = 'break1' + crypto.randomUUID()
+
+    x = crypto.randomUUID()
+    let descLabel = document.createElement('label')
+    descLabel.htmlFor = 'desc' + x
+    descLabel.id = 'descLabel' + x
+    descLabel.innerText = 'Description: '
+
+    let desc = document.createElement('input')
+    desc.type = 'text'
+    desc.id = 'desc' + x
+    desc.name = 'desc' + x
+    desc.required = true
+
+    let break2 = document.createElement('br')
+    break2.id = 'break2' + crypto.randomUUID()
+
+    x = crypto.randomUUID()
+    let removeLabel = document.createElement('label')
+    removeLabel.id = 'removeLabel' + x
+    removeLabel.htmlFor = 'remove' + x
+    removeLabel.innerText = 'Remove'
+
+    let remove = document.createElement('button')
+    remove.type = 'button'
+    remove.id = 'remove' + x
+    remove.name = 'remove' + x
+    remove.innerText = '➖'
+
+    let finalBreak = document.createElement('br')
+    finalBreak.id = 'finalBreak' + crypto.randomUUID()
+
+    let newDiv = document.createElement('div')
+    newDiv.id = 'addedFeat' + crypto.randomUUID()
+
+    remove.addEventListener('click', () => {
+        newDiv.remove()
+    })
+
+    newDiv.appendChild(nameLabel)
+    newDiv.appendChild(name)
+    newDiv.appendChild(break1)
+    newDiv.appendChild(descLabel)
+    newDiv.appendChild(desc)
+    newDiv.appendChild(break2)
+    newDiv.appendChild(removeLabel)
+    newDiv.appendChild(remove)
+    newDiv.appendChild(finalBreak)
+
+    featDiv.appendChild(newDiv)
+})
+
 //features and trait adding fucntionality
 addFeature.addEventListener('click', () => {
     let newDiv = document.createElement('div')
@@ -151,7 +222,7 @@ addFeature.addEventListener('click', () => {
     let name = document.createElement('input')
     name.type = 'text'
     name.id = 'name' + x
-    name.name = 'name' + x
+    name.name = 'name'
     name.required = true
 
     x = crypto.randomUUID()
@@ -163,7 +234,7 @@ addFeature.addEventListener('click', () => {
     let desc = document.createElement('input')
     desc.type = 'text'
     desc.id = 'description' + x
-    desc.name = 'description' + x
+    desc.name = 'description'
     desc.required = true
 
     x = crypto.randomUUID()
