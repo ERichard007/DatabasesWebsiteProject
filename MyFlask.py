@@ -108,6 +108,13 @@ def create_character():
         spellSlots = request.form.getlist('spellSlots')
         spellMod = request.form.getlist('spellMod')
 
+        featNames = request.form.getlist('featName')
+        featDescriptions = request.form.getlist('featDesc')
+
+        featureNames = request.form.getlist('featureName')
+        featureDescriptions = request.form.getlist('featureDescription')
+
+        
 
         #database insertion
         cursor.execute("INSERT INTO Character(userid, background, iscompanion, name, playername, electrum, gold, silver, copper, platinum, ownerid) VALUES(?,?,?,?,?,?,?,?,?,?,?)", (userid,request.form['background'],isCompanion,request.form['characterName'],request.form['playerName'],request.form['electrum'],request.form['gold'],request.form['silver'],request.form['copper'],request.form['platinum'],ownerid,))
@@ -152,7 +159,12 @@ def create_character():
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Wisdom", request.form['wisdom'],))
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Charisma", request.form['charisma'],))
 
-        cursor.execute("INSERT INTO Feat(characterid, name, description) VALUES(?,?,?)", (characterid,))
+        for featName, featDesc in zip(featNames, featDescriptions):
+            cursor.execute("INSERT INTO Feat(characterid, name, description) VALUES(?,?,?)", (characterid, featName, featDesc,))
+
+        for featureName, featureDesc in zip(featureNames, featureDescriptions):
+            cursor.execute("INSERT INTO Feature(characterid, name, description) VALUES(?,?,?)", (characterid, featureName, featureDesc,))
+        
 
         conn.commit()
         cursor.close()

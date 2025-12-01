@@ -152,7 +152,7 @@ addFeat.addEventListener('click', () => {
     let name = document.createElement('input')
     name.type = 'text'
     name.id = 'name' + x
-    name.name = 'name' + x
+    name.name = 'featName'
     name.required = true
 
     let break1 = document.createElement('br')
@@ -167,7 +167,7 @@ addFeat.addEventListener('click', () => {
     let desc = document.createElement('input')
     desc.type = 'text'
     desc.id = 'desc' + x
-    desc.name = 'desc' + x
+    desc.name = 'featDesc'
     desc.required = true
 
     let break2 = document.createElement('br')
@@ -222,7 +222,7 @@ addFeature.addEventListener('click', () => {
     let name = document.createElement('input')
     name.type = 'text'
     name.id = 'name' + x
-    name.name = 'name'
+    name.name = 'featureName'
     name.required = true
 
     x = crypto.randomUUID()
@@ -234,7 +234,7 @@ addFeature.addEventListener('click', () => {
     let desc = document.createElement('input')
     desc.type = 'text'
     desc.id = 'description' + x
-    desc.name = 'description'
+    desc.name = 'featureDescription'
     desc.required = true
 
     x = crypto.randomUUID()
