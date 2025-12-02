@@ -163,8 +163,10 @@ def create_character():
             cursor.execute("INSERT INTO Feat(characterid, name, description) VALUES(?,?,?)", (characterid, featName, featDesc,))
 
         for featureName, featureDesc in zip(featureNames, featureDescriptions):
-            cursor.execute("INSERT INTO Feature(characterid, name, description) VALUES(?,?,?)", (characterid, featureName, featureDesc,))
+            cursor.execute("INSERT INTO Features(characterid, name, description) VALUES(?,?,?)", (characterid, featureName, featureDesc,))
         
+        cursor.execute("INSERT INTO Lore(characterid, skin, eye, ideals, bonds, flaws, age, personalitytraits, weight, height, allies, appearance, backstory, hair, alignment) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (characterid, request.form['skin'], request.form['eyes'], request.form['ideals'], request.form['bonds'], request.form['flaws'], request.form['age'], request.form['traits'], request.form['weight'], request.form['height'], request.form['allies'], request.form['appearance'], request.form['backstory'], request.form['hair'], request.form['alignment'],))
+
 
         conn.commit()
         cursor.close()
