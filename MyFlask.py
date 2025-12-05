@@ -89,14 +89,14 @@ def create_character():
         cursor = conn.cursor()
 
         #form variables from character creation page
-        print(request.form)
-
         cursor.execute("SELECT MAX(characterid) FROM Character")
-        new_id = cursor.fetchone()[0] + 1
+        row = cursor.fetchone()
+        print(row)
+        new_id = (row[0] or 0) + 1
         characterid = new_id
 
         userid = session.get("userid") 
-        isCompanion = request.form['companion']
+        isCompanion = 1 if request.form.get('companion') == 'on' else 0
         ownerid = new_id if isCompanion else None
 
         className = request.form.getlist('classSelection')
@@ -114,43 +114,74 @@ def create_character():
         featureNames = request.form.getlist('featureName')
         featureDescriptions = request.form.getlist('featureDescription')
 
-        
+        itemNames = request.form.getlist('itemName')
+        itemDescriptions = request.form.getlist('itemDesc')
+        ozFilledOfWaters = request.form.getlist('ozFilledOfWater')
+        siegeACs = request.form.getlist('siegeAc')
+        siegeDamageImmunities = request.form.getlist('siegeDamageImmunities')
+        siegeHPs = request.form.getlist('siegeHP')
+        poisonTypes = request.form.getlist('poisonType')
+        poisonCosts = request.form.getlist('poisonCost')
+        adventuringGearCosts = request.form.getlist('adventuringGearCost')
+        adventuringGearWeights = request.form.getlist('adventuringGearWeight')
+        weaponWeights = request.form.getlist('weaponWeight')
+        weaponCosts = request.form.getlist('weaponCost')
+        weaponDamages = request.form.getlist('weaponDamage')
+        armorShieldWeights = request.form.getlist('armor&ShieldWeight')
+        armorShieldCosts = request.form.getlist('armor&ShieldCost')
+        armorShieldAcs = request.form.getlist('armor&ShiledAc')
+        armorShieldEquippeds = request.form.getlist('armor&ShieldEquipped')
+        explosiveWeights = request.form.getlist('explosiveWeight')
+        explosiveCosts = request.form.getlist('explosiveCost')
+        toolWeights = request.form.getlist('toolWeight')
+        toolCosts = request.form.getlist('toolCost')
+        firearmWeights = request.form.getlist('firearmWeight')
+        firearmCosts = request.form.getlist('firearmCost')
+        firearmDamages = request.form.getlist('firearmDamage')
+        otherWeights = request.form.getlist('otherWeight')
+        otherCosts = request.form.getlist('otherCost')
+        rationCounts = request.form.getlist('rationCount')
+        spellDurations = request.form.getlist('spellDuration')
+        spellComponents = request.form.getlist('spellComponent')
+        spellLevels = request.form.getlist('spellLevel')
+        spellRanges = request.form.getlist('spellRange')
+        spellCastingTimes = request.form.getlist('spellCastingTime')
 
         #database insertion
         cursor.execute("INSERT INTO Character(userid, background, iscompanion, name, playername, electrum, gold, silver, copper, platinum, ownerid) VALUES(?,?,?,?,?,?,?,?,?,?,?)", (userid,request.form['background'],isCompanion,request.form['characterName'],request.form['playerName'],request.form['electrum'],request.form['gold'],request.form['silver'],request.form['copper'],request.form['platinum'],ownerid,))
 
         cursor.execute("INSERT INTO Stats(characterid, exp) VALUES(?,?)", (characterid, request.form['experience'],))
 
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Acrobatics", request.form['dexterity'], request.form['acrobatics'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Animal Handling", request.form['wisdom'], request.form['animalHandling'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Arcana", request.form['intelligence'], request.form['arcana'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Athletics", request.form['strength'], request.form['athletics'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Deception", request.form['charisma'], request.form['deception'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "History", request.form['intelligence'], request.form['history'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Insight", request.form['wisdom'], request.form['insight'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Intimidation", request.form['charisma'], request.form['intimidation'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Investigation", request.form['intelligence'], request.form['investigation'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Medicine", request.form['wisdom'], request.form['medicine'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Nature", request.form['intelligence'], request.form['nature'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Perception", request.form['wisdom'], request.form['perception'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Performance", request.form['charisma'], request.form['performance'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Persuasion", request.form['charisma'], request.form['persuasion'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Religion", request.form['intelligence'], request.form['religion'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Sleight of Hand", request.form['dexterity'], request.form['sleightOfHand'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], request.form['stealth'],))
-        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], request.form['survival'],))    
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Acrobatics", request.form['dexterity'], 1 if request.form.get('acrobatics') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Animal Handling", request.form['wisdom'], 1 if request.form.get('animalHandling') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Arcana", request.form['intelligence'], 1 if request.form.get('arcana') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Athletics", request.form['strength'], 1 if request.form.get('athletics') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Deception", request.form['charisma'], 1 if request.form.get('deception') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "History", request.form['intelligence'], 1 if request.form.get('history') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Insight", request.form['wisdom'], 1 if request.form.get('insight') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Intimidation", request.form['charisma'], 1 if request.form.get('intimidation') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Investigation", request.form['intelligence'], 1 if request.form.get('investigation') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Medicine", request.form['wisdom'], 1 if request.form.get('medicine') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Nature", request.form['intelligence'], 1 if request.form.get('nature') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Perception", request.form['wisdom'], 1 if request.form.get('perception') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Performance", request.form['charisma'], 1 if request.form.get('performance') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Persuasion", request.form['charisma'], 1 if request.form.get('persuasion') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Religion", request.form['intelligence'], 1 if request.form.get('religion') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Sleight of Hand", request.form['dexterity'], 1 if request.form.get('sleightOfHand') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], 1 if request.form.get('stealth') == 'on' else 0,))
+        cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], 1 if request.form.get('survival') == 'on' else 0,))    
 
         for className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod in zip(className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod):
             cursor.execute("INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, currenthitpoints, classlevel, spellcastingmodifier) VALUES(?,?,?,?,?,?,?,?,?,?)", (characterid, className, profBonus, hitDice, hitDice, maxHP, maxHP, levelInput, spellMod,))
 
         cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
 
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Strength", request.form['strSave'], request.form['strength'],))
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Dexterity", request.form['dexSave'], request.form['dexterity'],))
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Constitution", request.form['conSave'], request.form['constitution'],))
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Intelligence", request.form['intSave'], request.form['intelligence'],))
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Wisdom", request.form['wisSave'], request.form['wisdom'],))
-        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Charisma", request.form['chaSave'], request.form['charisma'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Strength", 1 if request.form.get('strSave') == 'on' else 0, request.form['strength'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Dexterity", 1 if request.form.get('dexSave') == 'on' else 0, request.form['dexterity'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Constitution", 1 if request.form.get('conSave') == 'on' else 0, request.form['constitution'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Intelligence", 1 if request.form.get('intSave') == 'on' else 0, request.form['intelligence'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Wisdom", 1 if request.form.get('wisSave') == 'on' else 0, request.form['wisdom'],))
+        cursor.execute("INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)", (characterid, "Charisma", 1 if request.form.get('chaSave') == 'on' else 0, request.form['charisma'],))
 
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Strength", request.form['strength'],))
         cursor.execute("INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)", (characterid, "Dexterity", request.form['dexterity'],))
@@ -167,6 +198,36 @@ def create_character():
         
         cursor.execute("INSERT INTO Lore(characterid, skin, eye, ideals, bonds, flaws, age, personalitytraits, weight, height, allies, appearance, backstory, hair, alignment) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (characterid, request.form['skin'], request.form['eyes'], request.form['ideals'], request.form['bonds'], request.form['flaws'], request.form['age'], request.form['traits'], request.form['weight'], request.form['height'], request.form['allies'], request.form['appearance'], request.form['backstory'], request.form['hair'], request.form['alignment'],))
 
+        for itemName, itemDesc in zip(itemNames, itemDescriptions):
+            cursor.execute("INSERT INTO ItemTable(characterid, name, description) VALUES(?,?,?)", (characterid, itemName, itemDesc,))
+            if itemName == 'Container':
+                cursor.execute("INSERT INTO Container(characterid, ozfilledofwater) VALUES(?,?)", (characterid, ozFilledOfWaters.pop(0),))
+            elif itemName == 'SiegeEquipment':
+                cursor.execute("INSERT INTO SiegeEquipment(characterid, ac, damageimmunities, hp) VALUES(?,?,?,?)", (characterid, siegeACs.pop(0), siegeDamageImmunities.pop(0), siegeHPs.pop(0),))
+            elif itemName == 'Poison':
+                cursor.execute("INSERT INTO Poison(characterid, type, cost) VALUES(?,?,?)", (characterid, poisonTypes.pop(0), poisonCosts.pop(0),))
+            elif itemName == 'AdventuringGear':
+                cursor.execute("INSERT INTO AdventuringGear(characterid, cost, weight) VALUES(?,?,?)", (characterid, adventuringGearCosts.pop(0), adventuringGearWeights.pop(0),))
+            elif itemName == 'Weapon':
+                cursor.execute("INSERT INTO Weapon(characterid, weight, cost, damage) VALUES(?,?,?,?)", (characterid, weaponWeights.pop(0), weaponCosts.pop(0), weaponDamages.pop(0),))
+            elif itemName == 'Armor&Shield':
+                cursor.execute("INSERT INTO ArmorAndShield(characterid, weight, cost, ac, equipped) VALUES(?,?,?,?,?)", (characterid, armorShieldWeights.pop(0), armorShieldCosts.pop(0), armorShieldAcs.pop(0), armorShieldEquippeds.pop(0),))
+            elif itemName == 'Explosive':
+                cursor.execute("INSERT INTO Explosive(characterid, weight, cost) VALUES(?,?,?)", (characterid, explosiveWeights.pop(0), explosiveCosts.pop(0),))
+            elif itemName == 'Tools':
+                cursor.execute("INSERT INTO Tools(characterid, weight, cost) VALUES(?,?,?)", (characterid, toolWeights.pop(0), toolCosts.pop(0),))
+            elif itemName == 'Trinket':
+                cursor.execute("INSERT INTO Trinket(characterid) VALUES(?)", (characterid,))
+            elif itemName == 'Firearm':
+                cursor.execute("INSERT INTO Firearm(characterid, weight, cost, damage) VALUES(?,?,?,?)", (characterid, firearmWeights.pop(0), firearmCosts.pop(0), firearmDamages.pop(0),))
+            elif itemName == 'Other':
+                cursor.execute("INSERT INTO Other(characterid, weight, cost) VALUES(?,?,?)", (characterid, otherWeights.pop(0), otherCosts.pop(0),))
+            elif itemName == 'Wondrous':
+                cursor.execute("INSERT INTO Wondrous(characterid, rationcount) VALUES(?,?)", (characterid, rationCounts.pop(0),))
+            elif itemName == 'Ration':
+                cursor.execute("INSERT INTO Ration(characterid, rationcount) VALUES(?,?)", (characterid, rationCounts.pop(0),))
+            elif itemName == 'Spells':
+                cursor.execute("INSERT INTO Spells(characterid, duration, component, spelllevel, spellrange, castingtime) VALUES(?,?,?,?,?,?)", (characterid, spellDurations.pop(0), spellComponents.pop(0), spellLevels.pop(0), spellRanges.pop(0), spellCastingTimes.pop(0),))
 
         conn.commit()
         cursor.close()

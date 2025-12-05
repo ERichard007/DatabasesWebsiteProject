@@ -3,6 +3,23 @@ import sqlite3
 connection = sqlite3.connect('DnDCharacterManager.db')
 cursor = connection.cursor()
 
+def tryCreateTable(sql):
+    try:
+        cursor.execute(sql)
+    except sqlite3.OperationalError as e:
+        print(f'there was an error creating table: {e}')
+
+tables = [
+    "WaterContainer", "SiegeEquipment", "Poison", "AdventuringGear",
+    "Weapon", "ArmorShield", "Spell", "Explosive", "Tool", "Trinket",
+    "Firearm", "Other", "Wondrous", "Ration", "Item", "Lore", "Effects",
+    "Features", "Feat", "Ability", "SavingThrow", "Race", "Class",
+    "Skill", "Stats", "Character", "User"
+]
+
+for t in tables:
+    cursor.execute(f"DROP TABLE IF EXISTS {t};")
+
 UserTable = """CREATE TABLE IF NOT EXISTS
 User(
 userid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -196,7 +213,7 @@ cost TEXT,
 damage TEXT
 )"""
 
-ArmorAndShieldTable = """CREATE TABLE IF NOT EXISTS
+ArmorShieldTable = """CREATE TABLE IF NOT EXISTS
 ArmorShield(
 characterid INTEGER REFERENCES Character(characterid),
 itemid INTEGER REFERENCES Item(itemid),
@@ -271,44 +288,8 @@ days INTEGER NOT NULL CHECK(days >= 0) DEFAULT 0
 
 cursor.execute("PRAGMA foreign_keys = ON;")
 
-tables = [
-    "WaterContainer", "SiegeEquipment", "Poison", "AdventuringGear",
-    "Weapon", "ArmorShield", "Spell", "Explosive", "Tool", "Trinket",
-    "Firearm", "Other", "Wondrous", "Ration", "Item", "Lore", "Effects",
-    "Features", "Feat", "Ability", "SavingThrow", "Race", "Class",
-    "Skill", "Stats", "Character", "User"
-]
-
 for t in tables:
-    cursor.execute(f"DROP TABLE IF EXISTS {t};")
-
-cursor.execute(UserTable)
-cursor.execute(CharacterTable)
-cursor.execute(StatsTable)
-cursor.execute(SkillTable)
-cursor.execute(ClassTable)
-cursor.execute(RaceTable)
-cursor.execute(SavingThrowTable)
-cursor.execute(AbilityTable)
-cursor.execute(FeatTable)
-cursor.execute(FeaturesTable)
-cursor.execute(EffectsTable)
-cursor.execute(LoreTable)
-cursor.execute(ItemTable)
-cursor.execute(WaterContainerTable)
-cursor.execute(SiegeEquipmentTable)
-cursor.execute(PoisonTable)
-cursor.execute(AdventuringGearTable)
-cursor.execute(WeaponTable)
-cursor.execute(ArmorAndShieldTable)
-cursor.execute(SpellTable)
-cursor.execute(ExplosiveTable)
-cursor.execute(ToolTable)
-cursor.execute(TrinketTable)
-cursor.execute(FirearmTable)
-cursor.execute(OtherTable)
-cursor.execute(WondrousTable)
-cursor.execute(RationTable)
+    tryCreateTable(eval(f"{t}Table"))
 
 connection.commit()
 connection.close()
