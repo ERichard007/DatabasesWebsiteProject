@@ -22,8 +22,8 @@
             <input type="text" id="playerName" name="playerName" placeholder="Enter Name" required>
             <label for="characterName">Character Name:</label>
             <input type="text" id="characterName" name="characterName" placeholder="Enter Character Name" required><br>
-            <label for="companion" id="companionLabel" name="companionLabel">Is this a companion? If so give the id of the owner, leave blank otherwise:</label>
-            <input type="number" id="companion" name="companion">
+            <label for="companion" id="companionLabel" name="companionLabel">Is this a companion? If so give the id of the owner, leave 0 otherwise:</label>
+            <input type="number" id="companion" name="companion"  placeholder="0">
         
         </div>
 
@@ -49,17 +49,16 @@
             <label for="addClass">Add Class</label>
             <button type="button" id="addClass" name="addClass">➕</button><br>
 
-            <label for="classSelection">Choose Class:</label>
-            <input type="text" id="classSelection" name="classSelection" placeholder="Enter Class" required><br>
-
             <div id="classDiv" class="classDiv">
+                <hr>
+                <br><label for="classSelection">Choose Class:</label>
+                <input type="text" id="classSelection" name="classSelection" placeholder="Enter Class" required><br>
                 <img src="{{ url_for('static', filename='assets/levelImages/Level 1-5.png') }}" height="100" width="100" id="levelImage"><br>
                 Enter Class Level (1-20): <input type="number" id="levelInput" name="levelInput" min="1" max="20" value="1" required><br>
                 Proficiency Bonus: <input type="number" id="profBonus" name="profBonus" placeholder="Enter Proficiency Bonus" required><br>
                 Number of Hit Dice: <input type="number" id="hitDice" name="hitDice" placeholder="Enter Total Hit Dice" required><br>
                 Max Hitpoints: <input type="number" id="maxHP" name="maxHP" placeholder="Enter Max Hitpoints" required><br>
                 Is This A Spellcasting Class: <input type="checkbox" id="spellcastingClass" name="spellcastingClass"><br>
-                Spellslots Total: <input type="number" id="spellSlots" name="spellSlots" placeholder="Enter Total Spell Slots" required><br>
                 Spellcasting Modifier: <input type="number" id="spellMod" name="spellMod" placeholder="Enter Spellcasting Modifier" required><br>
             </div>
         

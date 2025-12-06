@@ -3,10 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{{ character[4] }} - Character Sheet</title>
 </head>
 <body>
+
+    <!-- Character Basic Info -->
     <h1>{{ character[4] }}</h1>
+    <div>
+        <p><strong>Player Name:</strong> {{ character[5] }}</p>
+        <p><strong>Background:</strong> {{ character[2] }}</p>
+        <p><strong>Race: </strong> {{ race[1] }}</p>
+        {% for c in classes %}
+            <p><strong>Class: </strong> {{ c[1] }} -- {{ c[7] }}</p>
+        {% endfor %}
+    </div>
     
+
+    <!-- Stats -->
+    <h2>Stats</h2>
+    <div>
+        <p><strong>Inspiration:</strong> <input type="number" placeholder="{{ stats[2] }}" min="0"></p>
+        <p><strong>Max HP:</strong></p> <input type="number" placeholder="{% set total_hp = 0 %}{% for c in classes %}{% set total_hp = total_hp + c[5] %}{% endfor %}{{ total_hp }}">
+        <p><strong>Current HP:</strong> <input type="number" placeholder="{{ stats[3] }}" min="0"></p>
+        <p><strong>Temp HP:</strong> <input type="number" placeholder="{{ stats[4] }}" min="0"></p>
+        <p><strong>EXP:</strong> <input type="number" placeholder="{{ stats[5] }}" min="0"></p>
+        <p><strong>Speed:</strong> <input type="number" placeholder="{{race[2]}}" min="0"></p>
+    </div>
+
+
+    <!-- Abilities -->
+    <h2>Abilities</h2>
+    <ul>
+        {% for ability in abilities %}
+            <li>
+                {{ ability[1] }}: <input type="number" placeholder="{{ ability[2] }}"><br>
+                Modifier: {{ (ability[2] - 10) // 2 }} 
+            </li>
+
+        {% endfor %}
+    </ul>
+
+    <!-- Saving Throws -->
+    <h2>Saving Throws</h2>
+    <ul>
+        {% for st in savingthrows %}
+            <li>{{ st[1] }}: <input type="number" placeholder="{{st[3]}}"> <input type="checkbox" {% if st[2] == 1 %}checked{% endif %}></li>
+        {% endfor %}
+    </ul>
+
+    <!-- Skills -->
+    <h2>Skills</h2>
+    <ul>
+        {% for s in skills %}
+            <li>
+                {{ s[1] }}: <input type="number" placeholder="{{ s[2] }}">  <input type="checkbox" {% if s[3] == 1 %}checked{% endif %}> 
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Class -->
+    <h2>Classes</h2>
+    <ul>
+        {% for c in classes %}
+            <li>
+                <strong>{{ c[1] }}</strong> (Level {{ c[8] }})<br>
+                Max HP: {{ c[5] }} | Current HP: {{ c[6] }}<br>
+                Proficiency Bonus: {{ c[2] }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Feats -->
+    <h2>Feats</h2>
+    <ul>
+        {% for f in feats %}
+            <li><strong>{{ f[1] }}</strong>: {{ f[2] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Features -->
+    <h2>Features</h2>
+    <ul>
+        {% for f in features %}
+            <li><strong>{{ f[1] }}</strong>: {{ f[2] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Effects -->
+    <h2>Effects</h2>
+    <ul>
+        {% for e in effects %}
+            <li><strong>{{ e[1] }}</strong>: {{ e[2] }} ({{ e[3] }})</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Lore -->
+    <h2>Lore</h2>
+
+    <p><strong>Age:</strong> {{ lore[6] }}</p>
+    <p><strong>Height:</strong> {{ lore[9] }}</p>
+    <p><strong>Weight:</strong> {{ lore[8] }}</p>
+    <p><strong>Appearance:</strong> {{ lore[12] }}</p>
+    <p><strong>Backstory:</strong> {{ lore[13] }}</p>
+
+    <!-- Items -->
+    <h2>Items</h2>
+    <ul>
+        {% for item in items %}
+            <li><strong>{{ item[2] }}</strong>: {{ item[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Containers -->
+    <h3>Water Containers</h3>
+    <ul>
+        {% for w in containers %}
+            <li>Item {{ w[1] }} — {{ w[2] }} oz filled</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Siege Equipment -->
+    <h3>Siege Equipment</h3>
+    <ul>
+        {% for se in siegeequipments %}
+            <li>AC {{ se[2] }}, HP {{ se[4] }}, Immunities: {{ se[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Poisons -->
+    <h3>Poisons</h3>
+    <ul>
+        {% for p in poisons %}
+            <li>{{ p[2] }} — Cost: {{ p[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Gear Categories -->
+    <h2>Gear</h2>
+
+    <h3>Adventuring Gear</h3>
+    <ul>
+        {% for g in adventuringgears %}
+            <li>Item {{ g[1] }} — Cost: {{ g[2] }}, Weight: {{ g[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Weapons</h3>
+    <ul>
+        {% for w in weapons %}
+            <li>Damage: {{ w[4] }}, Cost: {{ w[3] }}, Weight: {{ w[2] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Armor & Shields</h3>
+    <ul>
+        {% for a in armorshields %}
+            <li>AC {{ a[5] }}, Weight {{ a[3] }}, {% if a[2] == 1 %}Equipped{% endif %}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Spells</h3>
+    <ul>
+        {% for s in spells %}
+            <li>Level {{ s[4] }} — Range {{ s[5] }} — {{ s[6] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Explosives</h3>
+    <ul>
+        {% for ex in explosives %}
+            <li>Cost: {{ ex[2] }}, Weight: {{ ex[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Tools</h3>
+    <ul>
+        {% for t in tools %}
+            <li>Cost: {{ t[2] }}, Weight: {{ t[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Trinkets</h3>
+    <ul>
+        {% for tr in trinkets %}
+            <li>Item {{ tr[1] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Firearms</h3>
+    <ul>
+        {% for f in firearms %}
+            <li>Damage {{ f[3] }}, Cost {{ f[2] }}, Weight {{ f[4] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Other Items</h3>
+    <ul>
+        {% for o in others %}
+            <li>Cost {{ o[2] }}, Weight {{ o[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Wondrous Items</h3>
+    <ul>
+        {% for w in wondrous %}
+            <li>Item {{ w[1] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Rations</h3>
+    <ul>
+        {% for r in rations %}
+            <li>{{ r[2] }} days</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Currency:</strong></p>
+
+
+    <ul>
+        <li>Platinum: {{ character[10] }}</li>
+        <li>Gold: {{ character[7] }}</li>
+        <li>Electrum: {{ character[6] }}</li>
+        <li>Silver: {{ character[8] }}</li>
+        <li>Copper: {{ character[9] }}</li>
+    </ul>
+
+    <div>
+
+    </div>
+
 </body>
 </html>

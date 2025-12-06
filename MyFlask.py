@@ -177,12 +177,6 @@ def create_character():
         cursor = conn.cursor()
 
         #form variables from character creation page
-        cursor.execute("SELECT MAX(characterid) FROM Character")
-        row = cursor.fetchone()
-        print(row)
-        new_id = (row[0] or 0) + 1
-        characterid = new_id
-
         userid = session.get("userid") 
         isCompanion = request.form['companion']
         ownerid = isCompanion if int(isCompanion) >= 1 else None
@@ -192,8 +186,6 @@ def create_character():
         hitDice = request.form.getlist('hitDice')
         maxHP = request.form.getlist('maxHP')
         levelInput = request.form.getlist('levelInput')
-        spellCastingClass = request.form.getlist('spellcastingClass')
-        spellSlots = request.form.getlist('spellSlots')
         spellMod = request.form.getlist('spellMod')
 
         featNames = request.form.getlist('featName')
@@ -238,6 +230,8 @@ def create_character():
         #database insertion
         cursor.execute("INSERT INTO Character(userid, background, iscompanion, name, playername, electrum, gold, silver, copper, platinum, ownerid) VALUES(?,?,?,?,?,?,?,?,?,?,?)", (userid,request.form['background'],isCompanion,request.form['characterName'],request.form['playerName'],request.form['electrum'],request.form['gold'],request.form['silver'],request.form['copper'],request.form['platinum'],ownerid,))
 
+        characterid = cursor.execute("SELECT last_insert_rowid()").fetchone()[0]
+
         cursor.execute("INSERT INTO Stats(characterid, exp) VALUES(?,?)", (characterid, request.form['experience'],))
 
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Acrobatics", request.form['dexterity'], 1 if request.form.get('acrobatics') == 'on' else 0,))
@@ -259,8 +253,11 @@ def create_character():
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], 1 if request.form.get('stealth') == 'on' else 0,))
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], 1 if request.form.get('survival') == 'on' else 0,))    
 
-        for className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod in zip(className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod):
-            cursor.execute("INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, currenthitpoints, classlevel, spellcastingmodifier) VALUES(?,?,?,?,?,?,?,?,?)", (characterid, className, profBonus, hitDice, hitDice, maxHP, maxHP, levelInput, spellMod,))
+    
+        for cn, pb, hd, mhp, lvl, sm in zip(className, profBonus, hitDice, maxHP, levelInput, spellMod):
+            cursor.execute("""INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, classlevel, spellcastingmodifier)VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", (characterid, cn, pb, hd, hd, mhp, lvl, sm))
+
+
 
         cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
 
