@@ -68,7 +68,7 @@ def list_characters():
 
     user_id = session.get("userid")
 
-    cursor.execute("SELECT characterid, name, background FROM Character WHERE userid = ?", (user_id,))
+    cursor.execute("SELECT characterid, name, background FROM Character WHERE userid = ? AND iscompanion = 0", (user_id,))
     characters = cursor.fetchall()
 
     cursor.execute("SELECT username FROM User WHERE userid = ?", (user_id,))
@@ -80,7 +80,95 @@ def list_characters():
 
 @app.route("/character/<int:cid>") #character editing page
 def character(cid):
-    return render_template("character.html")
+    conn = sqlite3.connect("DnDCharacterManager.db")
+    cursor = conn.cursor()
+
+    user_id = session.get("userid")
+
+    cursor.execute("SELECT * FROM Character WHERE characterid = ? AND userid = ?", (cid, user_id,))
+    character = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM Character WHERE ownerid = ? AND userid = ?", (cid, user_id,))
+    companions = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Stats WHERE characterid = ?", (cid,))
+    stats = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM Skill WHERE characterid = ?", (cid,))
+    skills = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Class WHERE characterid = ?", (cid,))
+    classes = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Race WHERE characterid = ?", (cid,))
+    race = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM SavingThrow WHERE characterid = ?", (cid,))
+    savingthrows = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Ability WHERE characterid = ?", (cid,))
+    abilities = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Feat WHERE characterid = ?", (cid,))
+    feats = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Features WHERE characterid = ?", (cid,))
+    features = cursor.fetchall()
+
+    cursor.execute("SELECT * From Effects WHERE characterid = ?", (cid,))
+    effects = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Lore WHERE characterid = ?", (cid,))
+    lore = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM Item WHERE characterid = ?", (cid,))
+    items = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM WaterContainer WHERE characterid = ?", (cid,))
+    containers = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM SiegeEquipment WHERE characterid = ?", (cid,))
+    siegeequipments = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Poison WHERE characterid = ?", (cid,))
+    poisons = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM AdventuringGear WHERE characterid = ?", (cid,))
+    adventuringgears = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Weapon WHERE characterid = ?", (cid,))
+    weapons = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM ArmorShield WHERE characterid = ?", (cid,))
+    armorshields = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Spell WHERE characterid = ?", (cid,))
+    spells = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Explosive WHERE characterid = ?", (cid,))
+    explosives = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Tool WHERE characterid = ?", (cid,))
+    tools = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Trinket WHERE characterid = ?", (cid,))
+    trinkets = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Firearm WHERE characterid = ?", (cid,))
+    firearms = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Other WHERE characterid = ?", (cid,))
+    others = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Wondrous WHERE characterid = ?", (cid,))
+    wondrous = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Ration WHERE characterid = ?", (cid,))
+    rations = cursor.fetchall()
+
+    conn.close()
+
+    return render_template("character.html", character=character, companions=companions, stats=stats, skills=skills, classes=classes, race=race, savingthrows=savingthrows, abilities=abilities, feats=feats, features=features, effects=effects, lore=lore, items=items, containers=containers, siegeequipments=siegeequipments, poisons=poisons, adventuringgears=adventuringgears, weapons=weapons, armorshields=armorshields, spells=spells, explosives=explosives, tools=tools, trinkets=trinkets, firearms=firearms, others=others, wondrous=wondrous, rations=rations)
 
 @app.route("/charactercreation", methods=["GET","POST"]) #character creation page
 def create_character():
@@ -96,8 +184,8 @@ def create_character():
         characterid = new_id
 
         userid = session.get("userid") 
-        isCompanion = 1 if request.form.get('companion') == 'on' else 0
-        ownerid = new_id if isCompanion else None
+        isCompanion = request.form['companion']
+        ownerid = isCompanion if int(isCompanion) >= 1 else None
 
         className = request.form.getlist('classSelection')
         profBonus = request.form.getlist('profBonus')
@@ -172,7 +260,7 @@ def create_character():
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], 1 if request.form.get('survival') == 'on' else 0,))    
 
         for className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod in zip(className, profBonus, hitDice, maxHP, levelInput, spellCastingClass, spellSlots, spellMod):
-            cursor.execute("INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, currenthitpoints, classlevel, spellcastingmodifier) VALUES(?,?,?,?,?,?,?,?,?,?)", (characterid, className, profBonus, hitDice, hitDice, maxHP, maxHP, levelInput, spellMod,))
+            cursor.execute("INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, currenthitpoints, classlevel, spellcastingmodifier) VALUES(?,?,?,?,?,?,?,?,?)", (characterid, className, profBonus, hitDice, hitDice, maxHP, maxHP, levelInput, spellMod,))
 
         cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
 

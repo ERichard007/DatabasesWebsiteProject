@@ -32,7 +32,7 @@ Character(
 characterid INTEGER PRIMARY KEY AUTOINCREMENT,
 userid INTEGER REFERENCES User(userid),
 background TEXT NOT NULL,
-iscompanion INTEGER NOT NULL CHECK(iscompanion IN (0, 1)) DEFAULT 0, 
+iscompanion INTEGER CHECK(iscompanion >= 0) DEFAULT NULL, 
 name TEXT,
 playername TEXT,
 electrum INTEGER CHECK(electrum >= 0) DEFAULT 0,
