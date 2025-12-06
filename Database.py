@@ -229,9 +229,10 @@ characterid INTEGER REFERENCES Character(characterid),
 itemid INTEGER REFERENCES Item(itemid),
 duration TEXT,
 components TEXT,
-level INTEGER NOT NULL CHECK(level >= 0),
+level INTEGER NOT NULL CHECK(level >= 0 AND level <= 9),
 range TEXT,
-castingtime TEXT
+castingtime TEXT,
+ready INTEGER NOT NULL CHECK(ready IN (0, 1)) DEFAULT 0
 )"""
 
 ExplosiveTable = """CREATE TABLE IF NOT EXISTS

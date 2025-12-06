@@ -124,49 +124,51 @@ def character(cid):
     cursor.execute("SELECT * FROM Item WHERE characterid = ?", (cid,))
     items = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM WaterContainer WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT w.*, i.name, i.description FROM WaterContainer w JOIN Item i ON w.itemid = i.itemid WHERE w.characterid = ?", (cid,))
     containers = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM SiegeEquipment WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT s.*, i.name, i.description FROM SiegeEquipment s JOIN Item i ON s.itemid = i.itemid WHERE s.characterid = ?", (cid,))
     siegeequipments = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Poison WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT p.*, i.name, i.description FROM Poison p JOIN Item i ON p.itemid = i.itemid WHERE p.characterid = ?", (cid,))
     poisons = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM AdventuringGear WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT a.*, i.name, i.description FROM AdventuringGear a JOIN Item i ON a.itemid = i.itemid WHERE a.characterid = ?", (cid,))
     adventuringgears = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Weapon WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT w.*, i.name, i.description FROM Weapon w JOIN Item i ON w.itemid = i.itemid WHERE w.characterid = ?", (cid,))
     weapons = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM ArmorShield WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT a.*, i.name, i.description FROM ArmorShield a JOIN Item i ON a.itemid = i.itemid WHERE a.characterid = ?", (cid,))
     armorshields = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Spell WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT s.*, i.name, i.description FROM Spell s JOIN Item i ON s.itemid = i.itemid WHERE s.characterid = ?", (cid,))
     spells = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Explosive WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT e.*, i.name, i.description FROM Explosive e JOIN Item i ON e.itemid = i.itemid WHERE e.characterid = ?", (cid,))
     explosives = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Tool WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT t.*, i.name, i.description FROM Tool t JOIN Item i ON t.itemid = i.itemid WHERE t.characterid = ?", (cid,))
     tools = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Trinket WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT t.*, i.name, i.description FROM Trinket t JOIN Item i ON t.itemid = i.itemid WHERE t.characterid = ?", (cid,))
     trinkets = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Firearm WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT f.*, i.name, i.description FROM Firearm f JOIN Item i ON f.itemid = i.itemid WHERE f.characterid = ?", (cid,))
     firearms = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Other WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT o.*, i.name, i.description FROM Other o JOIN Item i ON o.itemid = i.itemid WHERE o.characterid = ?", (cid,))
     others = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Wondrous WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT w.*, i.name, i.description FROM Wondrous w JOIN Item i ON w.itemid = i.itemid WHERE w.characterid = ?", (cid,))
     wondrous = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Ration WHERE characterid = ?", (cid,))
+    cursor.execute("SELECT r.*, i.name, i.description FROM Ration r JOIN Item i ON r.itemid = i.itemid WHERE r.characterid = ?", (cid,))
     rations = cursor.fetchall()
 
     conn.close()
+
+    print(character, companions, stats, skills, classes, race, savingthrows, abilities, feats, features, effects, lore, items, containers, siegeequipments, poisons, adventuringgears, weapons, armorshields, spells, explosives, tools, trinkets, firearms, others, wondrous, rations)
 
     return render_template("character.html", character=character, companions=companions, stats=stats, skills=skills, classes=classes, race=race, savingthrows=savingthrows, abilities=abilities, feats=feats, features=features, effects=effects, lore=lore, items=items, containers=containers, siegeequipments=siegeequipments, poisons=poisons, adventuringgears=adventuringgears, weapons=weapons, armorshields=armorshields, spells=spells, explosives=explosives, tools=tools, trinkets=trinkets, firearms=firearms, others=others, wondrous=wondrous, rations=rations)
 
@@ -194,6 +196,7 @@ def create_character():
         featureNames = request.form.getlist('featureName')
         featureDescriptions = request.form.getlist('featureDescription')
 
+        itemTypes = request.form.getlist('itemType')
         itemNames = request.form.getlist('itemName')
         itemDescriptions = request.form.getlist('itemDesc')
         ozFilledOfWaters = request.form.getlist('ozFilledOfWater')
@@ -253,11 +256,8 @@ def create_character():
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], 1 if request.form.get('stealth') == 'on' else 0,))
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], 1 if request.form.get('survival') == 'on' else 0,))    
 
-    
         for cn, pb, hd, mhp, lvl, sm in zip(className, profBonus, hitDice, maxHP, levelInput, spellMod):
             cursor.execute("""INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, classlevel, spellcastingmodifier)VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", (characterid, cn, pb, hd, hd, mhp, lvl, sm))
-
-
 
         cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
 
@@ -283,36 +283,38 @@ def create_character():
         
         cursor.execute("INSERT INTO Lore(characterid, skin, eye, ideals, bonds, flaws, age, personalitytraits, weight, height, allies, appearance, backstory, hair, alignment) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (characterid, request.form['skin'], request.form['eyes'], request.form['ideals'], request.form['bonds'], request.form['flaws'], request.form['age'], request.form['traits'], request.form['weight'], request.form['height'], request.form['allies'], request.form['appearance'], request.form['backstory'], request.form['hair'], request.form['alignment'],))
 
-        for itemName, itemDesc in zip(itemNames, itemDescriptions):
-            cursor.execute("INSERT INTO ItemTable(characterid, name, description) VALUES(?,?,?)", (characterid, itemName, itemDesc,))
-            if itemName == 'Container':
-                cursor.execute("INSERT INTO Container(characterid, ozfilledofwater) VALUES(?,?)", (characterid, ozFilledOfWaters.pop(0),))
-            elif itemName == 'SiegeEquipment':
-                cursor.execute("INSERT INTO SiegeEquipment(characterid, ac, damageimmunities, hp) VALUES(?,?,?,?)", (characterid, siegeACs.pop(0), siegeDamageImmunities.pop(0), siegeHPs.pop(0),))
-            elif itemName == 'Poison':
-                cursor.execute("INSERT INTO Poison(characterid, type, cost) VALUES(?,?,?)", (characterid, poisonTypes.pop(0), poisonCosts.pop(0),))
-            elif itemName == 'AdventuringGear':
-                cursor.execute("INSERT INTO AdventuringGear(characterid, cost, weight) VALUES(?,?,?)", (characterid, adventuringGearCosts.pop(0), adventuringGearWeights.pop(0),))
-            elif itemName == 'Weapon':
-                cursor.execute("INSERT INTO Weapon(characterid, weight, cost, damage) VALUES(?,?,?,?)", (characterid, weaponWeights.pop(0), weaponCosts.pop(0), weaponDamages.pop(0),))
-            elif itemName == 'Armor&Shield':
-                cursor.execute("INSERT INTO ArmorAndShield(characterid, weight, cost, ac, equipped) VALUES(?,?,?,?,?)", (characterid, armorShieldWeights.pop(0), armorShieldCosts.pop(0), armorShieldAcs.pop(0), armorShieldEquippeds.pop(0),))
-            elif itemName == 'Explosive':
-                cursor.execute("INSERT INTO Explosive(characterid, weight, cost) VALUES(?,?,?)", (characterid, explosiveWeights.pop(0), explosiveCosts.pop(0),))
-            elif itemName == 'Tools':
-                cursor.execute("INSERT INTO Tools(characterid, weight, cost) VALUES(?,?,?)", (characterid, toolWeights.pop(0), toolCosts.pop(0),))
-            elif itemName == 'Trinket':
-                cursor.execute("INSERT INTO Trinket(characterid) VALUES(?)", (characterid,))
-            elif itemName == 'Firearm':
-                cursor.execute("INSERT INTO Firearm(characterid, weight, cost, damage) VALUES(?,?,?,?)", (characterid, firearmWeights.pop(0), firearmCosts.pop(0), firearmDamages.pop(0),))
-            elif itemName == 'Other':
-                cursor.execute("INSERT INTO Other(characterid, weight, cost) VALUES(?,?,?)", (characterid, otherWeights.pop(0), otherCosts.pop(0),))
-            elif itemName == 'Wondrous':
-                cursor.execute("INSERT INTO Wondrous(characterid, rationcount) VALUES(?,?)", (characterid, rationCounts.pop(0),))
-            elif itemName == 'Ration':
-                cursor.execute("INSERT INTO Ration(characterid, rationcount) VALUES(?,?)", (characterid, rationCounts.pop(0),))
-            elif itemName == 'Spells':
-                cursor.execute("INSERT INTO Spells(characterid, duration, component, spelllevel, spellrange, castingtime) VALUES(?,?,?,?,?,?)", (characterid, spellDurations.pop(0), spellComponents.pop(0), spellLevels.pop(0), spellRanges.pop(0), spellCastingTimes.pop(0),))
+        for itemType, itemName, itemDesc in zip(itemTypes, itemNames, itemDescriptions):
+            cursor.execute("INSERT INTO Item(characterid, name, description) VALUES(?,?,?)", (characterid, itemName, itemDesc,))
+            itemId = cursor.execute("SELECT last_insert_rowid()").fetchone()[0]
+            print(itemId)
+            if itemType == 'Container':
+                cursor.execute("INSERT INTO WaterContainer(characterid, itemid, ozfilled) VALUES(?,?,?)", (characterid, itemId, ozFilledOfWaters.pop(0),))
+            elif itemType == 'SiegeEquipment':
+                cursor.execute("INSERT INTO SiegeEquipment(characterid, itemid, ac, damageimmunities, hitpoints) VALUES(?,?,?,?,?)", (characterid, itemId, siegeACs.pop(0), siegeDamageImmunities.pop(0), siegeHPs.pop(0),))
+            elif itemType == 'Poison':
+                cursor.execute("INSERT INTO Poison(characterid, itemid, type, cost) VALUES(?,?,?,?)", (characterid, itemId, poisonTypes.pop(0), poisonCosts.pop(0),))
+            elif itemType == 'AdventuringGear':
+                cursor.execute("INSERT INTO AdventuringGear(characterid, itemid, cost, weight) VALUES(?,?,?,?)", (characterid, itemId, adventuringGearCosts.pop(0), adventuringGearWeights.pop(0),))
+            elif itemType == 'Weapon':
+                cursor.execute("INSERT INTO Weapon(characterid, itemid, weight, cost, damage) VALUES(?,?,?,?,?)", (characterid, itemId, weaponWeights.pop(0), weaponCosts.pop(0), weaponDamages.pop(0),))
+            elif itemType == 'Armor&Shield':
+                cursor.execute("INSERT INTO ArmorShield(characterid, itemid, weight, cost, ac, equipped) VALUES(?,?,?,?,?,?)", (characterid, itemId, armorShieldWeights.pop(0), armorShieldCosts.pop(0), armorShieldAcs.pop(0), 1 if armorShieldEquippeds.pop(0) == 'on' else 0,))
+            elif itemType == 'Explosive':
+                cursor.execute("INSERT INTO Explosive(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, explosiveWeights.pop(0), explosiveCosts.pop(0),))
+            elif itemType == 'Tools':
+                cursor.execute("INSERT INTO Tool(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, toolWeights.pop(0), toolCosts.pop(0),))
+            elif itemType == 'Trinket':
+                cursor.execute("INSERT INTO Trinket(characterid, itemid) VALUES(?,?)", (characterid, itemId,))
+            elif itemType == 'Firearm':
+                cursor.execute("INSERT INTO Firearm(characterid, itemid, weight, cost, damage) VALUES(?,?,?,?,?)", (characterid, itemId, firearmWeights.pop(0), firearmCosts.pop(0), firearmDamages.pop(0),))
+            elif itemType == 'Other':
+                cursor.execute("INSERT INTO Other(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, otherWeights.pop(0), otherCosts.pop(0),))
+            elif itemType == 'Wondrous':
+                cursor.execute("INSERT INTO Wondrous(characterid, itemid) VALUES(?,?)", (characterid, itemId,))
+            elif itemType == 'Ration':
+                cursor.execute("INSERT INTO Ration(characterid, itemid, rationcount) VALUES(?,?,?)", (characterid, itemId, rationCounts.pop(0),))
+            elif itemType == 'Spells':
+                cursor.execute("INSERT INTO Spell(characterid, itemid, duration, components, level, range, castingtime) VALUES(?,?,?,?,?,?,?)", (characterid, itemId, spellDurations.pop(0), spellComponents.pop(0), spellLevels.pop(0), spellRanges.pop(0), spellCastingTimes.pop(0),))
 
         conn.commit()
         cursor.close()

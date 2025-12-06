@@ -342,8 +342,17 @@ addItem.addEventListener('click', () => {
     //stuff that is the same for every item
     let newItemDiv = document.createElement('div')
     newItemDiv.id = 'itemDiv'+crypto.randomUUID()
+
+    let x = 'itemType'+crypto.randomUUID()
+    let itemTypeInput = document.createElement('input')
+    itemTypeInput.type = 'text'
+    itemTypeInput.id = x
+    itemTypeInput.name = 'itemType'
+    itemTypeInput.readOnly = true
+    itemTypeInput.hidden = true
+    itemTypeInput.value = itemType.value
     
-    let x = 'itemName'+crypto.randomUUID()
+    x = 'itemName'+crypto.randomUUID()
     let itemNameLabel = document.createElement('label')
     itemNameLabel.htmlFor = x
     itemNameLabel.innerText = 'Name:'
@@ -352,6 +361,7 @@ addItem.addEventListener('click', () => {
     itemName.type = 'text'
     itemName.id = x
     itemName.name = 'itemName'
+    itemName.required = true
 
     let break1 = document.createElement('br')
     break1.id = 'break1'+crypto.randomUUID()
@@ -365,6 +375,7 @@ addItem.addEventListener('click', () => {
     descriptionAndProperties.type = 'text'
     descriptionAndProperties.id = x
     descriptionAndProperties.name = 'itemDesc'
+    descriptionAndProperties.required = true
 
     let break2 = document.createElement('br')
     break2.id = 'break2'+crypto.randomUUID()
@@ -383,6 +394,7 @@ addItem.addEventListener('click', () => {
     let finalBreak = document.createElement('br')
     finalBreak.id = 'finalBreak'+crypto.randomUUID()
 
+    newItemDiv.appendChild(itemTypeInput)
     newItemDiv.appendChild(itemNameLabel)
     newItemDiv.appendChild(itemName)
     newItemDiv.appendChild(break1)
@@ -405,6 +417,7 @@ addItem.addEventListener('click', () => {
         ozFilledOfWater.placeholder = 0
         ozFilledOfWater.id = 'ozFilledOfWater' + x
         ozFilledOfWater.name = 'ozFilledOfWater'
+        ozFilledOfWater.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -426,6 +439,7 @@ addItem.addEventListener('click', () => {
         ac.id = 'ac'+x
         ac.name = 'siegeAc'
         ac.placeholder = 0
+        ac.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -440,6 +454,7 @@ addItem.addEventListener('click', () => {
         damageImmunities.type = 'text'
         damageImmunities.id = 'damageImmunities' + x
         damageImmunities.name = 'siegeDamageImmunities'
+        damageImmunities.required = true
 
         let innerBreak2 = document.createElement('br')
         innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
@@ -455,6 +470,7 @@ addItem.addEventListener('click', () => {
         HP.id = 'HP' + x
         HP.name = 'siegeHP'
         HP.placeholder = 0
+        HP.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -481,6 +497,7 @@ addItem.addEventListener('click', () => {
         type.type = 'text'
         type.id = 'type' + x
         type.name = 'poisonType'
+        type.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -495,6 +512,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'poisonCost'
+        cost.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -518,6 +536,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'adventuringGearCost'
+        cost.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -534,6 +553,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'adventuringGearWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -559,6 +579,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'weaponWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -573,6 +594,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'weaponCost'
+        cost.required = true
 
         let innerBreak2 = document.createElement('br')
         innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
@@ -587,6 +609,7 @@ addItem.addEventListener('click', () => {
         damage.type = 'text'
         damage.id = 'damage' + x
         damage.name = 'weaponDamage'
+        damage.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -615,6 +638,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'armor&ShieldWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -629,6 +653,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'armor&ShieldCost'
+        cost.required = true
 
         let innerBreak2 = document.createElement('br')
         innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
@@ -690,6 +715,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'explosiveWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -704,6 +730,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'explosiveCost'
+        cost.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -729,6 +756,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'toolWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -743,6 +771,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'toolCost'
+        cost.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -772,6 +801,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'firearmWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -786,6 +816,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'firearmCost'
+        cost.required = true
 
         let innerBreak2 = document.createElement('br')
         innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
@@ -800,6 +831,7 @@ addItem.addEventListener('click', () => {
         damage.type = 'text'
         damage.id = 'damage' + x
         damage.name = 'firearmDamage'
+        damage.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -828,6 +860,7 @@ addItem.addEventListener('click', () => {
         weight.name = 'otherWeight'
         weight.placeholder = 0
         weight.min = 0
+        weight.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -842,6 +875,7 @@ addItem.addEventListener('click', () => {
         cost.type = 'text'
         cost.id = 'cost' + x
         cost.name = 'otherCost'
+        cost.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -871,6 +905,7 @@ addItem.addEventListener('click', () => {
         count.name = 'rationCount'
         count.min = 0
         count.placeholder = 0
+        count.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
@@ -891,6 +926,7 @@ addItem.addEventListener('click', () => {
         duration.type = 'text'
         duration.id = 'duration' + x
         duration.name = 'spellDuration'
+        duration.required = true
 
         let innerBreak1 = document.createElement('br')
         innerBreak1.id = 'innerBreak1' + crypto.randomUUID()
@@ -905,6 +941,7 @@ addItem.addEventListener('click', () => {
         component.type = 'text'
         component.id = 'component' + x
         component.name = 'spellComponent'
+        component.required = true
 
         let innerBreak2 = document.createElement('br')
         innerBreak2.id = 'innerBreak2' + crypto.randomUUID()
@@ -921,6 +958,7 @@ addItem.addEventListener('click', () => {
         spellLevel.name = 'spellLevel'
         spellLevel.min = 0
         spellLevel.placeholder = 0
+        spellLevel.required = true
 
         let innerBreak3 = document.createElement('br')
         innerBreak3.id = 'innerBreak3' + crypto.randomUUID()
@@ -935,6 +973,7 @@ addItem.addEventListener('click', () => {
         range.type = 'text'
         range.id = 'range' + x
         range.name = 'spellRange'
+        range.required = true
 
         let innerBreak4 = document.createElement('br')
         innerBreak4.id = 'innerBreak4' + crypto.randomUUID()
@@ -949,6 +988,7 @@ addItem.addEventListener('click', () => {
         castingTime.type = 'text'
         castingTime.id = 'castingTime' + x
         castingTime.name = 'spellCastingTime'
+        castingTime.required = true
 
         let finalBreak = document.createElement('br')
         finalBreak.id = 'finalBreak' + crypto.randomUUID()
