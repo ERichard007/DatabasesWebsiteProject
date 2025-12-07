@@ -202,7 +202,7 @@
                     AC: <input type="number" value="{{ a[5] }}"><br>
                     Cost: <input type="text" value="{{ a[4] }}"><br>
                     Weight: <input type="number" value="{{ a[3] }}" min="0"><br>
-                    Equipped: <input type="checkbox" {% if a[8] == 1 %}checked{% endif %}><br>
+                    Equipped: <input type="checkbox" {% if a[2] == 1 %}checked{% endif %}><br>
                     <strong>Description:</strong> {{ a[7] }}
                 </li>
             {% endfor %}
