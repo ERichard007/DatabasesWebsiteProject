@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ character[4] }} - Character Sheet</title>
 </head>
-<body>
+<body data-character-id="{{ character[0] }}">
 
     <!-- Character Basic Info -->
     <h1>{{ character[4] }}</h1>
@@ -17,16 +17,35 @@
             <p><strong>Class: </strong> {{ c[1] }} -- {{ c[7] }}</p>
         {% endfor %}
     </div>
-    
+
+    <!-- Functions -->
+    <h2>Functions</h2>
+    <div>
+        <p>
+            <label>
+                Drink (oz):
+                <input type="number" id="drinkWaterAmount" min="1" value="1">
+            </label>
+            <button type="button" id="drinkWaterButton">Drink Water</button>
+        </p>
+
+        <p>
+            <label>
+                Eat (rations):
+                <input type="number" id="eatRationAmount" min="1" value="1">
+            </label>
+            <button type="button" id="eatRationButton">Eat Food</button>
+        </p>
+    </div>
 
     <!-- Stats -->
     <h2>Stats</h2>
     <div>
         <p><strong>Inspiration:</strong> <input type="number" placeholder="{{ stats[2] }}" min="0"></p>
-        <p><strong>Initiative:</strong> <input type="text" value="0"></p>
+        <p><strong>Initiative:</strong> <input type="number" id="initiativeInput" value="0"></p>
         <p><strong>Armor Class:</strong> <input type="number" value="0"></p>
         {% set total_hp = classes | sum(attribute=6) %}
-        <p><strong>Max HP:</strong> {{ total_hp }}</p>
+        <p><strong>Max HP: </strong><span id="totalMaxHpInput">{{ total_hp }}</span></p>
         <p><strong>Current HP:</strong> <input type="number" placeholder="{{ stats[3] }}" min="0"></p>
         <p><strong>Temp HP:</strong> <input type="number" placeholder="{{ stats[4] }}" min="0"></p>
         <p><strong>EXP:</strong> <input type="number" placeholder="{{ stats[5] }}" min="0"></p>
@@ -39,6 +58,8 @@
             <input type="checkbox" {% if stats[7] >= 2 %}checked{% endif %}>
             <input type="checkbox" {% if stats[7] == 3 %}checked{% endif %}>
         </p>
+        <p><strong>Total Water:</strong> <span id="totalWaterValue">{{ total_water }}</span> oz</p>
+        <p><strong>Total Rations:</strong> <span id="totalRationsValue">{{ total_rations }}</span> {% if total_rations == 1 %} day {% else %} days {% endif %}</p>
     </div>
 
     <!-- Abilities -->
@@ -46,11 +67,10 @@
     <div>
         <ul>
             {% for ability in abilities %}
-                <li>
-                    {{ ability[1] }}: <input type="number" placeholder="{{ ability[2] }}"><br>
-                    Modifier: {{ (ability[2] - 10) // 2 }} 
+                <li class="ability-row" data-ability-name="{{ ability[1] }}">
+                    {{ ability[1] }}: <input type="number" class="ability-score" value="{{ ability[2] }}" placeholder="{{ ability[2] }}" min="1"><br>
+                    Modifier: <span class="ability-mod">{{ (ability[2] - 10) // 2 }}</span> 
                 </li>
-
             {% endfor %}
         </ul>
     </div>
@@ -80,18 +100,27 @@
     <!-- Class -->
     <h2>Classes</h2>
     <div>
-        <ul>
+        <button type="button" id="addClassButton">Add Class</button>
+        <ul id="classList">
             {% for c in classes %}
-                <li>
-                    <strong>{{ c[1] }}</strong> (Level: <input type="number" value="{{ c[7] }}" min="0" max="20">)<br>
-                    Max HP: <input type='number' value="{{ c[6] }}" min="0"><br>
-                    Proficiency Bonus: +<input type="number" value="{{ c[2] }}" min="0"><br>
+                <li class="spellcasting-class">
+                    <strong>{{ c[1] }}</strong> 
+                    (Level: <input type="number" value="{{ c[7] }}" min="0" max="20">)<br>
+                    Max HP: <input type='number' class="class-maxhp" value="{{ c[6] }}" min="0"><br>
                     Hit Dice: <input type="number" value="{{ c[4] }}" min="0"> / <input type="number" value="{{ c[3] }}" min="0">d
                     <select>
                         {% for size in [6,8,10,12] %}
                             <option value="{{ size }}" {% if size == c[6] %}selected{% endif %}>{{ size }}</option>
                         {% endfor %}
                     </select><br>
+                    Proficiency Bonus: 
+                    +<input type="number" value="{{ c[2] }}" min="0"><br>
+                    Spellcasting Modifier:
+                    <input type="number" class="spellcasting-mod" value="{{ c[10] }}"><br>
+                    Spellsave DC:
+                    <input type="number" class="spellsave-dc" readonly><br>
+                    Spell Attack Bonus:
+                    <input type="number" class="spell-attack-bonus" readonly><br>
                 </li>
             {% endfor %}
         </ul>
@@ -100,10 +129,12 @@
     <!-- Feats -->
     <h2>Feats</h2>
     <div>
-        <ul>
+        <button type="button" id="addFeatButton">Add Feat</button>
+        <ul id="featList">
             {% for f in feats %}
                 <li>
-                    <strong><input type="text" value="{{ f[1] }}"></strong>: <input type="text" value="{{ f[2] }}">
+                    <strong><input type="text" value="{{ f[1] }}"></strong>: 
+                    <input type="text" value="{{ f[2] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -112,10 +143,12 @@
     <!-- Features -->
     <h2>Features</h2>
     <div>
-        <ul>
+        <button type="button" id="addFeatureButton">Add Feature</button>
+        <ul id="featureList">
             {% for f in features %}
                 <li>
-                    <strong><input type="text" value="{{ f[1] }}"></strong>: <input type="text" value="{{ f[2] }}">
+                    <strong><input type="text" value="{{ f[1] }}"></strong>:
+                    <input type="text" value="{{ f[2] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -124,15 +157,18 @@
     <!-- Effects -->
     <h2>Effects</h2>
     <div>
-        <ul>
+        <button type="button" id="addEffectButton">Add Effect</button>
+        <ul id="effectList">
             {% for e in effects %}
                 <li>
-                    <strong><input type="text" value="{{ e[1] }}"></strong>: <input type="text" value="{{ e[2] }}"><br> 
+                    <strong><input type="text" value="{{ e[1] }}"></strong>:
+                    <input type="text" value="{{ e[2] }}"><br>
                     Duration: (<input type="text" value="{{ e[3] }}">)
                 </li>
             {% endfor %}
         </ul>
     </div>
+
 
     <!-- Lore -->
     <h2>Lore</h2>
@@ -160,7 +196,7 @@
         <h3>Water Containers</h3>
         <ul>
             {% for w in containers %}
-                <li><strong>{{w[3]}}:</strong> <input type="number" value="{{ w[2] }}"> oz filled<br>
+                <li><strong>{{w[3]}}:</strong> <input type="number" value="{{ w[2] }}" class="water-amount" min="0" data-itemid="{{ w[1] }}"> oz filled<br>
                     <strong>Description:</strong> {{ w[4] }}
                 </li>
             {% endfor %}
@@ -307,7 +343,7 @@
             {% for r in rations %}
                 <li>
                     {{ r[3] }}
-                    Quantity: <input type="number" value="{{ r[2] }}" min="0"><br>
+                    Quantity: <input type="number" value="{{ r[2] }}" class="ration-amount" min="0" data-itemid="{{ r[1] }}"><br>
                     <strong>Description:</strong> {{ r[4] }}
                 </li>
             {% endfor %}
@@ -330,9 +366,10 @@
         <ul>
             {% for c in classes %}
                 {% if c[8] == 1 %}
-                    <li>
-                        {{ c[1] }}
-                        Spellcasting Modifier: <input type="number" value="{{ c[28] }}"><br>
+                    <li class="spellcasting-class">
+                        {{ c[1] }}<br>
+                        Proficiency Bonus: +<input type="number" class="class-prof-bonus" value="{{ c[2] }}" min="0"><br>
+                        Spellcasting Modifier: <input type="number" class="spellcasting-mod" value="{{ c[10] }}"><br>
                         Spellcasting Ability: <select>
                             <option value="Str" {% if c[27] == 'Str' %}selected{% endif %}>Str</option>
                             <option value="Dex" {% if c[27] == 'Dex' %}selected{% endif %}>Dex</option>
@@ -341,8 +378,8 @@
                             <option value="Wis" {% if c[27] == 'Wis' %}selected{% endif %}>Wis</option>
                             <option value="Cha" {% if c[27] == 'Cha' %}selected{% endif %}>Cha</option>
                         </select><br>
-                        Spellsave DC: <input type="number" value="8 + {{ c[2] }} + {{ c[28] }}"><br>
-                        Spell Attack Bonus: <input type="number" value="{{ c[2] }} + {{ c[28] }}"><br>
+                        Spellsave DC: <input type="number" class="spellsave-dc" value="8 + {{ c[2] }} + {{ c[10] }}"><br>
+                        Spell Attack Bonus: <input type="number" class="spell-attack-bonus" value="{{ c[2] }} + {{ c[10] }}"><br>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -487,5 +524,11 @@
         {% endfor %}
     </div>
 
+    <hr>
+
+    <button type="button" id="saveInventoryButton">Save Inventory</button>
+    <span id="saveInventoryStatus"></span>
+
+    <script src="{{ url_for('static', filename='js/character.js') }}"></script>
 </body>
 </html>

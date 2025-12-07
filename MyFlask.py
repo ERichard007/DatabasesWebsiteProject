@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session
+from flask import Flask, request, redirect, render_template, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 
@@ -127,6 +127,8 @@ def character(cid):
     cursor.execute("SELECT w.*, i.name, i.description FROM WaterContainer w JOIN Item i ON w.itemid = i.itemid WHERE w.characterid = ?", (cid,))
     containers = cursor.fetchall()
 
+    total_water = sum(w[2] for w in containers)
+
     cursor.execute("SELECT s.*, i.name, i.description FROM SiegeEquipment s JOIN Item i ON s.itemid = i.itemid WHERE s.characterid = ?", (cid,))
     siegeequipments = cursor.fetchall()
 
@@ -165,12 +167,60 @@ def character(cid):
 
     cursor.execute("SELECT r.*, i.name, i.description FROM Ration r JOIN Item i ON r.itemid = i.itemid WHERE r.characterid = ?", (cid,))
     rations = cursor.fetchall()
+       
+    total_rations = sum(r[2] for r in rations)  
 
     conn.close()
 
     print(character, companions, stats, skills, classes, race, savingthrows, abilities, feats, features, effects, lore, items, containers, siegeequipments, poisons, adventuringgears, weapons, armorshields, spells, explosives, tools, trinkets, firearms, others, wondrous, rations)
 
-    return render_template("character.html", character=character, companions=companions, stats=stats, skills=skills, classes=classes, race=race, savingthrows=savingthrows, abilities=abilities, feats=feats, features=features, effects=effects, lore=lore, items=items, containers=containers, siegeequipments=siegeequipments, poisons=poisons, adventuringgears=adventuringgears, weapons=weapons, armorshields=armorshields, spells=spells, explosives=explosives, tools=tools, trinkets=trinkets, firearms=firearms, others=others, wondrous=wondrous, rations=rations)
+    return render_template("character.html", character=character, companions=companions, stats=stats, skills=skills, classes=classes, race=race, savingthrows=savingthrows, abilities=abilities, feats=feats, features=features, effects=effects, lore=lore, items=items, containers=containers, siegeequipments=siegeequipments, poisons=poisons, adventuringgears=adventuringgears, weapons=weapons, armorshields=armorshields, spells=spells, explosives=explosives, tools=tools, trinkets=trinkets, firearms=firearms, others=others, wondrous=wondrous, rations=rations, total_water=total_water, total_rations=total_rations)
+
+@app.route("/character/<int:cid>/inventory", methods=["POST"])
+def update_inventory(cid):
+    user_id = session.get("userid")
+    if not user_id:
+        return "Unauthorized", 401
+
+    data = request.get_json(silent=True) or {}
+    water = data.get("water", [])
+    rations = data.get("rations", [])
+
+    conn = sqlite3.connect("DnDCharacterManager.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT userid FROM Character WHERE characterid = ?",
+        (cid,),
+    )
+    row = cursor.fetchone()
+    if not row or row[0] != user_id:
+        conn.close()
+        return "Forbidden", 403
+
+    for w in water:
+        itemid = w.get("itemid")
+        ozfilled = max(0, int(w.get("ozfilled", 0)))
+        cursor.execute(
+            "UPDATE WaterContainer SET ozfilled = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (ozfilled, cid, itemid),
+        )
+
+    for r in rations:
+        itemid = r.get("itemid")
+        days = max(0, int(r.get("days", 0)))
+        cursor.execute(
+            "UPDATE Ration SET days = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (days, cid, itemid),
+        )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "ok"})
+
 
 @app.route("/charactercreation", methods=["GET","POST"]) #character creation page
 def create_character():
