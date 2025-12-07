@@ -23,12 +23,22 @@
     <h2>Stats</h2>
     <div>
         <p><strong>Inspiration:</strong> <input type="number" placeholder="{{ stats[2] }}" min="0"></p>
-        {% set total_hp = classes | sum(attribute=5) %}
+        <p><strong>Initiative:</strong> <input type="text" value="0"></p>
+        <p><strong>Armor Class:</strong> <input type="number" value="0"></p>
+        {% set total_hp = classes | sum(attribute=6) %}
         <p><strong>Max HP:</strong> {{ total_hp }}</p>
         <p><strong>Current HP:</strong> <input type="number" placeholder="{{ stats[3] }}" min="0"></p>
         <p><strong>Temp HP:</strong> <input type="number" placeholder="{{ stats[4] }}" min="0"></p>
         <p><strong>EXP:</strong> <input type="number" placeholder="{{ stats[5] }}" min="0"></p>
         <p><strong>Speed:</strong> <input type="number" placeholder="{{race[2]}}" min="0"></p>
+        <p><strong>Death Saves:</strong> 
+            Success <input type="checkbox" {% if stats[6] >= 1 %}checked{% endif %}>
+            <input type="checkbox" {% if stats[6] >= 2 %}checked{% endif %}>
+            <input type="checkbox" {% if stats[6] == 3 %}checked{% endif %}>
+            Failure <input type="checkbox" {% if stats[7] >= 1 %}checked{% endif %}>
+            <input type="checkbox" {% if stats[7] >= 2 %}checked{% endif %}>
+            <input type="checkbox" {% if stats[7] == 3 %}checked{% endif %}>
+        </p>
     </div>
 
     <!-- Abilities -->
@@ -73,9 +83,15 @@
         <ul>
             {% for c in classes %}
                 <li>
-                    <strong>{{ c[1] }}</strong> (Level: <input type="number" placeholder="{{ c[8] }}" min="0" max="20">)<br>
-                    Max HP: <input type='number' placeholder="{{ c[5] }}" min="0"><br>
-                    Proficiency Bonus: +{{ c[2] }}
+                    <strong>{{ c[1] }}</strong> (Level: <input type="number" value="{{ c[7] }}" min="0" max="20">)<br>
+                    Max HP: <input type='number' value="{{ c[6] }}" min="0"><br>
+                    Proficiency Bonus: +<input type="number" value="{{ c[2] }}" min="0"><br>
+                    Hit Dice: <input type="number" value="{{ c[4] }}" min="0"> / <input type="number" value="{{ c[3] }}" min="0">d
+                    <select>
+                        {% for size in [6,8,10,12] %}
+                            <option value="{{ size }}" {% if size == c[6] %}selected{% endif %}>{{ size }}</option>
+                        {% endfor %}
+                    </select><br>
                 </li>
             {% endfor %}
         </ul>
@@ -121,11 +137,20 @@
     <!-- Lore -->
     <h2>Lore</h2>
     <div>
-        <p><strong>Age:</strong> {{ lore[6] }}</p>
-        <p><strong>Height:</strong> {{ lore[9] }}</p>
-        <p><strong>Weight:</strong> {{ lore[8] }}</p>
-        <p><strong>Appearance:</strong> {{ lore[12] }}</p>
-        <p><strong>Backstory:</strong> {{ lore[13] }}</p>
+        <p><strong>Skin:</strong><input type='text' value='{{ lore[2] }}'></p>
+        <p><strong>Eyes:</strong><input type='text' value='{{ lore[3] }}'></p>
+        <p><strong>Hair:</strong><input type="text" value="{{ lore[14] }}"></p>
+        <p><strong>Alignment:</strong><input type="text" value="{{ lore[15] }}"></p>
+        <p><strong>Ideals:</strong><input type='text' value='{{ lore[4] }}'></p>
+        <p><strong>Bonds:</strong><input type='text' value='{{ lore[5] }}'></p>
+        <p><strong>Flaws:</strong><input type='text' value='{{ lore[6] }}'></p>
+        <p><strong>Age:</strong><input type='text' value='{{ lore[7] }}'></p>
+        <p><strong>Personality Traits:</strong><input type='text' value='{{ lore[8] }}'></p>
+        <p><strong>Weight:</strong><input type='text' value='{{ lore[9] }}'></p>
+        <p><strong>Height:</strong><input type='text' value='{{ lore[10] }}'></p>
+        <p><strong>Allies:</strong><input type='text' value='{{ lore[11] }}'></p>
+        <p><strong>Appearance:</strong><input type='text' value='{{ lore[12] }}'></p>
+        <p><strong>Backstory:</strong><input type='text' value='{{ lore[13] }}'></p>
     </div>
 
     <!-- Items -->
@@ -301,6 +326,28 @@
     <!-- Spellcasting -->
     <h2>Spellcasting</h2>
     <div>
+        <h3>Spellcasting Classes</h3>
+        <ul>
+            {% for c in classes %}
+                {% if c[8] == 1 %}
+                    <li>
+                        {{ c[1] }}
+                        Spellcasting Modifier: <input type="number" value="{{ c[28] }}"><br>
+                        Spellcasting Ability: <select>
+                            <option value="Str" {% if c[27] == 'Str' %}selected{% endif %}>Str</option>
+                            <option value="Dex" {% if c[27] == 'Dex' %}selected{% endif %}>Dex</option>
+                            <option value="Con" {% if c[27] == 'Con' %}selected{% endif %}>Con</option>
+                            <option value="Int" {% if c[27] == 'Int' %}selected{% endif %}>Int</option>
+                            <option value="Wis" {% if c[27] == 'Wis' %}selected{% endif %}>Wis</option>
+                            <option value="Cha" {% if c[27] == 'Cha' %}selected{% endif %}>Cha</option>
+                        </select><br>
+                        Spellsave DC: <input type="number" value="8 + {{ c[2] }} + {{ c[28] }}"><br>
+                        Spell Attack Bonus: <input type="number" value="{{ c[2] }} + {{ c[28] }}"><br>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
         <h3>Cantrips</h3>
         {% for spell in spells %}
             {% if spell[4] == 0 %}
@@ -314,8 +361,9 @@
         {% endfor %}
         <hr>
         <h3>Level 1 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[17] }}" min="0">/<input type="number" value="{{ stats[8] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 1 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -327,8 +375,9 @@
         {% endfor %}
         <hr>
         <h3>Level 2 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[18] }}" min="0">/<input type="number" value="{{ stats[9] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 2 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -340,8 +389,9 @@
         {% endfor %}
         <hr>
         <h3>Level 3 Spells</h3>
+                Spell Slots: <input type="number" value="{{ stats[19] }}" min="0">/<input type="number" value="{{ stats[10] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 3 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -353,8 +403,9 @@
         {% endfor %}
         <hr>
         <h3>Level 4 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[20] }}" min="0">/<input type="number" value="{{ stats[11] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 4 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -366,8 +417,9 @@
         {% endfor %}
         <hr>
         <h3>Level 5 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[21] }}" min="0">/<input type="number" value="{{ stats[12] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 5 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -379,8 +431,9 @@
         {% endfor %}
         <hr>
         <h3>Level 6 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[22] }}" min="0">/<input type="number" value="{{ stats[13] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 6 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -392,8 +445,9 @@
         {% endfor %}
         <hr>
         <h3>Level 7 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[23] }}" min="0">/<input type="number" value="{{ stats[14] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 7 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -405,8 +459,9 @@
         {% endfor %}
         <hr>
         <h3>Level 8 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[24] }}" min="0">/<input type="number" value="{{ stats[15] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 8 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>
@@ -418,8 +473,9 @@
         {% endfor %}
         <hr>
         <h3>Level 9 Spells</h3>
+        Spell Slots: <input type="number" value="{{ stats[25] }}" min="0">/<input type="number" value="{{ stats[16] }}" min="0"><br>
         {% for spell in spells %}
-            {% if spell[4] == 0 %}
+            {% if spell[4] == 9 %}
                 {{ spell[7] }}
                 Duration: <input type="text" value="{{ spell[2] }}"><br>
                 Components: <input type="text" value="{{ spell[3] }}"><br>

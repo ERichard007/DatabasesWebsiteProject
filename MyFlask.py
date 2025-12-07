@@ -189,6 +189,7 @@ def create_character():
         maxHP = request.form.getlist('maxHP')
         levelInput = request.form.getlist('levelInput')
         spellMod = request.form.getlist('spellMod')
+        spellCastingClassFlags = request.form.getlist('isSpellcastingClass')
 
         featNames = request.form.getlist('featName')
         featDescriptions = request.form.getlist('featDesc')
@@ -256,8 +257,18 @@ def create_character():
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Stealth", request.form['dexterity'], 1 if request.form.get('stealth') == 'on' else 0,))
         cursor.execute("INSERT INTO Skill(characterid,name,score,proficient) VALUES(?,?,?,?)", (characterid, "Survival", request.form['wisdom'], 1 if request.form.get('survival') == 'on' else 0,))    
 
-        for cn, pb, hd, mhp, lvl, sm in zip(className, profBonus, hitDice, maxHP, levelInput, spellMod):
-            cursor.execute("""INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, classlevel, spellcastingmodifier)VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", (characterid, cn, pb, hd, hd, mhp, lvl, sm))
+        spcf_flags = []
+        i = 0
+        while i < len(spellCastingClassFlags):
+            if spellCastingClassFlags[i] == 'off' and i+1 < len(spellCastingClassFlags) and spellCastingClassFlags[i+1] == 'on':
+                spcf_flags.append(1)
+                i += 2
+            else:
+                spcf_flags.append(0)
+                i += 1
+
+        for cn, pb, hd, mhp, lvl, sm, spcf in zip(className, profBonus, hitDice, maxHP, levelInput, spellMod, spcf_flags):
+            cursor.execute("""INSERT INTO Class(characterid, name, proficiencybonus, totalhitdice, currenthitdice, maxhitpoints, classlevel, isSpellCastingClass, spellcastingmodifier) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", (characterid, cn, pb, hd, hd, mhp, lvl, spcf, sm))
 
         cursor.execute("INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)", (characterid, request.form['raceSelection'], request.form['speed'],))
 
@@ -294,14 +305,14 @@ def create_character():
             elif itemTypes[idx] == 'Poison': cursor.execute("INSERT INTO Poison(characterid, itemid, type, cost) VALUES(?,?,?,?)", (characterid, itemId, poisonTypes[poisonIdx], poisonCosts[poisonIdx])); poisonIdx += 1
             elif itemTypes[idx] == 'AdventuringGear': cursor.execute("INSERT INTO AdventuringGear(characterid, itemid, cost, weight) VALUES(?,?,?,?)", (characterid, itemId, adventuringGearCosts[gearIdx], adventuringGearWeights[gearIdx])); gearIdx += 1
             elif itemTypes[idx] == 'Weapon': cursor.execute("INSERT INTO Weapon(characterid, itemid, weight, cost, damage) VALUES(?,?,?,?,?)", (characterid, itemId, weaponWeights[weaponIdx], weaponCosts[weaponIdx], weaponDamages[weaponIdx])); weaponIdx += 1
-            elif itemTypes[idx] == 'Armor&Shield': cursor.execute("INSERT INTO ArmorShield(characterid, itemid, weight, cost, ac, equipped) VALUES(?,?,?,?,?,?)", (characterid, itemId, armorShieldWeights[armorIdx], armorShieldCosts[armorIdx], armorShieldAcs[armorIdx], 1 if armorShieldEquippeds[armorIdx] == 'on' else 0)); armorIdx += 1
+            elif itemTypes[idx] == 'Armor&Shield': cursor.execute("INSERT INTO ArmorShield(characterid, itemid, weight, cost, ac, equipped) VALUES(?,?,?,?,?,?)", (characterid, itemId, armorShieldWeights[armorIdx], armorShieldCosts[armorIdx], armorShieldAcs[armorIdx], 1 if (armorIdx < len(armorShieldEquippeds) and armorShieldEquippeds[armorIdx] == 'on') else 0)); armorIdx += 1
             elif itemTypes[idx] == 'Explosive': cursor.execute("INSERT INTO Explosive(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, explosiveWeights[explosiveIdx], explosiveCosts[explosiveIdx])); explosiveIdx += 1
             elif itemTypes[idx] == 'Tools': cursor.execute("INSERT INTO Tool(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, toolWeights[toolIdx], toolCosts[toolIdx])); toolIdx += 1
             elif itemTypes[idx] == 'Trinket': cursor.execute("INSERT INTO Trinket(characterid, itemid) VALUES(?,?)", (characterid, itemId))
             elif itemTypes[idx] == 'Firearm': cursor.execute("INSERT INTO Firearm(characterid, itemid, weight, cost, damage) VALUES(?,?,?,?,?)", (characterid, itemId, firearmWeights[firearmIdx], firearmCosts[firearmIdx], firearmDamages[firearmIdx])); firearmIdx += 1
             elif itemTypes[idx] == 'Other': cursor.execute("INSERT INTO Other(characterid, itemid, weight, cost) VALUES(?,?,?,?)", (characterid, itemId, otherWeights[otherIdx], otherCosts[otherIdx])); otherIdx += 1
             elif itemTypes[idx] == 'Wondrous': cursor.execute("INSERT INTO Wondrous(characterid, itemid) VALUES(?,?)", (characterid, itemId))
-            elif itemTypes[idx] == 'Ration': cursor.execute("INSERT INTO Ration(characterid, itemid, rationcount) VALUES(?,?,?)", (characterid, itemId, rationCounts[rationIdx])); rationIdx += 1
+            elif itemTypes[idx] == 'Ration': cursor.execute("INSERT INTO Ration(characterid, itemid, days) VALUES(?,?,?)", (characterid, itemId, rationCounts[rationIdx])); rationIdx += 1
             elif itemTypes[idx] == 'Spells': cursor.execute("INSERT INTO Spell(characterid, itemid, duration, components, level, range, castingtime) VALUES(?,?,?,?,?,?,?)", (characterid, itemId, spellDurations[spellIdx], spellComponents[spellIdx], spellLevels[spellIdx], spellRanges[spellIdx], spellCastingTimes[spellIdx])); spellIdx += 1
 
         conn.commit()
