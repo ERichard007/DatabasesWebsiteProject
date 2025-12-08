@@ -56,6 +56,11 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/logout", methods=["GET","POST"]) #logout page
+def logout():
+    session.clear()
+    return redirect("/")
+
 @app.route("/list") #character listing page
 def list_characters():
     conn = sqlite3.connect("DnDCharacterManager.db")
@@ -90,6 +95,7 @@ def character(cid):
 
     cursor.execute("SELECT * FROM Character WHERE ownerid = ? AND userid = ?", (cid, user_id,))
     companions = cursor.fetchall()
+
 
     cursor.execute("SELECT * FROM Stats WHERE characterid = ?", (cid,))
     stats = cursor.fetchone()
@@ -176,51 +182,556 @@ def character(cid):
 
     return render_template("character.html", character=character, companions=companions, stats=stats, skills=skills, classes=classes, race=race, savingthrows=savingthrows, abilities=abilities, feats=feats, features=features, effects=effects, lore=lore, items=items, containers=containers, siegeequipments=siegeequipments, poisons=poisons, adventuringgears=adventuringgears, weapons=weapons, armorshields=armorshields, spells=spells, explosives=explosives, tools=tools, trinkets=trinkets, firearms=firearms, others=others, wondrous=wondrous, rations=rations, total_water=total_water, total_rations=total_rations)
 
-@app.route("/character/<int:cid>/inventory", methods=["POST"])
-def update_inventory(cid):
+@app.route("/character/<int:cid>/save", methods=["POST"]) #character updating/saving in character.html
+def save_character(cid):
     user_id = session.get("userid")
     if not user_id:
         return "Unauthorized", 401
 
     data = request.get_json(silent=True) or {}
-    water = data.get("water", [])
-    rations = data.get("rations", [])
 
     conn = sqlite3.connect("DnDCharacterManager.db")
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT userid FROM Character WHERE characterid = ?",
-        (cid,),
-    )
+    # Ensure character belongs to user
+    cursor.execute("SELECT userid FROM Character WHERE characterid = ?", (cid,))
     row = cursor.fetchone()
     if not row or row[0] != user_id:
         conn.close()
         return "Forbidden", 403
 
-    for w in water:
-        itemid = w.get("itemid")
-        ozfilled = max(0, int(w.get("ozfilled", 0)))
+    # ---- Stats ----
+    stats = data.get("stats", {})
+    if stats:
+        totals = stats.get("spellSlotsTotal", {}) or {}
+        used   = stats.get("spellSlotsUsed", {}) or {}
+
+        def get_total(level):
+            return int(totals.get(str(level), 0))
+
+        def get_used(level, total):
+            u = int(used.get(str(level), 0))
+            return min(u, total)
+
+        t1 = get_total(1); u1 = get_used(1, t1)
+        t2 = get_total(2); u2 = get_used(2, t2)
+        t3 = get_total(3); u3 = get_used(3, t3)
+        t4 = get_total(4); u4 = get_used(4, t4)
+        t5 = get_total(5); u5 = get_used(5, t5)
+        t6 = get_total(6); u6 = get_used(6, t6)
+        t7 = get_total(7); u7 = get_used(7, t7)
+        t8 = get_total(8); u8 = get_used(8, t8)
+        t9 = get_total(9); u9 = get_used(9, t9)
+
+        cursor.execute("""
+            UPDATE Stats
+            SET inspiration = ?,
+                currenthitpoints = ?,
+                temporaryhitpoints = ?,
+                exp = ?,
+                deathsuccesses = ?,
+                deathfailures = ?,
+                totalspellslotslevel1 = ?,
+                totalspellslotslevel2 = ?,
+                totalspellslotslevel3 = ?,
+                totalspellslotslevel4 = ?,
+                totalspellslotslevel5 = ?,
+                totalspellslotslevel6 = ?,
+                totalspellslotslevel7 = ?,
+                totalspellslotslevel8 = ?,
+                totalspellslotslevel9 = ?,
+                usedspellslotslevel1 = ?,
+                usedspellslotslevel2 = ?,
+                usedspellslotslevel3 = ?,
+                usedspellslotslevel4 = ?,
+                usedspellslotslevel5 = ?,
+                usedspellslotslevel6 = ?,
+                usedspellslotslevel7 = ?,
+                usedspellslotslevel8 = ?,
+                usedspellslotslevel9 = ?
+            WHERE characterid = ?
+        """, (
+            int(stats.get("inspiration", 0)),
+            int(stats.get("currentHP", 0)),
+            int(stats.get("tempHP", 0)),
+            int(stats.get("exp", 0)),
+            int(stats.get("deathSuccesses", 0)),
+            int(stats.get("deathFailures", 0)),
+            t1, t2, t3, t4, t5, t6, t7, t8, t9,
+            u1, u2, u3, u4, u5, u6, u7, u8, u9,
+            cid,
+        ))
+
+    # ---- Abilities ----
+    for ab in data.get("abilities", []):
         cursor.execute(
-            "UPDATE WaterContainer SET ozfilled = ? "
-            "WHERE characterid = ? AND itemid = ?",
-            (ozfilled, cid, itemid),
+            "UPDATE Ability SET score = ? WHERE characterid = ? AND name = ?",
+            (int(ab.get("score", 0)), cid, ab.get("name")),
         )
 
-    for r in rations:
-        itemid = r.get("itemid")
-        days = max(0, int(r.get("days", 0)))
+    # ---- Saving Throws ----
+    for st in data.get("savingThrows", []):
         cursor.execute(
-            "UPDATE Ration SET days = ? "
-            "WHERE characterid = ? AND itemid = ?",
-            (days, cid, itemid),
+            "UPDATE SavingThrow SET score = ?, proficient = ? WHERE characterid = ? AND name = ?",
+            (int(st.get("score", 0)), int(st.get("proficient", 0)), cid, st.get("name")),
         )
+
+    # ---- Skills ----
+    for sk in data.get("skills", []):
+        cursor.execute(
+            "UPDATE Skill SET score = ?, proficient = ? WHERE characterid = ? AND name = ?",
+            (int(sk.get("score", 0)), int(sk.get("proficient", 0)), cid, sk.get("name")),
+        )
+
+    # ---- Classes (replace) ----
+    cursor.execute("DELETE FROM Class WHERE characterid = ?", (cid,))
+    for cl in data.get("classes", []):
+        name = cl.get("name") or ""
+        if not name:
+            continue
+
+        cursor.execute("""
+            INSERT INTO Class(
+                characterid, name, proficiencybonus,
+                totalhitdice, currenthitdice, typeofhitdice,
+                maxhitpoints, classlevel, isSpellCastingClass,
+                spellcastingability, spellcastingmodifier
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        """, (
+            cid,
+            name,
+            int(cl.get("proficiencybonus", 0)),
+            int(cl.get("totalhitdice", 0)),
+            int(cl.get("currenthitdice", 0)),
+            int(cl.get("typeofhitdice", 6)),
+            int(cl.get("maxhitpoints", 0)),
+            int(cl.get("classlevel", 0)),
+            int(cl.get("isSpellCastingClass", 0)),
+            cl.get("spellcastingability", "Int"),
+            int(cl.get("spellcastingmodifier", 0)),
+        ))
+
+    # ---- Feats ----
+    cursor.execute("DELETE FROM Feat WHERE characterid = ?", (cid,))
+    for ft in data.get("feats", []):
+        name = ft.get("name") or ""
+        if not name:
+            continue
+        cursor.execute("""
+            INSERT INTO Feat(characterid, name, description)
+            VALUES(?,?,?)
+        """, (cid, name, ft.get("description", "")))
+
+
+    # ---- Features ----
+    cursor.execute("DELETE FROM Features WHERE characterid = ?", (cid,))
+    for ft in data.get("features", []):
+        name = ft.get("name") or ""
+        if not name:
+            continue
+        cursor.execute("""
+            INSERT INTO Features(characterid, name, description)
+            VALUES(?,?,?)
+        """, (cid, name, ft.get("description", "")))
+
+
+    # ---- Effects (replace full set) ----
+    cursor.execute("DELETE FROM Effects WHERE characterid = ?", (cid,))
+    for ef in data.get("effects", []):
+        name = ef.get("name") or ""
+        if not name:
+            continue
+        cursor.execute("""
+            INSERT INTO Effects(characterid, name, description, duration)
+            VALUES(?,?,?,?)
+        """, (cid, name, ef.get("description", ""), ef.get("duration", "")))
+
+
+    # ---- Item names & descriptions ----
+    for im in data.get("itemMeta", []):
+        cursor.execute(
+            "UPDATE Item SET name = ?, description = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                im.get("name", ""),
+                im.get("description", ""),
+                cid,
+                int(im.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Deleted Items ----
+    for iid in data.get("deletedItems", []):
+        try:
+            item_id = int(iid)
+        except (TypeError, ValueError):
+            continue
+
+        # Delete from all subtype tables that reference Item
+        for tbl in [
+            "WaterContainer",
+            "SiegeEquipment",
+            "Poison",
+            "AdventuringGear",
+            "Weapon",
+            "ArmorShield",
+            "Explosive",
+            "Tool",
+            "Trinket",
+            "Firearm",
+            "Other",
+            "Wondrous",
+            "Ration",
+            "Spell",
+        ]:
+            cursor.execute(
+                f"DELETE FROM {tbl} WHERE characterid = ? AND itemid = ?",
+                (cid, item_id),
+            )
+
+        # Finally delete base Item row
+        cursor.execute(
+            "DELETE FROM Item WHERE characterid = ? AND itemid = ?",
+            (cid, item_id),
+        )
+
+    # ---- Inventory: Water & Rations ----
+    for w in data.get("water", []):
+        cursor.execute(
+            "UPDATE WaterContainer SET ozfilled = ? WHERE characterid = ? AND itemid = ?",
+            (int(w.get("ozfilled", 0)), cid, int(w.get("itemid", 0))),
+        )
+
+    for r in data.get("rations", []):
+        cursor.execute(
+            "UPDATE Ration SET days = ? WHERE characterid = ? AND itemid = ?",
+            (int(r.get("days", 0)), cid, int(r.get("itemid", 0))),
+        )
+    
+    # ---- Siege Equipment ----
+    for se in data.get("siegeEquipment", []):
+        cursor.execute(
+            "UPDATE SiegeEquipment SET ac = ?, damageimmunities = ?, hitpoints = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                int(se.get("ac", 0)),
+                se.get("damageimmunities", ""),
+                int(se.get("hitpoints", 0)),
+                cid,
+                int(se.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Poisons ----
+    for p in data.get("poisons", []):
+        cursor.execute(
+            "UPDATE Poison SET type = ?, cost = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                p.get("type", ""),
+                p.get("cost", ""),
+                cid,
+                int(p.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Adventuring Gear ----
+    for g in data.get("adventuringGear", []):
+        cursor.execute(
+            "UPDATE AdventuringGear SET cost = ?, weight = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                g.get("cost", ""),
+                float(g.get("weight", 0.0)),
+                cid,
+                int(g.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Weapons ----
+    for w in data.get("weapons", []):
+        cursor.execute(
+            "UPDATE Weapon SET weight = ?, cost = ?, damage = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                float(w.get("weight", 0.0)),
+                w.get("cost", ""),
+                w.get("damage", ""),
+                cid,
+                int(w.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Armor & Shields ----
+    for a in data.get("armorShields", []):
+        cursor.execute(
+            "UPDATE ArmorShield SET equipped = ?, weight = ?, cost = ?, ac = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                int(a.get("equipped", 0)),
+                float(a.get("weight", 0.0)),
+                a.get("cost", ""),
+                int(a.get("ac", 0)),
+                cid,
+                int(a.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Explosives ----
+    for ex in data.get("explosives", []):
+        cursor.execute(
+            "UPDATE Explosive SET cost = ?, weight = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                ex.get("cost", ""),
+                float(ex.get("weight", 0.0)),
+                cid,
+                int(ex.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Tools ----
+    for t in data.get("tools", []):
+        cursor.execute(
+            "UPDATE Tool SET cost = ?, weight = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                t.get("cost", ""),
+                float(t.get("weight", 0.0)),
+                cid,
+                int(t.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Firearms ----
+    for f in data.get("firearms", []):
+        cursor.execute(
+            "UPDATE Firearm SET cost = ?, damage = ?, weight = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                f.get("cost", ""),
+                f.get("damage", ""),
+                float(f.get("weight", 0.0)),
+                cid,
+                int(f.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Other Items ----
+    for o in data.get("others", []):
+        cursor.execute(
+            "UPDATE Other SET cost = ?, weight = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                o.get("cost", ""),
+                float(o.get("weight", 0.0)),
+                cid,
+                int(o.get("itemid", 0)),
+            ),
+        )
+    
+    # ---- Spells ----
+    for sp in data.get("spells", []):
+        cursor.execute(
+            "UPDATE Spell SET duration = ?, components = ?, range = ?, castingtime = ?, ready = ? "
+            "WHERE characterid = ? AND itemid = ?",
+            (
+                sp.get("duration", ""),
+                sp.get("components", ""),
+                sp.get("range", ""),
+                sp.get("castingtime", ""),
+                int(sp.get("ready", 0)),
+                cid,
+                int(sp.get("itemid", 0)),
+            ),
+        )
+
+    # ---- Currency ----
+    currency = data.get("currency", {})
+    if currency:
+        cursor.execute("""
+            UPDATE Character
+            SET copper = ?, silver = ?, electrum = ?, gold = ?, platinum = ?
+            WHERE characterid = ?
+        """, (
+            int(currency.get("copper", 0)),
+            int(currency.get("silver", 0)),
+            int(currency.get("electrum", 0)),
+            int(currency.get("gold", 0)),
+            int(currency.get("platinum", 0)),
+            cid,
+        ))
+
+    # ---- Lore ----
+    lore = data.get("lore", {})
+    if lore:
+        cursor.execute("""
+            UPDATE Lore
+            SET skin = ?, eye = ?, ideals = ?, bonds = ?, flaws = ?,
+                age = ?, personalitytraits = ?, weight = ?, height = ?,
+                allies = ?, appearance = ?, backstory = ?, hair = ?, alignment = ?
+            WHERE characterid = ?
+        """, (
+            lore.get("skin", ""),
+            lore.get("eyes", ""),
+            lore.get("ideals", ""),
+            lore.get("bonds", ""),
+            lore.get("flaws", ""),
+            lore.get("age", 0),
+            lore.get("traits", ""),
+            lore.get("weight", 0),
+            lore.get("height", 0),
+            lore.get("allies", ""),
+            lore.get("appearance", ""),
+            lore.get("backstory", ""),
+            lore.get("hair", ""),
+            lore.get("alignment", ""),
+            cid,
+        ))
 
     conn.commit()
     conn.close()
 
     return jsonify({"status": "ok"})
 
+@app.route("/character/<int:cid>/items", methods=["POST"]) #character item saving in character.html
+def add_item(cid):
+    user_id = session.get("userid")
+    if not user_id:
+        return "Unauthorized", 401
+
+    data = request.get_json(silent=True) or {}
+    item_type = data.get("type")
+    name = (data.get("name") or "").strip()
+    description = data.get("description") or ""
+    extra = data.get("extra") or {}
+
+    if not name:
+        return "Name required", 400
+
+    conn = sqlite3.connect("DnDCharacterManager.db")
+    cursor = conn.cursor()
+
+    # Ensure character belongs to user
+    cursor.execute("SELECT userid FROM Character WHERE characterid = ?", (cid,))
+    row = cursor.fetchone()
+    if not row or row[0] != user_id:
+        conn.close()
+        return "Forbidden", 403
+
+    # Base Item row
+    cursor.execute(
+        "INSERT INTO Item(characterid, name, description) VALUES(?,?,?)",
+        (cid, name, description),
+    )
+    itemid = cursor.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+    # Subtable per type
+    if item_type == "Container":
+        oz = int(extra.get("ozfilled", 0))
+        cursor.execute(
+            "INSERT INTO WaterContainer(characterid, itemid, ozfilled) VALUES(?,?,?)",
+            (cid, itemid, oz),
+        )
+    elif item_type == "SiegeEquipment":
+        ac = int(extra.get("ac", 0))
+        hp = int(extra.get("hitpoints", 0))
+        dmgimm = extra.get("damageimmunities", "")
+        cursor.execute(
+            "INSERT INTO SiegeEquipment(characterid, itemid, ac, damageimmunities, hitpoints) VALUES(?,?,?,?,?)",
+            (cid, itemid, ac, dmgimm, hp),
+        )
+    elif item_type == "Poison":
+        ptype = extra.get("type", "")
+        cost = extra.get("cost", "")
+        cursor.execute(
+            "INSERT INTO Poison(characterid, itemid, type, cost) VALUES(?,?,?,?)",
+            (cid, itemid, ptype, cost),
+        )
+    elif item_type == "AdventuringGear":
+        cost = extra.get("cost", "")
+        weight = float(extra.get("weight", 0.0))
+        cursor.execute(
+            "INSERT INTO AdventuringGear(characterid, itemid, cost, weight) VALUES(?,?,?,?)",
+            (cid, itemid, cost, weight),
+        )
+    elif item_type == "Weapon":
+        weight = float(extra.get("weight", 0.0))
+        cost = extra.get("cost", "")
+        damage = extra.get("damage", "")
+        cursor.execute(
+            "INSERT INTO Weapon(characterid, itemid, weight, cost, damage) VALUES(?,?,?,?,?)",
+            (cid, itemid, weight, cost, damage),
+        )
+    elif item_type == "Armor&Shield":
+        cost = extra.get("cost", "")
+        weight = float(extra.get("weight", 0.0))
+        ac = int(extra.get("ac", 0))
+        equipped = int(extra.get("equipped", 0))
+        cursor.execute(
+            "INSERT INTO ArmorShield(characterid, itemid, equipped, weight, cost, ac) VALUES(?,?,?,?,?,?)",
+            (cid, itemid, equipped, weight, cost, ac),
+        )
+    elif item_type == "Explosive":
+        cost = extra.get("cost", "")
+        weight = float(extra.get("weight", 0.0))
+        cursor.execute(
+            "INSERT INTO Explosive(characterid, itemid, cost, weight) VALUES(?,?,?,?)",
+            (cid, itemid, cost, weight),
+        )
+    elif item_type == "Tools":
+        cost = extra.get("cost", "")
+        weight = float(extra.get("weight", 0.0))
+        cursor.execute(
+            "INSERT INTO Tool(characterid, itemid, cost, weight) VALUES(?,?,?,?)",
+            (cid, itemid, cost, weight),
+        )
+    elif item_type == "Trinket":
+        cursor.execute(
+            "INSERT INTO Trinket(characterid, itemid) VALUES(?,?)",
+            (cid, itemid),
+        )
+    elif item_type == "Firearm":
+        cost = extra.get("cost", "")
+        damage = extra.get("damage", "")
+        weight = float(extra.get("weight", 0.0))
+        cursor.execute(
+            "INSERT INTO Firearm(characterid, itemid, cost, damage, weight) VALUES(?,?,?,?,?)",
+            (cid, itemid, cost, damage, weight),
+        )
+    elif item_type == "Other":
+        cost = extra.get("cost", "")
+        weight = float(extra.get("weight", 0.0))
+        cursor.execute(
+            "INSERT INTO Other(characterid, itemid, cost, weight) VALUES(?,?,?,?)",
+            (cid, itemid, cost, weight),
+        )
+    elif item_type == "Wondrous":
+        cursor.execute(
+            "INSERT INTO Wondrous(characterid, itemid) VALUES(?,?)",
+            (cid, itemid),
+        )
+    elif item_type == "Ration":
+        days = int(extra.get("days", 0))
+        cursor.execute(
+            "INSERT INTO Ration(characterid, itemid, days) VALUES(?,?,?)",
+            (cid, itemid, days),
+        )
+    elif item_type == "Spells":
+        duration = extra.get("duration", "")
+        components = extra.get("components", "")
+        level = int(extra.get("level", 0))
+        rng = extra.get("range", "")
+        castingtime = extra.get("castingtime", "")
+        cursor.execute(
+            "INSERT INTO Spell(characterid, itemid, duration, components, level, range, castingtime) VALUES(?,?,?,?,?,?,?)",
+            (cid, itemid, duration, components, level, rng, castingtime),
+        )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "ok", "itemid": itemid})
 
 @app.route("/charactercreation", methods=["GET","POST"]) #character creation page
 def create_character():

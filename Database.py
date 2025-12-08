@@ -70,7 +70,8 @@ usedspellslotslevel5 INTEGER NOT NULL CHECK(usedspellslotslevel5 >= 0 AND usedsp
 usedspellslotslevel6 INTEGER NOT NULL CHECK(usedspellslotslevel6 >= 0 AND usedspellslotslevel6 <= totalspellslotslevel6) DEFAULT 0,
 usedspellslotslevel7 INTEGER NOT NULL CHECK(usedspellslotslevel7 >= 0 AND usedspellslotslevel7 <= totalspellslotslevel7) DEFAULT 0,
 usedspellslotslevel8 INTEGER NOT NULL CHECK(usedspellslotslevel8 >= 0 AND usedspellslotslevel8 <= totalspellslotslevel8) DEFAULT 0,
-usedspellslotslevel9 INTEGER NOT NULL CHECK(usedspellslotslevel9 >= 0 AND usedspellslotslevel9 <= totalspellslotslevel9) DEFAULT 0
+usedspellslotslevel9 INTEGER NOT NULL CHECK(usedspellslotslevel9 >= 0 AND usedspellslotslevel9 <= totalspellslotslevel9) DEFAULT 0,
+armorclass INTEGER NOT NULL DEFAULT 0
 )"""
 
 SkillTable = """CREATE TABLE IF NOT EXISTS

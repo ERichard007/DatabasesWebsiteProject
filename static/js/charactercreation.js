@@ -1018,3 +1018,8 @@ addItem.addEventListener('click', () => {
         newItemDiv.remove()
     })
 })
+
+const exit = document.getElementById('exitButton')
+exit.addEventListener('click', () => {
+    window.location.href = '/list';
+})

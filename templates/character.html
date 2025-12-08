@@ -41,23 +41,26 @@
     <!-- Stats -->
     <h2>Stats</h2>
     <div>
-        <p><strong>Inspiration:</strong> <input type="number" placeholder="{{ stats[2] }}" min="0"></p>
+        <p><strong>Inspiration:</strong> <input type="number" id="statsInspiration" value="{{ stats[2] }}" min="0"></p>
         <p><strong>Initiative:</strong> <input type="number" id="initiativeInput" value="0"></p>
-        <p><strong>Armor Class:</strong> <input type="number" value="0"></p>
+        <p><strong>Armor Class:</strong> <input type="number" id="statsAC" value="{{ stats[26] }}"></p>
         {% set total_hp = classes | sum(attribute=6) %}
         <p><strong>Max HP: </strong><span id="totalMaxHpInput">{{ total_hp }}</span></p>
-        <p><strong>Current HP:</strong> <input type="number" placeholder="{{ stats[3] }}" min="0"></p>
-        <p><strong>Temp HP:</strong> <input type="number" placeholder="{{ stats[4] }}" min="0"></p>
-        <p><strong>EXP:</strong> <input type="number" placeholder="{{ stats[5] }}" min="0"></p>
-        <p><strong>Speed:</strong> <input type="number" placeholder="{{race[2]}}" min="0"></p>
-        <p><strong>Death Saves:</strong> 
-            Success <input type="checkbox" {% if stats[6] >= 1 %}checked{% endif %}>
-            <input type="checkbox" {% if stats[6] >= 2 %}checked{% endif %}>
-            <input type="checkbox" {% if stats[6] == 3 %}checked{% endif %}>
-            Failure <input type="checkbox" {% if stats[7] >= 1 %}checked{% endif %}>
-            <input type="checkbox" {% if stats[7] >= 2 %}checked{% endif %}>
-            <input type="checkbox" {% if stats[7] == 3 %}checked{% endif %}>
+        <p><strong>Current HP:</strong> <input type="number" id="statsCurrentHP" value="{{ stats[3] }}" min="0"></p>
+        <p><strong>Temp HP:</strong> <input type="number" id="statsTempHP" value="{{ stats[4] }}" min="0"></p>
+        <p><strong>EXP:</strong> <input type="number" id="statsExp" value="{{ stats[5] }}" min="0"></p>
+        <p><strong>Speed:</strong> <input type="number" value="{{race[2]}}" min="0"></p>
+        <p><strong>Death Saves:</strong>
+            Success
+            <input type="checkbox" class="death-success" data-index="1" {% if stats[6] >= 1 %}checked{% endif %}>
+            <input type="checkbox" class="death-success" data-index="2" {% if stats[6] >= 2 %}checked{% endif %}>
+            <input type="checkbox" class="death-success" data-index="3" {% if stats[6] == 3 %}checked{% endif %}>
+            Failure
+            <input type="checkbox" class="death-failure" data-index="1" {% if stats[7] >= 1 %}checked{% endif %}>
+            <input type="checkbox" class="death-failure" data-index="2" {% if stats[7] >= 2 %}checked{% endif %}>
+            <input type="checkbox" class="death-failure" data-index="3" {% if stats[7] == 3 %}checked{% endif %}>
         </p>
+
         <p><strong>Total Water:</strong> <span id="totalWaterValue">{{ total_water }}</span> oz</p>
         <p><strong>Total Rations:</strong> <span id="totalRationsValue">{{ total_rations }}</span> {% if total_rations == 1 %} day {% else %} days {% endif %}</p>
     </div>
@@ -80,7 +83,7 @@
     <div>
         <ul>
             {% for st in savingthrows %}
-                <li>{{ st[1] }}: <input type="number" placeholder="{{st[3]}}"> <input type="checkbox" {% if st[2] == 1 %}checked{% endif %}></li>
+                <li>{{ st[1] }}: <input type="number" class="saving-score" data-name="{{ st[1] }}" value="{{ st[3] }}"> <input type="checkbox" class="saving-prof" data-name="{{ st[1] }}" {% if st[2] == 1 %}checked{% endif %}></li>
             {% endfor %}
         </ul>
     </div>
@@ -91,7 +94,7 @@
         <ul>
             {% for s in skills %}
                 <li>
-                    {{ s[1] }}: <input type="number" placeholder="{{ s[2] }}">  <input type="checkbox" {% if s[3] == 1 %}checked{% endif %}> 
+                    {{ s[1] }}: <input type="number" class="skill-score" data-name="{{ s[1] }}" value="{{ s[2] }}">  <input type="checkbox" class="skill-prof" data-name="{{ s[1] }}" {% if s[3] == 1 %}checked{% endif %}> 
                 </li>
             {% endfor %}
         </ul>
@@ -103,25 +106,47 @@
         <button type="button" id="addClassButton">Add Class</button>
         <ul id="classList">
             {% for c in classes %}
-                <li class="spellcasting-class">
-                    <strong>{{ c[1] }}</strong> 
-                    (Level: <input type="number" value="{{ c[7] }}" min="0" max="20">)<br>
-                    Max HP: <input type='number' class="class-maxhp" value="{{ c[6] }}" min="0"><br>
-                    Hit Dice: <input type="number" value="{{ c[4] }}" min="0"> / <input type="number" value="{{ c[3] }}" min="0">d
-                    <select>
+                <li class="spellcasting-class" data-original-name="{{ c[1] }}">
+                    <strong><input type="text" class="class-name" value="{{ c[1] }}"></strong>
+                    (Level: <input type="number" class="class-level" value="{{ c[7] }}" min="0" max="20">)<br>
+
+                    Max HP: <input type="number" class="class-maxhp" value="{{ c[6] }}" min="0"><br>
+                    Hit Dice: <input type="number" class="class-currenthd" value="{{ c[4] }}" min="0"> /
+                    <input type="number" class="class-totalhd" value="{{ c[3] }}" min="0">d
+                    <select class="class-die-size">
                         {% for size in [6,8,10,12] %}
                             <option value="{{ size }}" {% if size == c[6] %}selected{% endif %}>{{ size }}</option>
                         {% endfor %}
                     </select><br>
-                    Proficiency Bonus: 
-                    +<input type="number" value="{{ c[2] }}" min="0"><br>
+
+                    Is Spellcasting Class?
+                    <input type="checkbox"
+                        class="class-is-spellcasting"
+                        {% if c[8] == 1 %}checked{% endif %}><br>
+
+
+                    Proficiency Bonus:
+                    +<input type="number" class="class-prof-bonus" value="{{ c[2] }}" min="0"><br>
+
                     Spellcasting Modifier:
                     <input type="number" class="spellcasting-mod" value="{{ c[10] }}"><br>
+
+                    Spellcasting Ability:
+                    <select class="class-spell-ability">
+                        <option value="Str" {% if c[9] == 'Str' %}selected{% endif %}>Str</option>
+                        <option value="Dex" {% if c[9] == 'Dex' %}selected{% endif %}>Dex</option>
+                        <option value="Con" {% if c[9] == 'Con' %}selected{% endif %}>Con</option>
+                        <option value="Int" {% if c[9] == 'Int' %}selected{% endif %}>Int</option>
+                        <option value="Wis" {% if c[9] == 'Wis' %}selected{% endif %}>Wis</option>
+                        <option value="Cha" {% if c[9] == 'Cha' %}selected{% endif %}>Cha</option>
+                    </select><br>
+
                     Spellsave DC:
                     <input type="number" class="spellsave-dc" readonly><br>
                     Spell Attack Bonus:
                     <input type="number" class="spell-attack-bonus" readonly><br>
                 </li>
+
             {% endfor %}
         </ul>
     </div>
@@ -132,9 +157,9 @@
         <button type="button" id="addFeatButton">Add Feat</button>
         <ul id="featList">
             {% for f in feats %}
-                <li>
-                    <strong><input type="text" value="{{ f[1] }}"></strong>: 
-                    <input type="text" value="{{ f[2] }}">
+                <li data-original-name="{{ f[1] }}">
+                    <strong><input type="text" class="feat-name" value="{{ f[1] }}"></strong>: 
+                    <input type="text" class="feat-desc" value="{{ f[2] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -146,9 +171,9 @@
         <button type="button" id="addFeatureButton">Add Feature</button>
         <ul id="featureList">
             {% for f in features %}
-                <li>
-                    <strong><input type="text" value="{{ f[1] }}"></strong>:
-                    <input type="text" value="{{ f[2] }}">
+                <li data-original-name="{{ f[1] }}">
+                    <strong><input type="text" class="feature-name" value="{{ f[1] }}"></strong>:
+                    <input type="text" class="feature-desc" value="{{ f[2] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -160,58 +185,106 @@
         <button type="button" id="addEffectButton">Add Effect</button>
         <ul id="effectList">
             {% for e in effects %}
-                <li>
-                    <strong><input type="text" value="{{ e[1] }}"></strong>:
-                    <input type="text" value="{{ e[2] }}"><br>
-                    Duration: (<input type="text" value="{{ e[3] }}">)
+                <li data-original-name="{{ e[1] }}">
+                    <strong><input type="text" class="effect-name" value="{{ e[1] }}"></strong>:
+                    <input type="text" class="effect-desc" value="{{ e[2] }}"><br>
+                    Duration: (<input type="text" class="effect-duration" value="{{ e[3] }}">)
                 </li>
             {% endfor %}
         </ul>
     </div>
 
-
     <!-- Lore -->
     <h2>Lore</h2>
     <div>
-        <p><strong>Skin:</strong><input type='text' value='{{ lore[2] }}'></p>
-        <p><strong>Eyes:</strong><input type='text' value='{{ lore[3] }}'></p>
-        <p><strong>Hair:</strong><input type="text" value="{{ lore[14] }}"></p>
-        <p><strong>Alignment:</strong><input type="text" value="{{ lore[15] }}"></p>
-        <p><strong>Ideals:</strong><input type='text' value='{{ lore[4] }}'></p>
-        <p><strong>Bonds:</strong><input type='text' value='{{ lore[5] }}'></p>
-        <p><strong>Flaws:</strong><input type='text' value='{{ lore[6] }}'></p>
-        <p><strong>Age:</strong><input type='text' value='{{ lore[7] }}'></p>
-        <p><strong>Personality Traits:</strong><input type='text' value='{{ lore[8] }}'></p>
-        <p><strong>Weight:</strong><input type='text' value='{{ lore[9] }}'></p>
-        <p><strong>Height:</strong><input type='text' value='{{ lore[10] }}'></p>
-        <p><strong>Allies:</strong><input type='text' value='{{ lore[11] }}'></p>
-        <p><strong>Appearance:</strong><input type='text' value='{{ lore[12] }}'></p>
-        <p><strong>Backstory:</strong><input type='text' value='{{ lore[13] }}'></p>
+        <p><strong>Skin:</strong><input type='text' id="loreSkin" value='{{ lore[2] }}'></p>
+        <p><strong>Eyes:</strong><input type='text' id="loreEyes" value='{{ lore[3] }}'></p>
+        <p><strong>Hair:</strong><input type="text" id="loreHair" value="{{ lore[14] }}"></p>
+        <p><strong>Alignment:</strong><input type="text" id="loreAlignment" value="{{ lore[15] }}"></p>
+        <p><strong>Ideals:</strong><input type='text' id="loreIdeals" value='{{ lore[4] }}'></p>
+        <p><strong>Bonds:</strong><input type='text' id="loreBonds" value='{{ lore[5] }}'></p>
+        <p><strong>Flaws:</strong><input type='text' id="loreFlaws" value='{{ lore[6] }}'></p>
+        <p><strong>Age:</strong><input type='text' id="loreAge" value='{{ lore[7] }}'></p>
+        <p><strong>Personality Traits:</strong><input type='text' id="loreTraits" value='{{ lore[8] }}'></p>
+        <p><strong>Weight:</strong><input type='text' id="loreWeight" value='{{ lore[9] }}'></p>
+        <p><strong>Height:</strong><input type='text' id="loreHeight" value='{{ lore[10] }}'></p>
+        <p><strong>Allies:</strong><input type='text' id="loreAllies" value='{{ lore[11] }}'></p>
+        <p><strong>Appearance:</strong><input type='text' id="loreAppearance" value='{{ lore[12] }}'></p>
+        <p><strong>Backstory:</strong><input type='text' id="loreBackstory" value='{{ lore[13] }}'></p>
     </div>
 
     <!-- Items -->
     <h2>Inventory</h2>
     <div>
+        <!-- Add Item Panel -->
+        <h3>Add Item</h3>
+        <div id="addItemPanel">
+            <p>
+                <label>
+                    Type:
+                    <select id="newItemType">
+                        <option value="Container">Container</option>
+                        <option value="SiegeEquipment">Siege Equipment</option>
+                        <option value="Poison">Poison</option>
+                        <option value="AdventuringGear">Adventuring Gear</option>
+                        <option value="Weapon">Weapon</option>
+                        <option value="Armor&Shield">Armor & Shield</option>
+                        <option value="Explosive">Explosive</option>
+                        <option value="Tools">Tools</option>
+                        <option value="Trinket">Trinket</option>
+                        <option value="Firearm">Firearm</option>
+                        <option value="Other">Other</option>
+                        <option value="Wondrous">Wondrous</option>
+                        <option value="Ration">Ration</option>
+                        <option value="Spells">Spells</option>
+                    </select>
+                </label>
+            </p>
+            <p>
+                <label>
+                    Name:
+                    <input type="text" id="newItemName">
+                </label>
+            </p>
+            <p>
+                <label>
+                    Description:
+                    <input type="text" id="newItemDescription">
+                </label>
+            </p>
+            <div id="newItemExtraFields"></div>
+            <button type="button" id="addItemButton">Add Item</button>
+            <span id="addItemStatus"></span>
+        </div>
+
         <!-- Containers -->
         <h3>Water Containers</h3>
         <ul>
             {% for w in containers %}
-                <li><strong>{{w[3]}}:</strong> <input type="number" value="{{ w[2] }}" class="water-amount" min="0" data-itemid="{{ w[1] }}"> oz filled<br>
-                    <strong>Description:</strong> {{ w[4] }}
+                <li class="inv-item" data-itemid="{{ w[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ w[3] }}"><br>
+                    Ounces filled:
+                    <input type="number" value="{{ w[2] }}" class="water-amount" min="0" data-itemid="{{ w[1] }}"> oz<br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ w[4] }}">
                 </li>
             {% endfor %}
         </ul>
+
 
         <!-- Siege Equipment -->
         <h3>Siege Equipment</h3>
         <ul>
             {% for se in siegeequipments %}
-                <li>
-                    {{ se[5] }}
-                    AC: <input type="number" value="{{ se[2] }}"><br>
-                    HP: <input type="number" value="{{ se[4] }}"><br>
-                    Immunities: <input type="text" value="{{ se[3] }}"><br>
-                    <strong>Description: </strong> {{ se[6] }}
+                <li class="inv-item inv-siege" data-itemid="{{ se[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ se[5] }}"><br>
+                    AC: <input type="number" class="inv-siege-ac" value="{{ se[2] }}"><br>
+                    HP: <input type="number" class="inv-siege-hp" value="{{ se[4] }}"><br>
+                    Immunities: <input type="text" class="inv-siege-imm" value="{{ se[3] }}"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ se[6] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -220,11 +293,13 @@
         <h3>Poisons</h3>
         <ul>
             {% for p in poisons %}
-                <li>
-                    {{ p[4] }}
-                    Type: <input type="text" value="{{ p[2] }}"><br>
-                    Cost: <input type="text" value="{{ p[3] }}"><br>
-                    <strong>Description:</strong> {{ p[5] }}
+                <li class="inv-item inv-poison" data-itemid="{{ p[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ p[4] }}"><br>
+                    Type: <input type="text" class="inv-poison-type" value="{{ p[2] }}"><br>
+                    Cost: <input type="text" class="inv-poison-cost" value="{{ p[3] }}"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ p[5] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -233,38 +308,47 @@
         <h3>Adventuring Gear</h3>
         <ul>
             {% for g in adventuringgears %}
-                <li>
-                    {{ g[4] }}
-                    Cost: <input type="text" value="{{ g[2] }}"><br> 
-                    Weight: <input type="number" value="{{ g[3] }}" min="0"><br>
-                    <strong>Description:</strong> {{ g[5] }}
+                <li class="inv-item inv-gear" data-itemid="{{ g[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ g[4] }}"><br>
+                    Cost: <input type="text" class="inv-gear-cost" value="{{ g[2] }}"><br>
+                    Weight: <input type="number" class="inv-gear-weight" value="{{ g[3] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ g[5] }}">
                 </li>
             {% endfor %}
         </ul>
 
+        <!-- Weapons -->
         <h3>Weapons</h3>
         <ul>
             {% for w in weapons %}
-                <li>
-                    {{ w[5] }}
-                    Damage: <input type="text" value="{{ w[4] }}"><br>
-                    Cost: <input type="text" value="{{ w[3] }}"><br>
-                    Weight: <input type="number" value="{{ w[2] }}" min="0"><br>
-                    <strong>Description:</strong> {{ w[6] }}
+                <li class="inv-item inv-weapon" data-itemid="{{ w[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ w[5] }}"><br>
+                    Damage: <input type="text" class="inv-weapon-damage" value="{{ w[4] }}"><br>
+                    Cost: <input type="text" class="inv-weapon-cost" value="{{ w[3] }}"><br>
+                    Weight: <input type="number" class="inv-weapon-weight" value="{{ w[2] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ w[6] }}">
                 </li>
             {% endfor %}
         </ul>
 
+
+        <!-- Armor & Shields -->
         <h3>Armor & Shields</h3>
         <ul>
             {% for a in armorshields %}
-                <li>
-                    {{ a[6] }}
-                    AC: <input type="number" value="{{ a[5] }}"><br>
-                    Cost: <input type="text" value="{{ a[4] }}"><br>
-                    Weight: <input type="number" value="{{ a[3] }}" min="0"><br>
-                    Equipped: <input type="checkbox" {% if a[2] == 1 %}checked{% endif %}><br>
-                    <strong>Description:</strong> {{ a[7] }}
+                <li class="inv-item inv-armor" data-itemid="{{ a[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ a[6] }}"><br>
+                    AC: <input type="number" class="inv-armor-ac" value="{{ a[5] }}"><br>
+                    Cost: <input type="text" class="inv-armor-cost" value="{{ a[4] }}"><br>
+                    Weight: <input type="number" class="inv-armor-weight" value="{{ a[3] }}" min="0"><br>
+                    Equipped: <input type="checkbox" class="inv-armor-equipped" {% if a[2] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ a[7] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -272,11 +356,13 @@
         <h3>Explosives</h3>
         <ul>
             {% for ex in explosives %}
-                <li>
-                    {{ ex[4] }}
-                    Cost: <input type="text" value="{{ ex[2] }}"><br>
-                    Weight: <input type="number" value="{{ ex[3] }}" min="0"><br>
-                    <strong>Description:</strong> {{ ex[5] }}
+                <li class="inv-item inv-explosive" data-itemid="{{ ex[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ ex[4] }}"><br>
+                    Cost: <input type="text" class="inv-explosive-cost" value="{{ ex[2] }}"><br>
+                    Weight: <input type="number" class="inv-explosive-weight" value="{{ ex[3] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ ex[5] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -284,11 +370,13 @@
         <h3>Tools</h3>
         <ul>
             {% for t in tools %}
-                <li>
-                    {{ t[4] }}
-                    Cost: <input type="text" value="{{ t[2] }}"><br>
-                    Weight: <input type="number" value="{{ t[3] }}" min="0"><br>
-                    <strong>Description:</strong> {{ t[5] }}
+                <li class="inv-item inv-tool" data-itemid="{{ t[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ t[4] }}"><br>
+                    Cost: <input type="text" class="inv-tool-cost" value="{{ t[2] }}"><br>
+                    Weight: <input type="number" class="inv-tool-weight" value="{{ t[3] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ t[5] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -296,9 +384,11 @@
         <h3>Trinkets</h3>
         <ul>
             {% for tr in trinkets %}
-                <li>
-                    {{ tr[2] }}
-                    <strong>Description:</strong> {{ tr[3] }}
+                <li class="inv-item inv-trinket" data-itemid="{{ tr[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ tr[2] }}"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ tr[3] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -306,12 +396,14 @@
         <h3>Firearms</h3>
         <ul>
             {% for f in firearms %}
-                <li>
-                    {{ f[5] }}
-                    Damage: <input type="text" value="{{ f[3] }}"><br>
-                    Cost: <input type="text" value="{{ f[2] }}"><br>
-                    Weight: <input type="number" value="{{ f[4] }}" min="0"><br>
-                    <strong>Description:</strong> {{ f[6] }}
+                <li class="inv-item inv-firearm" data-itemid="{{ f[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ f[5] }}"><br>
+                    Damage: <input type="text" class="inv-firearm-damage" value="{{ f[3] }}"><br>
+                    Cost: <input type="text" class="inv-firearm-cost" value="{{ f[2] }}"><br>
+                    Weight: <input type="number" class="inv-firearm-weight" value="{{ f[4] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ f[6] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -319,11 +411,13 @@
         <h3>Other Items</h3>
         <ul>
             {% for o in others %}
-                <li>
-                    {{ o[4] }}
-                    Cost: <input type="text" value="{{ o[2] }}"><br>
-                    Weight: <input type="number" value="{{ o[3] }}" min="0"><br>
-                    <strong>Description:</strong> {{ o[5] }}
+                <li class="inv-item inv-other" data-itemid="{{ o[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ o[4] }}"><br>
+                    Cost: <input type="text" class="inv-other-cost" value="{{ o[2] }}"><br>
+                    Weight: <input type="number" class="inv-other-weight" value="{{ o[3] }}" min="0"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ o[5] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -331,9 +425,11 @@
         <h3>Wondrous Items</h3>
         <ul>
             {% for w in wondrous %}
-                <li>
-                    {{ w[2] }}
-                    <strong>Description:</strong> {{ w[3] }}
+                <li class="inv-item inv-wondrous" data-itemid="{{ w[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ w[2] }}"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ w[3] }}">
                 </li>
             {% endfor %}
         </ul>
@@ -341,21 +437,25 @@
         <h3>Rations</h3>
         <ul>
             {% for r in rations %}
-                <li>
-                    {{ r[3] }}
-                    Quantity: <input type="number" value="{{ r[2] }}" class="ration-amount" min="0" data-itemid="{{ r[1] }}"><br>
-                    <strong>Description:</strong> {{ r[4] }}
+                <li class="inv-item inv-ration" data-itemid="{{ r[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ r[3] }}"><br>
+                    Quantity:
+                    <input type="number" value="{{ r[2] }}" class="ration-amount" min="0" data-itemid="{{ r[1] }}"><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ r[4] }}">
                 </li>
             {% endfor %}
         </ul>
 
+
         <p><strong>Currency:</strong></p>
         <ul>
-            <li>Platinum: {{ character[10] }}</li>
-            <li>Gold: {{ character[7] }}</li>
-            <li>Electrum: {{ character[6] }}</li>
-            <li>Silver: {{ character[8] }}</li>
-            <li>Copper: {{ character[9] }}</li>
+            <li>Copper: <input type="number" id="currencyCopper"   value="{{ character[9] }}"  min="0"></li>
+            <li>Silver: <input type="number" id="currencySilver"   value="{{ character[8] }}"  min="0"></li>
+            <li>Electrum: <input type="number" id="currencyElectrum" value="{{ character[6] }}"  min="0"></li>
+            <li>Gold: <input type="number" id="currencyGold"     value="{{ character[7] }}"  min="0"></li>
+            <li>Platnium: <input type="number" id="currencyPlatinum" value="{{ character[10] }}" min="0"></li>
         </ul>
     </div>
 
@@ -368,18 +468,11 @@
                 {% if c[8] == 1 %}
                     <li class="spellcasting-class">
                         {{ c[1] }}<br>
-                        Proficiency Bonus: +<input type="number" class="class-prof-bonus" value="{{ c[2] }}" min="0"><br>
-                        Spellcasting Modifier: <input type="number" class="spellcasting-mod" value="{{ c[10] }}"><br>
-                        Spellcasting Ability: <select>
-                            <option value="Str" {% if c[27] == 'Str' %}selected{% endif %}>Str</option>
-                            <option value="Dex" {% if c[27] == 'Dex' %}selected{% endif %}>Dex</option>
-                            <option value="Con" {% if c[27] == 'Con' %}selected{% endif %}>Con</option>
-                            <option value="Int" {% if c[27] == 'Int' %}selected{% endif %}>Int</option>
-                            <option value="Wis" {% if c[27] == 'Wis' %}selected{% endif %}>Wis</option>
-                            <option value="Cha" {% if c[27] == 'Cha' %}selected{% endif %}>Cha</option>
-                        </select><br>
-                        Spellsave DC: <input type="number" class="spellsave-dc" value="8 + {{ c[2] }} + {{ c[10] }}"><br>
-                        Spell Attack Bonus: <input type="number" class="spell-attack-bonus" value="{{ c[2] }} + {{ c[10] }}"><br>
+                        Proficiency Bonus: +<input type="number" class="class-prof-bonus" value="{{ c[2] }}" min="0" readonly><br>
+                        Spellcasting Modifier: <input type="number" class="spellcasting-mod" value="{{ c[10] }}" readonly><br>
+                        Spellcasting Ability: <input type="text" value="{{ c[9] }}" readonly><br>
+                        Spellsave DC: <input type="number" class="spellsave-dc" value="8 + {{ c[2] }} + {{ c[10] }}" readonly><br>
+                        Spell Attack Bonus: <input type="number" class="spell-attack-bonus" value="{{ c[2] }} + {{ c[10] }}" readonly><br>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -388,146 +481,220 @@
         <h3>Cantrips</h3>
         {% for spell in spells %}
             {% if spell[4] == 0 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
+
         <hr>
         <h3>Level 1 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[17] }}" min="0">/<input type="number" value="{{ stats[8] }}" min="0"><br>
+        Spell Slots: 
+        <input type="number" class="slot-used"  data-level="1" value="{{ stats[17] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="1" value="{{ stats[8] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 1 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 2 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[18] }}" min="0">/<input type="number" value="{{ stats[9] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="2" value="{{ stats[18] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="2" value="{{ stats[9] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 2 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 3 Spells</h3>
-                Spell Slots: <input type="number" value="{{ stats[19] }}" min="0">/<input type="number" value="{{ stats[10] }}" min="0"><br>
+                Spell Slots: <input type="number" class="slot-used"  data-level="3" value="{{ stats[19] }}" min="0">/
+                <input type="number" class="slot-total"  data-level="3" value="{{ stats[10] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 3 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 4 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[20] }}" min="0">/<input type="number" value="{{ stats[11] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="4" value="{{ stats[20] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="4" value="{{ stats[11] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 4 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 5 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[21] }}" min="0">/<input type="number" value="{{ stats[12] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="5" value="{{ stats[21] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="5" value="{{ stats[12] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 5 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 6 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[22] }}" min="0">/<input type="number" value="{{ stats[13] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="6" value="{{ stats[22] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="6" value="{{ stats[13] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 6 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 7 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[23] }}" min="0">/<input type="number" value="{{ stats[14] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="7" value="{{ stats[23] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="7" value="{{ stats[14] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 7 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 8 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[24] }}" min="0">/<input type="number" value="{{ stats[15] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="8" value="{{ stats[24] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="8" value="{{ stats[15] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 8 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
         <hr>
         <h3>Level 9 Spells</h3>
-        Spell Slots: <input type="number" value="{{ stats[25] }}" min="0">/<input type="number" value="{{ stats[16] }}" min="0"><br>
+        Spell Slots: <input type="number" class="slot-used"  data-level="9" value="{{ stats[25] }}" min="0">/
+        <input type="number" class="slot-total"  data-level="9" value="{{ stats[16] }}" min="0"><br>
         {% for spell in spells %}
             {% if spell[4] == 9 %}
-                {{ spell[7] }}
-                Duration: <input type="text" value="{{ spell[2] }}"><br>
-                Components: <input type="text" value="{{ spell[3] }}"><br>
-                Range: <input type="text" value="{{ spell[5] }}"><br>
-                Casting Time: <input type="text" value="{{ spell[6] }}"><br>
-                Ready: <input type="checkbox" {% if spell[7] == 1 %}checked{% endif %}><br>
-                <strong>Description:</strong> {{ spell[8] }}<br>
+                <div class="inv-item inv-spell" data-itemid="{{ spell[1] }}">
+                    <strong>Name:</strong>
+                    <input type="text" class="inv-item-name" value="{{ spell[8] }}"><br>
+                    Duration: <input type="text" class="inv-spell-duration" value="{{ spell[2] }}"><br>
+                    Components: <input type="text" class="inv-spell-components" value="{{ spell[3] }}"><br>
+                    Range: <input type="text" class="inv-spell-range" value="{{ spell[5] }}"><br>
+                    Casting Time: <input type="text" class="inv-spell-casting" value="{{ spell[6] }}"><br>
+                    Ready: <input type="checkbox" class="inv-spell-ready" {% if spell[7] == 1 %}checked{% endif %}><br>
+                    <strong>Description:</strong>
+                    <input type="text" class="inv-item-desc" value="{{ spell[9] }}">
+                </div>
             {% endif %}
         {% endfor %}
     </div>
 
+    <!-- Companions -->
+    <h2>Companions</h2>
+    <div>
+        {% if companions %}
+            <ul>
+                {% for comp in companions %}
+                    <li>
+                        <!-- comp[0] = characterid, comp[4] = name, comp[2] = background -->
+                        <a href="{{ url_for('character', cid=comp[0]) }}">
+                            {{ comp[4] }}
+                        </a>
+                        (ID: {{ comp[0] }}, Background: {{ comp[2] }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No companions linked to this character.</p>
+        {% endif %}
+    </div>
+
     <hr>
 
-    <button type="button" id="saveInventoryButton">Save Inventory</button>
-    <span id="saveInventoryStatus"></span>
+    <button type="button" id="saveCharacterButton">Save Character</button>
+    <span id="saveCharacterStatus"></span>
+
+    <button type="button" id="exitButton">Exit</button>
 
     <script src="{{ url_for('static', filename='js/character.js') }}"></script>
 </body>
