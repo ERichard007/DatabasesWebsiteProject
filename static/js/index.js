@@ -1,5 +1,5 @@
-const login_button = document.getElementById("login_button")
+const loginButton = document.getElementById('indexLoginButton');
 
-login_button.addEventListener('click', () => {
-    window.location.href = "/login";
-})
+loginButton.addEventListener('click', () => {
+    window.location.href = '/login';
+});

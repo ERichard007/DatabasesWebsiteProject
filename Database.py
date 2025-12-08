@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 connection = sqlite3.connect('DnDCharacterManager.db')
 cursor = connection.cursor()
@@ -297,6 +298,222 @@ cursor.execute("PRAGMA foreign_keys = ON;")
 
 for t in tables:
     tryCreateTable(eval(f"{t}Table"))
+
+
+# ----------------------------------------------------------------- TEST DATA
+# Create test user
+username = "testuser"
+password_plain = "password123"
+password_hash = generate_password_hash(password_plain)
+
+cursor.execute(
+    "INSERT INTO User(username, passw) VALUES(?, ?)",
+    (username, password_hash),
+)
+user_id = cursor.lastrowid
+
+# Common helpers
+abilities_list = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+skills_by_ability = {
+    "Strength": ["Athletics"],
+    "Dexterity": ["Acrobatics", "Sleight of Hand", "Stealth"],
+    "Intelligence": ["Arcana", "History", "Investigation", "Nature", "Religion"],
+    "Wisdom": ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+    "Charisma": ["Deception", "Intimidation", "Performance", "Persuasion"],
+}
+
+def ability_mod(score):
+    return (score - 10) // 2
+
+def add_character(
+    name,
+    playername,
+    background,
+    race_name,
+    speed,
+    class_name,
+    class_level,
+    max_hp,
+    armor_class,
+    prof_bonus,
+    abilities,          # dict: ability name -> score
+    proficient_saves,   # list of ability names
+    proficient_skills,  # list of skill names
+    is_spellcaster=False,
+    spellcasting_ability="Int",
+    spellcasting_mod=0,
+    exp=0,
+):
+    # Character row
+    cursor.execute(
+        """
+        INSERT INTO Character(
+            userid, background, iscompanion, name, playername,
+            electrum, gold, silver, copper, platinum, ownerid
+        ) VALUES (?, ?, 0, ?, ?, 0, 0, 0, 0, 0, NULL)
+        """,
+        (user_id, background, name, playername),
+    )
+    char_id = cursor.lastrowid
+
+    # Race
+    cursor.execute(
+        "INSERT INTO Race(characterid, name, speed) VALUES(?,?,?)",
+        (char_id, race_name, speed),
+    )
+
+    # Class
+    cursor.execute(
+        """
+        INSERT INTO Class(
+            characterid, name, proficiencybonus,
+            totalhitdice, currenthitdice, typeofhitdice,
+            maxhitpoints, classlevel, isSpellCastingClass,
+            spellcastingability, spellcastingmodifier
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        """,
+        (
+            char_id,
+            class_name,
+            prof_bonus,
+            class_level,          # total hit dice
+            class_level,          # current hit dice
+            10,                   # d10 by default; adjust per class if you like
+            max_hp,
+            class_level,
+            1 if is_spellcaster else 0,
+            spellcasting_ability,
+            spellcasting_mod,
+        ),
+    )
+
+    # Stats (basic fields + AC)
+    cursor.execute(
+        """
+        INSERT INTO Stats(
+            characterid, inspiration, currenthitpoints,
+            temporaryhitpoints, exp, deathsuccesses, deathfailures, armorclass
+        ) VALUES(?,?,?,?,?,?,?,?)
+        """,
+        (char_id, 0, max_hp, 0, exp, 0, 0, armor_class),
+    )
+
+    # Abilities
+    for abil_name in abilities_list:
+        score = abilities[abil_name]
+        cursor.execute(
+            "INSERT INTO Ability(characterid, name, score) VALUES(?,?,?)",
+            (char_id, abil_name, score),
+        )
+
+    # Saving throws
+    for abil_name in abilities_list:
+        score = abilities[abil_name]
+        mod = ability_mod(score) + (prof_bonus if abil_name in proficient_saves else 0)
+        cursor.execute(
+            "INSERT INTO SavingThrow(characterid, name, proficient, score) VALUES(?,?,?,?)",
+            (char_id, abil_name, 1 if abil_name in proficient_saves else 0, mod),
+        )
+
+    # Skills
+    for abil_name, skills in skills_by_ability.items():
+        score = abilities[abil_name]
+        base_mod = ability_mod(score)
+        for sk in skills:
+            prof = sk in proficient_skills
+            total = base_mod + (prof_bonus if prof else 0)
+            cursor.execute(
+                "INSERT INTO Skill(characterid, name, score, proficient) VALUES(?,?,?,?)",
+                (char_id, sk, total, 1 if prof else 0),
+            )
+
+    return char_id
+
+# ---- Character 1: Human Fighter (frontliner) ----
+c1_abilities = {
+    "Strength": 16,
+    "Dexterity": 14,
+    "Constitution": 15,
+    "Intelligence": 10,
+    "Wisdom": 12,
+    "Charisma": 11,
+}
+add_character(
+    name="Sir Aldric",
+    playername="Test Player 1",
+    background="Noble knight from the northern realms.",
+    race_name="Human",
+    speed=30,
+    class_name="Fighter",
+    class_level=5,
+    max_hp=44,
+    armor_class=18,
+    prof_bonus=3,
+    abilities=c1_abilities,
+    proficient_saves=["Strength", "Constitution"],
+    proficient_skills=["Athletics", "Perception", "Intimidation"],
+    is_spellcaster=False,
+    exp=6500,
+)
+
+# ---- Character 2: Elf Wizard (blaster/caster) ----
+c2_abilities = {
+    "Strength": 8,
+    "Dexterity": 14,
+    "Constitution": 13,
+    "Intelligence": 17,
+    "Wisdom": 12,
+    "Charisma": 10,
+}
+add_character(
+    name="Lyriel Dawnweaver",
+    playername="Test Player 2",
+    background="Elven scholar obsessed with ancient arcana.",
+    race_name="High Elf",
+    speed=30,
+    class_name="Wizard",
+    class_level=7,
+    max_hp=32,
+    armor_class=15,
+    prof_bonus=3,
+    abilities=c2_abilities,
+    proficient_saves=["Intelligence", "Wisdom"],
+    proficient_skills=["Arcana", "History", "Investigation", "Insight"],
+    is_spellcaster=True,
+    spellcasting_ability="Int",
+    spellcasting_mod=ability_mod(c2_abilities["Intelligence"]),
+    exp=23000,
+)
+
+# ---- Character 3: Dwarf Cleric (support/tank) ----
+c3_abilities = {
+    "Strength": 14,
+    "Dexterity": 10,
+    "Constitution": 16,
+    "Intelligence": 10,
+    "Wisdom": 17,
+    "Charisma": 12,
+}
+add_character(
+    name="Borin Stoneheart",
+    playername="Test Player 3",
+    background="Hill dwarf priest devoted to the forge god.",
+    race_name="Hill Dwarf",
+    speed=25,
+    class_name="Cleric",
+    class_level=6,
+    max_hp=52,
+    armor_class=19,
+    prof_bonus=3,
+    abilities=c3_abilities,
+    proficient_saves=["Wisdom", "Charisma"],
+    proficient_skills=["Medicine", "Religion", "Insight", "Persuasion"],
+    is_spellcaster=True,
+    spellcasting_ability="Wis",
+    spellcasting_mod=ability_mod(c3_abilities["Wisdom"]),
+    exp=14000,
+)
+
 
 connection.commit()
 connection.close()

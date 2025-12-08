@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #3b2a1e 0, #121218 60%, #050509 100%);
+    color: #f3e9dc;
+}
+
+/* Register card */
+.register-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 2rem 2.4rem;
+    background: rgba(31, 31, 38, 0.95);
+    border-radius: 10px;
+    border: 1px solid #a67c52;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Title */
+.register-card h1 {
+    margin: 0 0 1.2rem;
+    font-family: "Georgia", "Times New Roman", serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #a67c52;
+    padding-bottom: 0.4rem;
+}
+
+/* Form layout */
+.register-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
+}
+
+.register-card label {
+    font-size: 0.9rem;
+    margin-bottom: 0.15rem;
+    display: block;
+}
+
+/* Inputs */
+.register-card input[type="text"],
+.register-card input[type="password"] {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #121217;
+    color: #f3e9dc;
+}
+
+.register-card input:focus {
+    outline: none;
+    border-color: #e0b469;
+    box-shadow: 0 0 0 1px #e0b46940;
+}
+
+/* Password row */
+.password-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Buttons */
+.register-card button {
+    border-radius: 4px;
+    border: 1px solid #e0b469;
+    background: #2c2520;
+    color: #f3e9dc;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.register-card button:hover {
+    background: #3a2f27;
+}
+
+#show_password {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Submit button centered */
+.register-submit {
+    text-align: center;
+}
+
+/* Error message */
+.register-error {
+    color: #ffb3b3;
+    background: rgba(120, 0, 0, 0.2);
+    border: 1px solid rgba(255, 0, 0, 0.4);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Login link */
+.register-card .login-link {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.register-card .login-link a {
+    color: #e0b469;
+    text-decoration: none;
+}
+
+.register-card .login-link a:hover {
+    text-decoration: underline;
+}

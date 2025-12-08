@@ -3,23 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/list.css') }}">
     <title>Document</title>
 </head>
 <body>
-    <h2>Character List</h2>
+    <div class="list-card">
+        <h2>Characters for {{ username }}</h2>
 
-    <a href="/charactercreation"> Create Character </a>
+        <div class="list-actions">
+            <a href="/charactercreation" class="primary-link">Create Character</a>
+        </div>
 
-    <ul>
-        {% for c in characters %} <!--c[0] = characterid, c[1] = name, c[2] = background-->
-            <li>
-                {{c[1]}} -- ({{c[2]}}:{{c[0]}})
-                <a href="character/{{ c[0] }}">Choose</a>
-            </li>
-        {% endfor %}
-    </ul>
+        
+        <form class="filter-row" method="get" action="{{ url_for('list_characters') }}">
+            <label>
+                Name contains:
+                <input type="text" name="search" value="{{ search or '' }}">
+            </label>
 
-    <button type="button" id="logoutButton">Logout</button>
+            <label>
+                Min Level:
+                <input type="number" name="min_level" min="0"
+                    value="{{ min_level if min_level is not none }}">
+            </label>
+
+            <button type="submit">Apply</button>
+
+            <!-- preserve current sort/direction when filtering -->
+            <input type="hidden" name="sort" value="{{ current_sort }}">
+            <input type="hidden" name="dir" value="{{ current_dir }}">
+        </form>
+
+
+        <table class="character-table">
+            <thead>
+                <tr>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='id',
+                                            dir='desc' if current_sort=='id' and current_dir=='asc' else 'asc') }}">
+                            ID
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='name',
+                                            dir='desc' if current_sort=='name' and current_dir=='asc' else 'asc') }}">
+                            Name
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='background',
+                                            dir='desc' if current_sort=='background' and current_dir=='asc' else 'asc') }}">
+                            Background
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='race',
+                                            dir='desc' if current_sort=='race' and current_dir=='asc' else 'asc') }}">
+                            Race
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='level',
+                                            dir='desc' if current_sort=='level' and current_dir=='asc' else 'asc') }}">
+                            Level
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='maxhp',
+                                            dir='desc' if current_sort=='maxhp' and current_dir=='asc' else 'asc') }}">
+                            Max HP
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='ac',
+                                            dir='desc' if current_sort=='ac' and current_dir=='asc' else 'asc') }}">
+                            AC
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{ url_for('list_characters', sort='gold',
+                                            dir='desc' if current_sort=='gold' and current_dir=='asc' else 'asc') }}">
+                            Gold
+                        </a>
+                    </th>
+                    <th>Open</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in characters %}
+                    {# c indexes: 0 id, 1 name, 2 background, 3 race, 4 level, 5 maxhp, 6 ac, 7 gold #}
+                    <tr>
+                        <td>{{ c[0] }}</td>
+                        <td>{{ c[1] }}</td>
+                        <td>{{ c[2] }}</td>
+                        <td>{{ c[3] }}</td>
+                        <td>{{ c[4] }}</td>
+                        <td>{{ c[5] }}</td>
+                        <td>{{ c[6] }}</td>
+                        <td>{{ c[7] }}</td>
+                        <td>
+                            <a href="{{ url_for('character', cid=c[0]) }}" class="choose-link">Open</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="8">
+                        <div class="summary-row">
+                            <span>Total Characters: {{ summary.char_count }}</span>
+                            <span>Average Level: {{ summary.avg_level }}</span>
+                            <span>Total Gold: {{ summary.total_gold }}</span>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <button type="button" id="logoutButton">Logout</button>
+    </div>
 
     <script src="{{ url_for('static', filename='js/list.js') }}"></script>
 </body>

@@ -26,7 +26,7 @@ def login():
             session["userid"] = row[1]
             return redirect("/list")
         else:
-            return "Incorrect username or password"
+            return render_template("login.html", error="Incorrect username or password")
             
 
     return render_template("login.html")
@@ -52,7 +52,7 @@ def register():
 
         except sqlite3.IntegrityError:
             conn.close()
-            return "username already taken!"
+            return render_template("register.html", error="Username already taken!")
 
     return render_template("register.html")
 
@@ -61,27 +61,109 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/list") #character listing page
+@app.route("/list")
 def list_characters():
     conn = sqlite3.connect("DnDCharacterManager.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM User")
-    print(cursor.fetchall())
-    cursor.execute("SELECT * FROM Character")
-    print(cursor.fetchall())
-
     user_id = session.get("userid")
+    if not user_id:
+        conn.close()
+        return redirect("/login")
 
-    cursor.execute("SELECT characterid, name, background FROM Character WHERE userid = ? AND iscompanion = 0", (user_id,))
+    # Sorting
+    sort = request.args.get("sort", "name")
+    direction = request.args.get("dir", "asc").lower()
+    direction = "DESC" if direction == "desc" else "ASC"
+
+    # Filters
+    min_level = request.args.get("min_level", type=int)
+    search = request.args.get("search", default="")  # name search
+
+    sort_columns = {
+        "id": "c.characterid",
+        "name": "c.name",
+        "background": "c.background",
+        "race": "race_name",
+        "level": "max_class_level",
+        "maxhp": "total_maxhp",
+        "ac": "ac",
+        "gold": "c.gold",
+    }
+    order_by = sort_columns.get(sort, "c.name")
+
+    params = [user_id]
+    where_extra = ""
+    if search:
+        where_extra += " AND c.name LIKE ?"
+        params.append(f"%{search}%")
+
+    having_clause = ""
+    if min_level is not None:
+        having_clause = "HAVING max_class_level >= ?"
+        params.append(min_level)
+
+    cursor.execute(f"""
+        SELECT
+            c.characterid,
+            c.name,
+            c.background,
+            COALESCE(r.name, 'Unknown') AS race_name,
+            COALESCE(MAX(cl.classlevel), 0) AS max_class_level,
+            COALESCE(SUM(cl.maxhitpoints), 0) AS total_maxhp,
+            COALESCE(s.armorclass, 0) AS ac,
+            c.gold,
+            c.silver,
+            c.electrum,
+            c.copper,
+            c.platinum
+        FROM Character c
+        LEFT JOIN Race r ON r.characterid = c.characterid
+        LEFT JOIN Class cl ON cl.characterid = c.characterid
+        LEFT JOIN Stats s ON s.characterid = c.characterid
+        WHERE c.userid = ? AND c.iscompanion = 0
+        {where_extra}
+        GROUP BY
+            c.characterid, c.name, c.background,
+            race_name, ac,
+            c.gold, c.silver, c.electrum, c.copper, c.platinum
+        {having_clause}
+        ORDER BY {order_by} {direction}
+    """, params)
     characters = cursor.fetchall()
+
+    # (you can leave the summary query unfiltered, or reuse min_level similarly)
+    cursor.execute("""
+        SELECT
+            COUNT(DISTINCT c.characterid) AS char_count,
+            COALESCE(AVG(cl.classlevel), 0) AS avg_level,
+            COALESCE(SUM(c.gold), 0) AS total_gold
+        FROM Character c
+        LEFT JOIN Class cl ON cl.characterid = c.characterid
+        WHERE c.userid = ? AND c.iscompanion = 0
+    """, (user_id,))
+    summary_row = cursor.fetchone()
+    summary = {
+        "char_count": summary_row[0],
+        "avg_level": round(summary_row[1], 2) if summary_row[1] is not None else 0,
+        "total_gold": summary_row[2],
+    }
 
     cursor.execute("SELECT username FROM User WHERE userid = ?", (user_id,))
     username = cursor.fetchone()[0]
 
     conn.close()
 
-    return render_template("list.html", characters=characters, username=username)
+    return render_template(
+        "list.html",
+        characters=characters,
+        username=username,
+        summary=summary,
+        current_sort=sort,
+        current_dir="desc" if direction == "DESC" else "asc",
+        min_level=min_level,
+        search=search,
+    )
 
 @app.route("/character/<int:cid>") #character editing page
 def character(cid):

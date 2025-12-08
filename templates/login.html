@@ -3,25 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
+    <div class="login-card">
+        <h1>Login</h1>
 
-    <div>
-        <h1> Login </h1>
+        {% if error %}
+        <p class="login-error">{{ error }}</p>
+        {% endif %}
+
 
         <form action="/login" method="post">
+            <div>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-            Username: <input type="text" id="username" name="username" required> <br>
-            Password: <input type="password" id="password" name="password" required> 
-            <button type="button" id="show_password" name="show_password">👁️</button><br>
+            <div>
+                <label for="password">Password</label>
+                <div class="password-row">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="show_password" name="show_password">Show</button>
+                </div>
+            </div>
 
-            <button type="submit">Login</button>
-
+            <div class="login-submit">
+                <button type="submit">Login</button>
+            </div>
         </form>
 
-        <p>Don't have an account? </p><a href="register"> Register Here! </a>
-
+        <div class="register">
+            <span>Don't have an account?</span>
+            <a href="{{ url_for('register') }}">Register here</a>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>

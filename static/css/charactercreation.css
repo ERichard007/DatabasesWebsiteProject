@@ -1,0 +1,113 @@
+/* Page background + base font */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #3b2a1e 0, #121218 60%, #050509 100%);
+    color: #f3e9dc;
+}
+
+/* Main form container */
+form {
+    max-width: 1100px;
+    margin: 1.5rem auto;
+    padding: 1.6rem 2rem;
+    background: rgba(31, 31, 38, 0.96);
+    border-radius: 10px;
+    border: 1px solid #a67c52;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Titles */
+h1 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-family: "Georgia", "Times New Roman", serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #a67c52;
+    padding-bottom: 0.4rem;
+}
+
+h2 {
+    margin-top: 1.8rem;
+    margin-bottom: 0.6rem;
+    font-family: "Georgia", "Times New Roman", serif;
+    letter-spacing: 0.04em;
+}
+
+/* Section cards: each top-level div under form */
+form > div {
+    margin-bottom: 1.2rem;
+    padding: 1rem 1.1rem;
+    border-radius: 8px;
+    background: #25252e;
+    border: 1px solid #3a2b20;
+}
+
+/* Inputs / select / textarea */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+    background: #121217;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #f3e9dc;
+    padding: 0.25rem 0.4rem;
+    margin: 0.15rem 0.2rem 0.15rem 0;
+    font-size: 0.95rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #e0b469;
+    box-shadow: 0 0 0 1px #e0b46940;
+}
+
+/* Buttons (including your add/remove buttons from JS) */
+button {
+    border-radius: 4px;
+    border: 1px solid #e0b469;
+    background: #2c2520;
+    color: #f3e9dc;
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 0.15rem 0.2rem;
+}
+
+button:hover {
+    background: #3a2f27;
+}
+
+/* Dice roller list */
+#totalsList {
+    padding-left: 1rem;
+}
+
+/* Small layout tweaks for denser sections */
+#raceAndClassDiv,
+#featDiv,
+#featureDiv,
+#proficiencyDiv,
+#itemDiv {
+    background: #23232c;
+}
+
+/* Submit button area */
+#submitCharacterCreator {
+    display: inline-block;
+    margin-top: 0.8rem;
+}
+
+/* Make long paragraphs a bit more readable */
+form p {
+    line-height: 1.5;
+    font-size: 0.95rem;
+}

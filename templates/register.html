@@ -3,25 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 <body>
+    <div class="register-card">
+        <h1>Register</h1>
 
-    <div>
-        <h1> Register </h1>
+        {% if error %}
+        <p class="register-error">{{ error }}</p>
+        {% endif %}
 
         <form action="/register" method="post">
+            <div>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-            Username: <input type="text" id="username" name="username" required> <br>
-            Password: <input type="password" id="password" name="password" required> 
-            <button type="button" id="show_password" name="show_password">👁️</button><br>
+            <div>
+                <label for="password">Password</label>
+                <div class="password-row">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="show_password" name="show_password">Show</button>
+                </div>
+            </div>
 
-            <button type="submit">Register</button>
-
+            <div class="register-submit">
+                <button type="submit">Register</button>
+            </div>
         </form>
 
-        <p>Already have an account? </p><a href="login"> Login Here! </a>
-
+        <div class="login-link">
+            <span>Already have an account?</span>
+            <a href="{{ url_for('login') }}">Login here</a>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/register.js') }}"></script>
