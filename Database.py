@@ -301,7 +301,6 @@ for t in tables:
 
 
 # ----------------------------------------------------------------- TEST DATA
-# Create test user
 username = "testuser"
 password_plain = "password123"
 password_hash = generate_password_hash(password_plain)
@@ -312,7 +311,6 @@ cursor.execute(
 )
 user_id = cursor.lastrowid
 
-# Common helpers
 abilities_list = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
 skills_by_ability = {
     "Strength": ["Athletics"],
@@ -336,15 +334,15 @@ def add_character(
     max_hp,
     armor_class,
     prof_bonus,
-    abilities,          # dict: ability name -> score
-    proficient_saves,   # list of ability names
-    proficient_skills,  # list of skill names
+    abilities,          
+    proficient_saves,   
+    proficient_skills,  
     is_spellcaster=False,
     spellcasting_ability="Int",
     spellcasting_mod=0,
     exp=0,
 ):
-    # Character row
+    # Character 
     cursor.execute(
         """
         INSERT INTO Character(
@@ -376,9 +374,9 @@ def add_character(
             char_id,
             class_name,
             prof_bonus,
-            class_level,          # total hit dice
-            class_level,          # current hit dice
-            10,                   # d10 by default; adjust per class if you like
+            class_level,          
+            class_level,          
+            10,                   
             max_hp,
             class_level,
             1 if is_spellcaster else 0,
@@ -387,7 +385,7 @@ def add_character(
         ),
     )
 
-    # Stats (basic fields + AC)
+    # Stats
     cursor.execute(
         """
         INSERT INTO Stats(
@@ -429,7 +427,7 @@ def add_character(
 
     return char_id
 
-# ---- Character 1: Human Fighter (frontliner) ----
+# Character 1: Human Fighter
 c1_abilities = {
     "Strength": 16,
     "Dexterity": 14,
@@ -456,7 +454,7 @@ add_character(
     exp=6500,
 )
 
-# ---- Character 2: Elf Wizard (blaster/caster) ----
+# Character 2: Elf Wizard
 c2_abilities = {
     "Strength": 8,
     "Dexterity": 14,
@@ -485,7 +483,7 @@ add_character(
     exp=23000,
 )
 
-# ---- Character 3: Dwarf Cleric (support/tank) ----
+# Character 3: Dwarf Cleric
 c3_abilities = {
     "Strength": 14,
     "Dexterity": 10,

@@ -38,7 +38,7 @@ h2 {
     letter-spacing: 0.04em;
 }
 
-/* Section cards: each top-level div under form */
+/* Section cards*/
 form > div {
     margin-bottom: 1.2rem;
     padding: 1rem 1.1rem;
@@ -47,7 +47,6 @@ form > div {
     border: 1px solid #3a2b20;
 }
 
-/* Inputs / select / textarea */
 input[type="text"],
 input[type="number"],
 input[type="password"],
@@ -70,7 +69,7 @@ textarea:focus {
     box-shadow: 0 0 0 1px #e0b46940;
 }
 
-/* Buttons (including your add/remove buttons from JS) */
+/* Buttons */
 button {
     border-radius: 4px;
     border: 1px solid #e0b469;
@@ -106,7 +105,6 @@ button:hover {
     margin-top: 0.8rem;
 }
 
-/* Make long paragraphs a bit more readable */
 form p {
     line-height: 1.5;
     font-size: 0.95rem;

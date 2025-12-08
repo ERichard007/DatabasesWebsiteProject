@@ -78,7 +78,7 @@ def list_characters():
 
     # Filters
     min_level = request.args.get("min_level", type=int)
-    search = request.args.get("search", default="")  # name search
+    search = request.args.get("search", default="")  
 
     sort_columns = {
         "id": "c.characterid",
@@ -132,7 +132,6 @@ def list_characters():
     """, params)
     characters = cursor.fetchall()
 
-    # (you can leave the summary query unfiltered, or reuse min_level similarly)
     cursor.execute("""
         SELECT
             COUNT(DISTINCT c.characterid) AS char_count,
@@ -275,7 +274,6 @@ def save_character(cid):
     conn = sqlite3.connect("DnDCharacterManager.db")
     cursor = conn.cursor()
 
-    # Ensure character belongs to user
     cursor.execute("SELECT userid FROM Character WHERE characterid = ?", (cid,))
     row = cursor.fetchone()
     if not row or row[0] != user_id:
@@ -449,7 +447,6 @@ def save_character(cid):
         except (TypeError, ValueError):
             continue
 
-        # Delete from all subtype tables that reference Item
         for tbl in [
             "WaterContainer",
             "SiegeEquipment",
@@ -471,7 +468,6 @@ def save_character(cid):
                 (cid, item_id),
             )
 
-        # Finally delete base Item row
         cursor.execute(
             "DELETE FROM Item WHERE characterid = ? AND itemid = ?",
             (cid, item_id),
@@ -694,21 +690,18 @@ def add_item(cid):
     conn = sqlite3.connect("DnDCharacterManager.db")
     cursor = conn.cursor()
 
-    # Ensure character belongs to user
     cursor.execute("SELECT userid FROM Character WHERE characterid = ?", (cid,))
     row = cursor.fetchone()
     if not row or row[0] != user_id:
         conn.close()
         return "Forbidden", 403
 
-    # Base Item row
     cursor.execute(
         "INSERT INTO Item(characterid, name, description) VALUES(?,?,?)",
         (cid, name, description),
     )
     itemid = cursor.execute("SELECT last_insert_rowid()").fetchone()[0]
 
-    # Subtable per type
     if item_type == "Container":
         oz = int(extra.get("ozfilled", 0))
         cursor.execute(

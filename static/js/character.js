@@ -36,7 +36,6 @@ function addClassRemoveButton(li) {
     btn.addEventListener('click', () => {
         const currentClasses = classList.querySelectorAll('.spellcasting-class');
         if (currentClasses.length <= 1) {
-            // must have at least one class
             return;
         }
         li.remove();
@@ -73,7 +72,6 @@ function addEffectRemoveButton(li) {
 }
 
 function recalcSkills() {
-    // Build map: 'Str','Dex'... -> modifier
     const abilityMods = {};
     document.querySelectorAll('.ability-row').forEach(row => {
         const abilityName = (row.dataset.abilityName || '').toLowerCase();
@@ -88,7 +86,7 @@ function recalcSkills() {
         else if (abilityName.startsWith('cha')) abilityMods['Cha'] = mod;
     });
 
-    // Use first class proficiency bonus as global proficiency (fallback 2)
+  
     let profBonus = 2;
     const firstProfInput = document.querySelector('.class-prof-bonus');
     if (firstProfInput) {
@@ -96,7 +94,6 @@ function recalcSkills() {
         if (!isNaN(v)) profBonus = v;
     }
 
-    // Update each skill score = ability mod + (proficient ? profBonus : 0)
     document.querySelectorAll('.skill-score').forEach(input => {
         const skillName = input.dataset.name;
         if (!skillName) return;
@@ -238,7 +235,7 @@ function renderExtraFields() {
         makeInputRow('Cost:', 'newItemCost');
         makeInputRow('Weight:', 'newItemWeight', 'number');
         makeInputRow('AC:', 'newItemAC', 'number');
-        // equipped defaults to 0; could add checkbox if you want
+    
     } else if (t === 'Explosive') {
         makeInputRow('Cost:', 'newItemCost');
         makeInputRow('Weight:', 'newItemWeight', 'number');
@@ -246,7 +243,7 @@ function renderExtraFields() {
         makeInputRow('Cost:', 'newItemCost');
         makeInputRow('Weight:', 'newItemWeight', 'number');
     } else if (t === 'Trinket') {
-        // no extra fields
+        
     } else if (t === 'Firearm') {
         makeInputRow('Cost:', 'newItemCost');
         makeInputRow('Damage:', 'newItemDamage');
@@ -255,7 +252,7 @@ function renderExtraFields() {
         makeInputRow('Cost:', 'newItemCost');
         makeInputRow('Weight:', 'newItemWeight', 'number');
     } else if (t === 'Wondrous') {
-        // no extra fields
+        
     } else if (t === 'Ration') {
         makeInputRow('Days / Quantity:', 'newItemDays', 'number');
     } else if (t === 'Spells') {
@@ -719,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return { originalName, name, description, duration };
         });
 
-        // ---- Item meta (names & descriptions) ----
+        // ---- Item meta ----
         payload.itemMeta = Array.from(document.querySelectorAll('.inv-item')).map(el => {
             const id = parseInt(el.dataset.itemid, 10);
             const nameInput = el.querySelector('.inv-item-name');
